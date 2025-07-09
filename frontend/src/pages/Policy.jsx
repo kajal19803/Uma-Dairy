@@ -2,7 +2,7 @@ import React from 'react';
 
 
 const Policy = () => (
-  <div className="w-screen min-h-screen bg-white flex justify-center items-start py-10 px-4">
+  <div className="w-screen min-h-screen bg-gradient-to-br from-blue-100 via-green-100 to-teal-200 flex justify-center items-start py-10 px-4">
     <div className="max-w-4xl w-full text-center text-green-900 space-y-6">
 
       <h1 className="text-4xl font-bold border-b-2 border-green-800 pb-2">Uma Dairy – Policy Center</h1>

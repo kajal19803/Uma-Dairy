@@ -71,7 +71,7 @@ const ProductDetail = () => {
   if (!product) return <p className="text-center text-red-500 mt-10">Product not found.</p>;
 
   return (
-    <div className="min-h-screen w-screen bg-gray-50 py-8 px-4 md:px-16">
+    <div className="min-h-screen w-screen bg-gradient-to-br from-blue-100 via-green-100 to-teal-200 py-8 px-4 md:px-16">
       {/* 🔍 Image Zoom View */}
       {selectedImage !== null && (
         <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50" onClick={() => setSelectedImage(null)}>

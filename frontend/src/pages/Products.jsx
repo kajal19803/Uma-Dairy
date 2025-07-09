@@ -114,7 +114,7 @@ const Products = () =>{
 
 
   return (
-    <div className="w-screen min-h-screen bg-gray-50 p-6">
+    <div className="w-screen min-h-screen bg-gradient-to-br from-blue-100 via-green-100 to-teal-200 p-6">
       <h1 className="text-3xl font-bold text-center text-green-700 mb-6">All Products</h1>
 
       {/* Filters */}

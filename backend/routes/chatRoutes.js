@@ -1,89 +1,65 @@
 const express = require('express');
 const router = express.Router();
-const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const getWebsiteReply = require('../utils/websiteReplies');
+const { InferenceClient } = require('@huggingface/inference');
 require('dotenv').config();
+
+const hfClient = new InferenceClient(process.env.HUGGINGFACE_API_TOKEN);
 
 router.post('/', async (req, res) => {
   const userMessage = req.body.message;
   const token = req.headers.authorization?.split(' ')[1];
 
   let isLoggedIn = false;
+  let userId = null;
 
+  // Check if user is logged in
   if (token) {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      isLoggedIn = !!decoded?.id;
-    } catch (err) {
-      isLoggedIn = false; 
+      userId = decoded?.id;
+      isLoggedIn = !!userId;
+    } catch {
+      isLoggedIn = false;
     }
   }
 
+  // Check if message is related to support issues
   const needsTicket = /refund|problem|issue|not delivered|damaged|return|cancel|payment/i.test(userMessage);
+
+  // Try matching predefined website replies
   const predefinedReply = getWebsiteReply(userMessage);
-
-  
   if (predefinedReply) {
-    if (needsTicket) {
-      if (!isLoggedIn) {
-        return res.json({
-          reply: '⚠️ Please login to raise a support ticket.',
-          askToRaiseTicket: false,
-        });
-      }
-
-      return res.json({
-        reply: predefinedReply,
-        askToRaiseTicket: true,
-      });
-    }
-
-    return res.json({ reply: predefinedReply });
+    return res.json({
+      reply: predefinedReply,
+      askToRaiseTicket: needsTicket, // Will only prompt to raise ticket if needed
+    });
   }
 
-  
-  const headers = {
-    Authorization: `Bearer ${process.env.HUGGINGFACE_API_TOKEN}`,
-    'Content-Type': 'application/json',
-  };
-
-  const body = {
-    inputs: `<s>[INST] Reply shortly and simply in 2-3 lines: ${userMessage} [/INST]`,
-  };
-
+  // If no predefined reply, use HuggingFace
   try {
-    const response = await axios.post(
-      'https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct-v0.1',
-      body,
-      { headers }
-    );
+    const chatResponse = await hfClient.chatCompletion({
+      model: 'HuggingFaceH4/zephyr-7b-beta', // Use Mixtral if needed
+      messages: [
+        {
+          role: 'user',
+          content: userMessage,
+        },
+      ],
+    });
 
-    const rawReply = response.data[0]?.generated_text || 'Sorry, I couldn’t respond.';
-    const cleanReply = rawReply
-      .replace(/<[^>]*>/g, '')
-      .replace(/\[.*?\]/g, '')
-      .trim();
+    const reply = chatResponse?.choices?.[0]?.message?.content?.trim() || 'Sorry, I couldn’t respond.';
 
-    if (needsTicket) {
-      if (!isLoggedIn) {
-        return res.json({
-          reply: 'Please login to raise a support ticket.',
-          askToRaiseTicket: false,
-        });
-      }
-
-      return res.json({
-        reply: cleanReply,
-        askToRaiseTicket: true,
-      });
-    }
-
-    res.json({ reply: cleanReply });
+    return res.json({
+      reply,
+      askToRaiseTicket: needsTicket, // Frontend will decide to show ticket UI or not
+    });
   } catch (error) {
-    console.error(' HuggingFace API Error:', error.message);
-    res.status(500).json({ reply: 'Something went wrong. Try again later.' });
+    console.error('🔴 HuggingFace API Error:', error.message);
+    return res.status(500).json({ reply: 'Something went wrong. Try again later.' });
   }
 });
 
 module.exports = router;
+

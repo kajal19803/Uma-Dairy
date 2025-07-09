@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import useUserStore from '../store/userStore';
@@ -155,7 +155,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex w-screen min-h-screen bg-gray-100">
+    <div className="flex w-screen min-h-screen bg-gradient-to-br from-blue-100 via-green-100 to-teal-200">
       <Navbar />
       <aside className="w-64 bg-white shadow p-4 space-y-4">
         <h2 className="text-lg font-bold">My Dashboard</h2>

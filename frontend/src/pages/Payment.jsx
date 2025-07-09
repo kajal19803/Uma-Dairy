@@ -36,9 +36,8 @@ const Payment = () => {
       try {
         const cf = await load({ mode: 'production' });
         setCfInstance(cf);
-        console.log('✅ Cashfree SDK loaded');
       } catch (err) {
-        console.error('❌ Failed to load Cashfree SDK', err);
+        console.error('Failed to load Cashfree SDK', err);
       }
     };
     initCashfree();
@@ -75,9 +74,7 @@ const Payment = () => {
       });
 
       const data = await res.json();
-      console.log('✅ Cashfree backend response:', data);
-
-      if (!res.ok || !data.session_id) {
+     if (!res.ok || !data.session_id) {
         alert('Failed to create payment session');
         setLoading(false);
         return;
@@ -90,7 +87,7 @@ const Payment = () => {
         returnUrl: `${window.location.origin}/payment-status?order_id=${orderId}`,
       });
     } catch (err) {
-      console.error('❌ Payment error:', err);
+      console.error(' Payment error:', err);
       alert('Payment failed. Please try again.');
     } finally {
       setLoading(false);
@@ -118,13 +115,13 @@ const Payment = () => {
         alert(data.message || 'COD Order Failed');
       }
     } catch (error) {
-      console.error('❌ COD error:', error);
+      console.error(' COD error:', error);
       alert('Failed to place COD order.');
     }
   };
 
   return (
-    <div className="w-screen min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
+    <div className="w-screen min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 via-green-100 to-teal-200 p-4">
       <h2 className="text-2xl font-bold mb-4 text-yellow-900">Payment Page</h2>
 
       <div className="mb-6 bg-white p-4 rounded shadow w-full max-w-md">

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Moon, Sun } from 'lucide-react';
@@ -17,16 +17,12 @@ import Login from './pages/Login';
 import Logout from './pages/Logout';
 import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
-import MyOrders from './pages/MyOrders';
 import Cart from './pages/Cart';
 import Search from './components/search';
-import AddressForm from './pages/AddressForm';
 import Payment from './pages/Payment';
-import OrderSuccess from './pages/OrderSuccess';
 import PaymentStatus from './pages/PaymentStatus';
 import About from './pages/About';
 import Contact from './pages/Contact';
-import Checkout from './pages/Checkout';
 import { WishlistProvider } from './context/WishlistContext';
 import Policy from './pages/Policy';
 
@@ -85,19 +81,15 @@ const App = () => {
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
                 <Route path="/admindashboard" element={<PrivateRoute adminOnly={true}><AdminDashboard /></PrivateRoute>} />
-                <Route path="/myorders" element={<PrivateRoute><MyOrders /></PrivateRoute>} />
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/product/:id" element={<ProductDetail />} />
                 <Route path="/search" element={<Search />} />
-                <Route path="/address" element={<AddressForm />} />
                 <Route path="/payment" element={<Payment />} />
-                <Route path="/ordersuccess" element={<OrderSuccess />} />
                 <Route path="/paymentstatus" element={<PaymentStatus />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/policy" element={<Policy />}/>
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/checkout" element={<Checkout />} />
               </Routes>
             </ErrorBoundary>
           </main>

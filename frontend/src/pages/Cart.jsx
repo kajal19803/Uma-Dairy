@@ -114,7 +114,7 @@ const Cart = () => {
 
   if (cartItems.length === 0) {
     return (
-      <div className="w-screen h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
+      <div className="w-screen h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 via-green-100 to-teal-200 p-4">
         <p className="text-xl font-semibold text-gray-800 mb-3">Cart is empty</p>
         <Link
           to="/products"
