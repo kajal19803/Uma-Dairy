@@ -196,7 +196,7 @@ const Login = () => {
   };
 
   return (
-    <div className="w-screen h-screen bg-gray-100 flex items-center justify-center p-4">
+    <div className="w-screen h-screen bg-gradient-to-br from-blue-100 via-green-100 to-teal-200 flex items-center justify-center p-4">
       <ToastContainer />
       <div className="bg-white p-8 rounded-md shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold text-green-700 text-center mb-6">

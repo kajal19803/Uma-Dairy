@@ -82,12 +82,9 @@ const Cart = () => {
         },
         body: JSON.stringify(orderPayload),
       });
-      
-      console.log('📦 Response object:', res);
       if (!res.ok) throw new Error('Order failed');
       const data = await res.json();
       localStorage.setItem('latestOrderId', data.order.orderId);
-      console.log('📦 Parsed data:', data);
       navigate('/payment', {
         state: {
            order: data.order,
