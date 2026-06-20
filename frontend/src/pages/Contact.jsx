@@ -45,7 +45,7 @@ const Contact = () => {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full p-3 border bg-gray-100 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
               />
             </div>
             <div>
@@ -56,7 +56,7 @@ const Contact = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full p-3 bg-gray-100 text-blackborder rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
               />
             </div>
             <div>
@@ -67,7 +67,7 @@ const Contact = () => {
                 onChange={handleChange}
                 required
                 rows="5"
-                className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full p-3 border bg-gray-100 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
               />
             </div>
             <button

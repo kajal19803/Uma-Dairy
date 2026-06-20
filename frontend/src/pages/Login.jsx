@@ -206,7 +206,7 @@ const Login = () => {
         <form onSubmit={handleSubmit} noValidate>
           {!isLogin && (
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Full Name</label>
+              <label className="block text-sm font-medium text-black">Full Name</label>
               <input
                 name="name"
                 value={formData.name}
@@ -219,7 +219,7 @@ const Login = () => {
           )}
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <label className="block text-sm font-medium text-black">Email</label>
             <input
               name="email"
               type="email"
@@ -244,7 +244,7 @@ const Login = () => {
 
           {otpSent && !isOtpVerified && !isLogin && (
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Enter OTP</label>
+              <label className="block text-sm font-medium text-black">Enter OTP</label>
               <input
                 value={otp}
                 onChange={e => setOtp(e.target.value)}
@@ -263,13 +263,13 @@ const Login = () => {
           )}
 
           <div className="mb-4 relative">
-            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <label className="block text-sm font-medium text-black">Password</label>
             <input
               name="password"
               type={showPass ? 'text' : 'password'}
               value={formData.password}
               onChange={handleChange}
-              className="w-full p-2 border bg-white border-gray-300 rounded pr-10 focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full p-2 border text-black bg-white border-gray-300 rounded pr-10 focus:outline-none focus:ring-2 focus:ring-green-600"
               placeholder="Enter your password"
             />
             <button
@@ -286,13 +286,13 @@ const Login = () => {
 
           {!isLogin && (
             <div className="mb-4 relative">
-              <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
+              <label className="block text-sm font-medium text-black">Confirm Password</label>
               <input
                 name="confirmPassword"
                 type={showConfirmPass ? 'text' : 'password'}
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="w-full p-2 border bg-white border-gray-300 rounded pr-10 focus:outline-none focus:ring-2 focus:ring-green-600"
+                className="w-full p-2 border text-black bg-white border-gray-300 rounded pr-10 focus:outline-none focus:ring-2 focus:ring-green-600"
                 placeholder="Confirm your password"
               />
               <button
@@ -309,7 +309,7 @@ const Login = () => {
           )}
           {!isLogin && (
   <div className="mb-4">
-    <label className="flex items-start gap-2 text-sm text-gray-700">
+    <label className="flex items-start gap-2 text-sm text-black">
       <input
         type="checkbox"
         checked={formData.termsAccepted}

@@ -169,10 +169,10 @@ const Payment = () => {
         </div>
 
         <h3 className="font-semibold mb-2 text-gray-900 mt-4">Delivery Details</h3>
-        <p><strong>Name:</strong> {user?.name}</p>
-        <p><strong>Email:</strong> {user?.email}</p>
-        <p><strong>Phone:</strong> {phone}</p>
-        <p><strong>🏠 Address:</strong></p>
+        <p className="text-gray-700"><strong>Name:</strong> {user?.name}</p>
+        <p className="text-gray-700"><strong>Email:</strong> {user?.email}</p>
+        <p className="text-gray-700"><strong>Phone:</strong> {phone}</p>
+        <p className="text-black"><strong>🏠 Address:</strong></p>
         {typeof address === 'object' ? (
           <p className="ml-2 text-sm text-gray-700">
             {address.street}, {address.city}, {address.state} - {address.zip || address.pincode}
@@ -193,7 +193,7 @@ const Payment = () => {
       <div className="mb-4 w-full max-w-md">
         <p className="font-semibold text-gray-800 mb-2">Select Payment Method:</p>
         <div className="flex items-center gap-6">
-          <label className="flex items-center gap-2">
+          <label className="flex text-gray-700 items-center gap-2">
             <input
               type="radio"
               name="paymentMethod"
@@ -203,7 +203,7 @@ const Payment = () => {
             />
             Online Payment
           </label>
-          <label className="flex items-center gap-2">
+          <label className="flex text-gray-700 items-center gap-2">
             <input
               type="radio"
               name="paymentMethod"

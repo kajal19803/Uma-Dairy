@@ -158,7 +158,7 @@ const Dashboard = () => {
     <div className="flex w-screen min-h-screen bg-gradient-to-br from-blue-100 via-green-100 to-teal-200">
       <Navbar />
       <aside className="w-64 bg-white shadow p-4 space-y-4">
-        <h2 className="text-lg font-bold">My Dashboard</h2>
+        <h2 className="text-lg text-black font-bold">My Dashboard</h2>
         <button onClick={() => setActiveSection('profile')} className="block bg-white w-full text-left">Profile</button>
         <button onClick={() => setActiveSection('wishlist')} className="block bg-white w-full text-left">Wishlist</button>
         <button onClick={() => setActiveSection('addresses')} className="block bg-white w-full text-left">Addresses</button>
@@ -166,10 +166,10 @@ const Dashboard = () => {
         <button onClick={() => setActiveSection('orders')} className="block bg-white w-full text-left">Orders</button>
         <button onClick={() => setActiveSection('tickets')} className="block bg-white w-full text-left">Your Tickets</button>
       </aside>
-      <main className="flex-grow p-6">
+      <main className="flex-grow p-6 text-black">
         {activeSection === 'profile' && (
           <div>
-            <h1 className="text-2xl font-bold mb-4">Welcome {user?.name}</h1>
+            <h1 className="text-2xl text-black font-bold mb-4">Welcome {user?.name}</h1>
             <p>Email: {user?.email}</p>
           </div>
         )}
@@ -245,7 +245,7 @@ const Dashboard = () => {
 
             <p className="text-sm text-gray-500 mt-1">Order ID: {order.orderId}</p>
                <p className="text-sm text-gray-700">Payment:{order.paymentMethod}</p>
-               <p><strong>🏠 Delivery Address:</strong></p>
+               <p className="text-black "><strong>🏠 Delivery Address:</strong></p>
                    {typeof order.address === 'object' ? (
                    <p className="ml-2 text-sm text-gray-700">
                      {order.address.fullName}, {order.address.street}, {order.address.city}, {order.address.state} - {order.address.zip}
@@ -311,34 +311,34 @@ const Dashboard = () => {
 
         {activeSection === 'addresses' && (
           <div>
-            <h2 className="text-xl font-bold mb-2">Delivery Addresses</h2>
+            <h2 className="text-xl text-black font-bold mb-2">Delivery Addresses</h2>
             {addresses.map((addr, i) => (
               <div key={i} className="mb-2 border p-2 rounded">
-                <p>{addr.fullName}, {addr.street}</p>
-                <p>{addr.city}, {addr.state} - {addr.zip}</p>
+                <p className="text-black">{addr.fullName}, {addr.street}</p>
+                <p className="text-black">{addr.city}, {addr.state} - {addr.zip}</p>
                 <button onClick={() => removeAddress(addr)} className="text-sm bg-white text-red-600 underline">Remove</button>
               </div>
             ))}
             <h3 className="mt-4 font-semibold">Add New Address</h3>
-            <input className="block bg-white mb-2 p-1 border" placeholder="Full Name" value={newAddress.fullName} onChange={e => setNewAddress({ ...newAddress, fullName: e.target.value })} />
-            <input className="block bg-white mb-2 p-1 border" placeholder="Street" value={newAddress.street} onChange={e => setNewAddress({ ...newAddress, street: e.target.value })} />
-            <input className="block bg-white mb-2 p-1 border" placeholder="City" value={newAddress.city} onChange={e => setNewAddress({ ...newAddress, city: e.target.value })} />
-            <input className="block bg-white mb-2 p-1 border" placeholder="State" value={newAddress.state} onChange={e => setNewAddress({ ...newAddress, state: e.target.value })} />
-            <input className="block bg-white mb-2 p-1 border" placeholder="ZIP" value={newAddress.zip} onChange={e => setNewAddress({ ...newAddress, zip: e.target.value })} />
+            <input className="block text-black bg-white mb-2 p-1 border" placeholder="Full Name" value={newAddress.fullName} onChange={e => setNewAddress({ ...newAddress, fullName: e.target.value })} />
+            <input className="block text-black bg-white mb-2 p-1 border" placeholder="Street" value={newAddress.street} onChange={e => setNewAddress({ ...newAddress, street: e.target.value })} />
+            <input className="block text-black bg-white mb-2 p-1 border" placeholder="City" value={newAddress.city} onChange={e => setNewAddress({ ...newAddress, city: e.target.value })} />
+            <input className="block text-black bg-white mb-2 p-1 border" placeholder="State" value={newAddress.state} onChange={e => setNewAddress({ ...newAddress, state: e.target.value })} />
+            <input className="block text-black bg-white mb-2 p-1 border" placeholder="ZIP" value={newAddress.zip} onChange={e => setNewAddress({ ...newAddress, zip: e.target.value })} />
             <button className="bg-green-600 text-white px-4 py-1 rounded" onClick={handleAddAddress}>Add Address</button>
           </div>
         )}
 
         {activeSection === 'phones' && (
           <div>
-            <h2 className="text-xl font-bold mb-2">Phone Numbers</h2>
+            <h2 className="text-xl text-black font-bold mb-2">Phone Numbers</h2>
             {phoneNumbers.map((phone, i) => (
               <div key={i} className="flex justify-between items-center mb-2">
-                <p>{phone}</p>
+                <p className="text-black">{phone}</p>
                 <button onClick={() => removePhone(phone)} className="text-sm bg-white text-red-600 underline">Remove</button>
               </div>
             ))}
-            <input className="block bg-white my-2 p-1 border" placeholder="New Phone Number" value={newPhone} onChange={e => setNewPhone(e.target.value)} />
+            <input className="block text-black bg-white mb-2 p-1 border" placeholder="New Phone Number" value={newPhone} onChange={e => setNewPhone(e.target.value)} />
             <button className="bg-blue-600 text-white px-4 py-1 rounded" onClick={handleAddPhone}>Add Phone</button>
           </div>
         )}
@@ -366,7 +366,7 @@ const Dashboard = () => {
                  </span>
                </div>
               <p className="mt-2 text-sm text-gray-600">Ticket ID: {ticket.ticketNumber}</p>
-              <h3 className="text-lg font-bold mt-2">{ticket.issueType}</h3>
+              <h3 className="text-lg text-black font-bold mt-2">{ticket.issueType}</h3>
               <p className="text-sm text-gray-700 mt-1">{ticket.message}</p>
               <p className="text-sm text-gray-700 mt-1">Order Id: {ticket.orderId}</p>
                {ticket.images && ticket.images.length > 0 && (

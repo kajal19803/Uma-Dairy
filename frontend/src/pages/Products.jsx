@@ -122,7 +122,7 @@ const Products = () =>{
         <select
           value={filters.category}
           onChange={e => setFilters(prev => ({ ...prev, category: e.target.value }))}
-          className="p-2 border bg-white rounded"
+          className="p-2 border bg-white rounded text-black"
         >
           <option value="">All Categories</option>
           <option value="Dairy">Dairy</option>
@@ -133,7 +133,7 @@ const Products = () =>{
         <select
           value={filters.inStock}
           onChange={e => setFilters(prev => ({ ...prev, inStock: e.target.value }))}
-          className="p-2 border bg-white rounded"
+          className="p-2 border bg-white rounded text-black"
         >
           <option value="">Stock Status</option>
           <option value="true">In Stock</option>
@@ -143,7 +143,7 @@ const Products = () =>{
         <select
           value={filters.unit}
           onChange={e => setFilters(prev => ({ ...prev, unit: e.target.value }))}
-          className="p-2 border bg-white rounded"
+          className="p-2 border bg-white rounded text-black"
         >
           <option value="">All Units</option>
           <option value="litre">Litre</option>
@@ -153,7 +153,7 @@ const Products = () =>{
 
         <button
           onClick={() => setFilters({ category: '', inStock: '', unit: '' })}
-          className="px-4 py-2 bg-gray-200 rounded"
+          className="px-4 py-2 bg-gray-200 rounded text-black"
         >
           Reset Filters
         </button>
