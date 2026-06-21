@@ -159,12 +159,12 @@ const Dashboard = () => {
       <Navbar />
       <aside className="w-64 bg-white shadow p-4 space-y-4">
         <h2 className="text-lg text-black font-bold">My Dashboard</h2>
-        <button onClick={() => setActiveSection('profile')} className="block bg-white w-full text-left">Profile</button>
-        <button onClick={() => setActiveSection('wishlist')} className="block bg-white w-full text-left">Wishlist</button>
-        <button onClick={() => setActiveSection('addresses')} className="block bg-white w-full text-left">Addresses</button>
-        <button onClick={() => setActiveSection('phones')} className="block bg-white w-full text-left">Phone Numbers</button>
-        <button onClick={() => setActiveSection('orders')} className="block bg-white w-full text-left">Orders</button>
-        <button onClick={() => setActiveSection('tickets')} className="block bg-white w-full text-left">Your Tickets</button>
+        <button onClick={() => setActiveSection('profile')} className="block bg-white text-black w-full text-left">Profile</button>
+        <button onClick={() => setActiveSection('wishlist')} className="block bg-white text-black w-full text-left">Wishlist</button>
+        <button onClick={() => setActiveSection('addresses')} className="block bg-white text-black w-full text-left">Addresses</button>
+        <button onClick={() => setActiveSection('phones')} className="block bg-white text-black w-full text-left">Phone Numbers</button>
+        <button onClick={() => setActiveSection('orders')} className="block bg-white text-black w-full text-left">Orders</button>
+        <button onClick={() => setActiveSection('tickets')} className="block bg-white text-black w-full text-left">Your Tickets</button>
       </aside>
       <main className="flex-grow p-6 text-black">
         {activeSection === 'profile' && (

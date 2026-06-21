@@ -159,8 +159,8 @@ const Payment = () => {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p>Qty: {item.quantity}</p>
-                  <p>Price: ₹{item.price}</p>
+                  <p className="text-gray-700">Qty: {item.quantity}</p>
+                  <p className="text-gray-700">Price: ₹{item.price}</p>
                   <p className="font-semibold text-green-700">Total: ₹{Number(item.price) * item.quantity}</p>
                 </div>
               </div>
