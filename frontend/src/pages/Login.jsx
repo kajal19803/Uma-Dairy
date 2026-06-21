@@ -117,7 +117,7 @@ const Login = () => {
   }
 
   try {
-    await axios.post(`${API_URL}/api/auth/send-otp`, { email: formData.email });
+    await axios.post(`${API_URL}/api/email-otp/send`, { email: formData.email });
     toast.success('OTP sent successfully!');
     setOtpSent(true);
   } catch (error) {
