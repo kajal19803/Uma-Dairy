@@ -218,7 +218,7 @@ const AdminDashboard = () => {
         </button>
 
         <div>
-          <h2 className="text-2xl text-bluefont-semibold mb-4">User List</h2>
+          <h2 className="text-2xl text-blue-600 font-semibold mb-4">User List</h2>
           <div className="overflow-x-auto max-w-full">
             <table className="min-w-full bg-white border border-gray-200 rounded-md">
               <thead>
@@ -263,7 +263,7 @@ const AdminDashboard = () => {
         {showProductModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-md shadow-lg p-6 w-96 relative overflow-y-auto max-h-screen">
-              <h3 className="text-xl font-semibold mb-4">Add New Product</h3>
+              <h3 className="text-xl text-green-600 font-semibold mb-4">Add New Product</h3>
               <form onSubmit={handleAddProduct} className="space-y-3">
                 {[
                   ['name', 'Product Name'],
@@ -282,7 +282,7 @@ const AdminDashboard = () => {
                     placeholder={label}
                     value={productData[key]}
                     onChange={(e) => setProductData({ ...productData, [key]: e.target.value })}
-                    className="w-full border bg-white px-3 py-2 rounded-md"
+                    className="w-full border text-black bg-white px-3 py-2 rounded-md"
                     required
                   />
                 ))}
@@ -321,7 +321,7 @@ const AdminDashboard = () => {
                   <button
                     type="button"
                     onClick={() => setShowProductModal(false)}
-                    className="px-4 py-2 rounded border border-gray-300 hover:bg-gray-100"
+                    className="px-4 py-2 rounded border border-gray-300 hover:bg-gray-700"
                   >
                     Cancel
                   </button>
@@ -340,7 +340,7 @@ const AdminDashboard = () => {
         {showOfferModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-md shadow-lg p-6 w-96 relative">
-              <h3 className="text-xl font-semibold mb-4">Upload New Offer</h3>
+              <h3 className="text-xl text-blue-600 font-semibold mb-4">Upload New Offer</h3>
               <form onSubmit={handleAddOffer} className="space-y-3">
                 {['title', 'description', 'imageUrl', 'productName', 'discount'].map((key) => (
                   <input
@@ -349,7 +349,7 @@ const AdminDashboard = () => {
                     placeholder={key[0].toUpperCase() + key.slice(1)}
                     value={offerData[key]}
                     onChange={(e) => setOfferData({ ...offerData, [key]: e.target.value })}
-                    className="w-full border bg-white px-3 py-2 rounded-md"
+                    className="w-full border text-black bg-white px-3 py-2 rounded-md"
                     required
                   />
                 ))}
@@ -357,7 +357,7 @@ const AdminDashboard = () => {
                   <button
                     type="button"
                     onClick={() => setShowOfferModal(false)}
-                    className="px-4 py-2 rounded border border-gray-300 hover:bg-gray-100"
+                    className="px-4 py-2 rounded border border-gray-300 hover:bg-gray-700"
                   >
                     Cancel
                   </button>
