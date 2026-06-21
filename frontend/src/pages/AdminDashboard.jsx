@@ -218,15 +218,15 @@ const AdminDashboard = () => {
         </button>
 
         <div>
-          <h2 className="text-2xl font-semibold mb-4">User List</h2>
+          <h2 className="text-2xl text-bluefont-semibold mb-4">User List</h2>
           <div className="overflow-x-auto max-w-full">
             <table className="min-w-full bg-white border border-gray-200 rounded-md">
               <thead>
                 <tr className="bg-green-200">
-                  <th className="py-2 px-4 border">Name</th>
-                  <th className="py-2 px-4 border">Email</th>
-                  <th className="py-2 px-4 border">Role</th>
-                  <th className="py-2 px-4 border">Actions</th>
+                  <th className="py-2 text-black px-4 border">Name</th>
+                  <th className="py-2 text-black px-4 border">Email</th>
+                  <th className="py-2 text-black px-4 border">Role</th>
+                  <th className="py-2 text-black px-4 border">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -239,14 +239,14 @@ const AdminDashboard = () => {
                 ) : (
                   userList.map((u) => (
                     <tr key={u._id} className="hover:bg-gray-100">
-                      <td className="py-2 px-4 border">{u.name}</td>
-                      <td className="py-2 px-4 border">{u.email}</td>
-                      <td className="py-2 px-4 border capitalize">{u.role}</td>
-                      <td className="py-2 px-4 border">
+                      <td className="py-2 text-black px-4 border">{u.name}</td>
+                      <td className="py-2 text-black px-4 border">{u.email}</td>
+                      <td className="py-2 text-black px-4 border capitalize">{u.role}</td>
+                      <td className="py-2 text-black px-4 border">
                         {u.role !== 'admin' && (
                           <button
                             onClick={() => handleDeleteUser(u._id)}
-                            className="text-red-600 hover:underline"
+                            className="text-red-600 bg-transparent hover:bg-red-200 py-1 px-3 rounded"
                           >
                             Delete
                           </button>
