@@ -211,7 +211,7 @@ const Login = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full p-2 border bg-white border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-600"
+                className="w-full p-2 border bg-white text-black border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-600"
                 placeholder="Enter your full name"
               />
               {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
@@ -225,7 +225,7 @@ const Login = () => {
               type="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full p-2 border bg-white border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full p-2 border bg-white text-black border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-600"
               placeholder="Enter your email"
             />
             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
@@ -377,7 +377,7 @@ const Login = () => {
                 placeholder="Enter email"
                 value={fpData.email}
                 onChange={handleFpChange}
-                className="w-full p-2 border bg-white border-gray-300 rounded mb-4"
+                className="w-full p-2 border text-black bg-white border-gray-300 rounded mb-4"
               />
             )}
             {fpStep === 2 && (
@@ -386,7 +386,7 @@ const Login = () => {
                 placeholder="Enter OTP"
                 value={fpData.otp}
                 onChange={handleFpChange}
-                className="w-full p-2 border bg-white border-gray-300 rounded mb-4"
+                className="w-full p-2 border text-black bg-white border-gray-300 rounded mb-4"
               />
             )}
             {fpStep === 3 && (
@@ -396,7 +396,7 @@ const Login = () => {
                 placeholder="New Password"
                 value={fpData.newPassword}
                 onChange={handleFpChange}
-                className="w-full p-2 border bg-white border-gray-300 rounded mb-4"
+                className="w-full p-2 border  text-black bg-white border-gray-300 rounded mb-4"
               />
             )}
             <div className="flex justify-between">
