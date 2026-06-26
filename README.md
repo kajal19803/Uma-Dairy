@@ -149,8 +149,6 @@ This experience significantly improved my debugging and backend development skil
 
 # 📸 Screenshots
 
-Add screenshots of:
-
 - Home
 ![Home](Home.png)
 -Login
