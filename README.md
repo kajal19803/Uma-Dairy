@@ -152,21 +152,23 @@ This experience significantly improved my debugging and backend development skil
 Add screenshots of:
 
 - Home
-![Home](image.png)
-![Login](image-4.png)
+![Home](Home.png)
+-Login
+![Login](Login.png)
 - Products
-![Product](image-1.png)
+![Product](Products.png)
 - Product Details
-![Product detail page](image-2.png)
+![Product detail page](ProductDetail.png)
 - Cart
-![Cart](image-3.png)
+![Cart](Cart.png)
 - Checkout
-![Checkout](image-5.png)
+![Checkout](Checkout.png)
 - Orders
-![order confirmed](image-6.png)
-![My orders](image-7.png)
+![order confirmed](OrderConfirmed.png)
+-My orders
+![My orders](MyOrders.png)
 - Admin Dashboard
-![Admin Dashboard](image-8.png)
+![Admin Dashboard](AdminDashboard.png)
 
 ---
 
