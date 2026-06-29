@@ -99,16 +99,20 @@ const Navbar = () => {
 
         <div className="flex items-center space-x-4" ref={dropdownRef}>
           {/* Desktop Search */}
-          <div className="hidden md:flex w-[250px]">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="w-full rounded-full border border-orange-200 bg-white px-5 py-2 text-black outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-200"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyDown={handleSearchKeyDown}
-            />
-          </div>
+          <div className="hidden md:flex items-center relative w-[320px]">
+  <SearchIcon
+    className="absolute left-4 h-5 w-5 text-gray-400"
+  />
+
+  <input
+    type="text"
+    placeholder="Search for dairy products..."
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+    onKeyDown={handleSearchKeyDown}
+    className="w-full pl-12 pr-4 py-3 rounded-full border border-orange-200 bg-white text-[#4E342E] outline-none transition-all duration-300 focus:border-[#F97354] focus:ring-2 focus:ring-orange-200"
+  />
+</div>
 
           {/* Mobile Search */}
           <div className="md:hidden">
@@ -143,9 +147,9 @@ const Navbar = () => {
             ) : (
               <>
                 {userRole === "admin" ? (
-                  <Link to="/admindashboard"className="hover:text-[#F97354] text-[#4E342E] transition" onClick={() => setMenuOpen(false)}>Admin Dashboard</Link>
+                  <Link to="/admindashboard"className="text-[#4E342E] hover:text-[#F97354]  transition" onClick={() => setMenuOpen(false)}>Admin Dashboard</Link>
                 ) : (
-                  <Link to="/dashboard" className="hover:text-[#F97354] text-[#4E342E] transition" onClick={() => setMenuOpen(false)}>Profile</Link>
+                  <Link to="/dashboard" className="text-[#4E342E] hover:text-[#F97354]  transition" onClick={() => setMenuOpen(false)}>Profile</Link>
                 )}
                 <button
                  type="button"
@@ -174,7 +178,7 @@ const Navbar = () => {
               <Link to="/features" className="px-4 py-2 text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Features</Link>
               <Link to="/team" className="px-4 py-2 text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Team</Link>
               <Link to="/contact" className="px-4 py-2 text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Contact Us</Link>
-
+            <div className="md:hidden">
               {!isLoggedIn ? (
                 <Link to="/login" className="px-4 py-2 text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Login</Link>
               ) : (
@@ -193,6 +197,7 @@ const Navbar = () => {
                   </button>
                 </>
               )}
+              </div>
             </div>
           )}
         </div>
