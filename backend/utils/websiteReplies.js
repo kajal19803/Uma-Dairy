@@ -23,42 +23,6 @@ const websiteReplies = {
   curd:
     "🥣 Fresh curd is available every day with guaranteed quality.",
 
-  order:
-    "📦 You can track all your orders from Dashboard → My Orders.",
-
-  delivery:
-    "🚚 Orders are generally delivered within 2–3 business days depending on your location.",
-
-  payment:
-    "💳 We support both Online Payment and Cash on Delivery (COD).",
-
-  cod:
-    "💵 Cash on Delivery (COD) is available for eligible orders.",
-
-  refund:
-    "💰 If you received a damaged or incorrect product, Uma Assistant can help you raise a support ticket for refund assistance.",
-
-  cancel:
-    "❌ If your order hasn't been processed yet, our support team can help you with cancellation.",
-
-  return:
-    "📦 Return requests are handled by our support team depending on the product condition.",
-
-  damaged:
-    "⚠️ Sorry to hear that. Please raise a support ticket with an image of the damaged product.",
-
-  issue:
-    "🛠️ I can help you raise a support ticket regarding your issue.",
-
-  problem:
-    "🛠️ Please describe your problem in detail. If required, I'll help you raise a support ticket.",
-
-  support:
-    "🎫 You can raise a support ticket directly through Uma Assistant.",
-
-  ticket:
-    "🎫 I can help you create a support ticket. Just describe your issue.",
-
   contact:
     "📞 You can find our contact details on the Contact page.",
 

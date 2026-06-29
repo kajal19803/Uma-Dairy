@@ -230,7 +230,7 @@ Example:
   // Create Ticket
   // ===========================
 
-  const createTicket = async () => {
+  const createTicket = async (selectedImage = null) => {
     try {
       const formData = new FormData();
 
@@ -243,9 +243,11 @@ Example:
         JSON.stringify(ticketData.productNames)
       );
 
-      if (ticketData.image) {
-        formData.append("images", ticketData.image);
-      }
+      if (selectedImage) {
+  formData.append("images", selectedImage);
+} else if (ticketData.image) {
+  formData.append("images", ticketData.image);
+}
 
       const res = await fetch(`${API_BASE}/api/tickets`, {
         method: "POST",
@@ -571,18 +573,9 @@ or
       },
     ]);
 
-    setTicketData((prev) => ({
-      ...prev,
-      image: file,
-    }));
-
     delayBotMessage("📤 Uploading screenshot...");
 
-    // Wait for state update
-    setTimeout(async () => {
-      await createTicket();
-    }, 300);
-  };
+await createTicket(file);};
 
   // ===========================
   // Handle Form Submit
