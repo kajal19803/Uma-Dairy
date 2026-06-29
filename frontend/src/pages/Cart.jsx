@@ -110,18 +110,29 @@ const Cart = () => {
   }, [user]);
 
   if (cartItems.length === 0) {
-    return (
-      <div className="w-screen h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 via-green-100 to-teal-200 p-4">
-        <p className="text-xl font-semibold text-gray-800 mb-3">Cart is empty</p>
+  return (
+    <div className="min-h-screen w-screen bg-[#FFF8F1] flex items-center justify-center pt-24">
+      <div className="bg-white rounded-3xl shadow-xl p-12 text-center max-w-md">
+        <div className="text-7xl mb-6">🛒</div>
+
+        <h2 className="text-4xl font-bold text-[#3B2418]">
+          Your Cart is Empty
+        </h2>
+
+        <p className="text-gray-500 mt-4">
+          Looks like you haven't added any dairy products yet.
+        </p>
+
         <Link
           to="/products"
-          className="text-base text-yellow-700 hover:underline hover:text-yellow-800"
+          className="inline-block mt-8 px-8 py-4 rounded-2xl bg-[#F97354] text-white font-semibold hover:bg-[#ea6847] transition"
         >
-          View products
+          Continue Shopping
         </Link>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
  return (
 <div className="min-h-screen w-screen bg-[#FFF8F1] pt-28 pb-16 px-5">
