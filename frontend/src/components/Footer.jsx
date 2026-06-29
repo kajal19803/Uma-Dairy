@@ -85,6 +85,13 @@ export default function Footer() {
                 Contact
               </Link>
 
+              <Link
+                to="/policy"
+                className="block text-gray-600 hover:text-[#F97354]"
+              >
+                Policy
+              </Link>
+
             </div>
 
           </div>

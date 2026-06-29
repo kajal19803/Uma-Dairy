@@ -184,200 +184,513 @@ const AdminDashboard = () => {
   const user = JSON.parse(localStorage.getItem('user'));
 
   return (
-    <div className="w-screen min-h-screen bg-gray-100 p-6">
-      <div className="max-w-6xl mx-auto bg-white p-6 rounded-md shadow-md">
-        <h1 className="text-3xl font-bold text-green-700 mb-4">Admin Dashboard</h1>
-        <p className="text-gray-700 mb-6">
-          Welcome, <span className="font-semibold">{user?.name || 'Admin'}</span> ({user?.email})
-        </p>
+  <div className="min-h-screen w-screen bg-[#FFF8F1] pt-28 pb-20">
 
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          <div className="bg-green-100 p-4 rounded-md shadow">
-            <h2 className="text-lg font-semibold text-green-800">Total Users</h2>
-            <p className="text-2xl text-green-900 mt-2">{totalUsersCount}</p>
-          </div>
-          <div className="bg-green-100 p-4 rounded-md shadow">
-            <h2 className="text-lg font-semibold text-green-800">Orders Today</h2>
-            <p className="text-2xl text-green-900 mt-2">{ordersToday}</p>
-          </div>
-          <div>
-            <button
-              onClick={() => setShowOfferModal(true)}
-              className="mb-8 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
-            >
-              Upload Offer
-            </button>
-          </div>
-        </div>
+    <div className="max-w-7xl mx-auto px-5">
 
-        <button
-          onClick={() => setShowProductModal(true)}
-          className="mb-8 bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
-        >
-          Add Product
-        </button>
+      {/* Header */}
+
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-12">
 
         <div>
-          <h2 className="text-2xl text-blue-600 font-semibold mb-4">User List</h2>
-          <div className="overflow-x-auto max-w-full">
-            <table className="min-w-full bg-white border border-gray-200 rounded-md">
-              <thead>
-                <tr className="bg-green-200">
-                  <th className="py-2 text-black px-4 border">Name</th>
-                  <th className="py-2 text-black px-4 border">Email</th>
-                  <th className="py-2 text-black px-4 border">Role</th>
-                  <th className="py-2 text-black px-4 border">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {userList.length === 0 ? (
-                  <tr>
-                    <td colSpan="4" className="text-center py-4">
-                      No users found
-                    </td>
-                  </tr>
-                ) : (
-                  userList.map((u) => (
-                    <tr key={u._id} className="hover:bg-gray-100">
-                      <td className="py-2 text-black px-4 border">{u.name}</td>
-                      <td className="py-2 text-black px-4 border">{u.email}</td>
-                      <td className="py-2 text-black px-4 border capitalize">{u.role}</td>
-                      <td className="py-2 text-black px-4 border">
-                        {u.role !== 'admin' && (
-                          <button
-                            onClick={() => handleDeleteUser(u._id)}
-                            className="text-red-600 bg-transparent hover:bg-red-200 py-1 px-3 rounded"
-                          >
-                            Delete
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+
+          <div className="inline-flex px-5 py-2 rounded-full bg-orange-100 text-[#F97354] font-semibold">
+            Admin Panel
           </div>
+
+          <h1 className="mt-5 text-5xl font-bold text-[#3B2418]">
+            Dashboard
+          </h1>
+
+          <p className="mt-3 text-gray-600 text-lg">
+            Welcome back,
+            <span className="font-semibold text-[#F97354]">
+              {" "}{user?.name || "Admin"}
+            </span>
+          </p>
+
         </div>
 
-        {showProductModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-md shadow-lg p-6 w-96 relative overflow-y-auto max-h-screen">
-              <h3 className="text-xl text-green-600 font-semibold mb-4">Add New Product</h3>
-              <form onSubmit={handleAddProduct} className="space-y-3">
-                {[
-                  ['name', 'Product Name'],
-                  ['description', 'Description'],
-                  ['mrp', 'MRP'],
-                  ['discount', 'Discount (%)'],
-                  ['price', 'Price'],
-                  ['unit', 'Unit (e.g., 1L, 500g)'],
-                  ['ingredients', 'Ingredients'],
-                  ['nutritionalInfo', 'Nutritional Info'],
-                  ['category', 'Category'],
-                ].map(([key, label]) => (
-                  <input
-                    key={key}
-                    type="text"
-                    placeholder={label}
-                    value={productData[key]}
-                    onChange={(e) => setProductData({ ...productData, [key]: e.target.value })}
-                    className="w-full border text-black bg-white px-3 py-2 rounded-md"
-                    required
-                  />
-                ))}
-                  <label className="block">
-                   <span className="text-gray-700">Upload Images</span>
-                    <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={(e) =>
-                    setProductData((prev) => {
-                     const newFiles = Array.from(e.target.files);
-                     const existingNames = new Set(prev.images.map((f) => f.name));
-                     const uniqueFiles = newFiles.filter((f) => !existingNames.has(f.name));
+        <div className="flex gap-4 mt-8 lg:mt-0">
 
-                    return {
-                       ...prev,
-                       images: [...prev.images, ...uniqueFiles],
-                     };
-                     })
-                      }
+          <button
+            onClick={() => setShowOfferModal(true)}
+            className="px-6 py-4 rounded-2xl bg-[#3B2418] hover:bg-[#2b1b12] text-white font-semibold shadow-lg transition"
+          >
+            🎁 Upload Offer
+          </button>
 
-                    className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
-                    />
-                  </label>
+          <button
+            onClick={() => setShowProductModal(true)}
+            className="px-6 py-4 rounded-2xl bg-[#F97354] hover:bg-[#ea6847] text-white font-semibold shadow-lg transition"
+          >
+            ➕ Add Product
+          </button>
 
-                  {/* Show selected filenames */}
-                  {productData.images.length > 0 && (
-                  <ul className="text-sm text-gray-600 mt-2 list-disc pl-5 max-h-24 overflow-y-auto">
-                  {productData.images.map((file, idx) => (
-                  <li key={idx}>{file.name}</li>))}
-                  </ul>
-                   )}
+        </div>
 
-               <div className="flex justify-end gap-3 mt-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowProductModal(false)}
-                    className="px-4 py-2 rounded border border-gray-300 hover:bg-gray-700"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-                  >
-                    Add
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-
-        {showOfferModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-md shadow-lg p-6 w-96 relative">
-              <h3 className="text-xl text-blue-600 font-semibold mb-4">Upload New Offer</h3>
-              <form onSubmit={handleAddOffer} className="space-y-3">
-                {['title', 'description', 'imageUrl', 'productName', 'discount'].map((key) => (
-                  <input
-                    key={key}
-                    type="text"
-                    placeholder={key[0].toUpperCase() + key.slice(1)}
-                    value={offerData[key]}
-                    onChange={(e) => setOfferData({ ...offerData, [key]: e.target.value })}
-                    className="w-full border text-black bg-white px-3 py-2 rounded-md"
-                    required
-                  />
-                ))}
-                <div className="flex justify-end gap-3 mt-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowOfferModal(false)}
-                    className="px-4 py-2 rounded border border-gray-300 hover:bg-gray-700"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                  >
-                    Upload Offer
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Stats */}
+
+      <div className="grid md:grid-cols-3 gap-8 mb-12">
+
+        <div className="bg-white rounded-3xl shadow-xl p-8">
+
+          <div className="text-5xl mb-5">👥</div>
+
+          <p className="text-gray-500">
+            Total Users
+          </p>
+
+          <h2 className="text-5xl font-bold text-[#3B2418] mt-3">
+            {totalUsersCount}
+          </h2>
+
+        </div>
+
+        <div className="bg-white rounded-3xl shadow-xl p-8">
+
+          <div className="text-5xl mb-5">📦</div>
+
+          <p className="text-gray-500">
+            Orders Today
+          </p>
+
+          <h2 className="text-5xl font-bold text-[#3B2418] mt-3">
+            {ordersToday}
+          </h2>
+
+        </div>
+
+        <div className="bg-white rounded-3xl shadow-xl p-8">
+
+          <div className="text-5xl mb-5">💰</div>
+
+          <p className="text-gray-500">
+            Store Status
+          </p>
+
+          <h2 className="text-3xl font-bold text-green-600 mt-4">
+            Active
+          </h2>
+
+        </div>
+
+      </div>
+
+      {/* Users */}
+
+      <div className="bg-white rounded-[32px] shadow-xl p-8">
+
+        <div className="flex items-center justify-between mb-8">
+
+          <h2 className="text-3xl font-bold text-[#3B2418]">
+            Registered Users
+          </h2>
+
+          <span className="px-5 py-2 rounded-full bg-orange-100 text-[#F97354] font-semibold">
+            {userList.length} Users
+          </span>
+
+        </div>
+
+        <div className="overflow-x-auto">
+
+          <table className="w-full">
+            <thead>
+
+              <tr className="border-b border-orange-100">
+
+                <th className="py-4 text-left text-[#3B2418]">
+                  Name
+                </th>
+
+                <th className="py-4 text-left text-[#3B2418]">
+                  Email
+                </th>
+
+                <th className="py-4 text-left text-[#3B2418]">
+                  Role
+                </th>
+
+                <th className="py-4 text-center text-[#3B2418]">
+                  Action
+                </th>
+
+              </tr>
+
+            </thead>
+
+            <tbody>
+            {userList.length === 0 ? (
+
+<tr>
+  <td
+    colSpan="4"
+    className="py-12 text-center text-gray-500 text-lg"
+  >
+    No users found.
+  </td>
+</tr>
+
+) : (
+
+userList.map((u) => (
+
+<tr
+  key={u._id}
+  className="border-b border-orange-50 hover:bg-orange-50 transition"
+>
+
+  <td className="py-5">
+
+    <div className="flex items-center gap-4">
+
+      <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center font-bold text-[#F97354] text-lg">
+        {u.name?.charAt(0).toUpperCase()}
+      </div>
+
+      <div>
+
+        <p className="font-semibold text-[#3B2418]">
+          {u.name}
+        </p>
+
+        <p className="text-sm text-gray-500">
+          User ID: {u._id.slice(-6)}
+        </p>
+
+      </div>
+
     </div>
-  );
+
+  </td>
+
+  <td className="text-gray-600">
+    {u.email}
+  </td>
+
+  <td>
+
+    <span
+      className={`px-4 py-2 rounded-full text-sm font-semibold ${
+        u.role === "admin"
+          ? "bg-purple-100 text-purple-700"
+          : "bg-green-100 text-green-700"
+      }`}
+    >
+      {u.role}
+    </span>
+
+  </td>
+
+  <td className="text-center">
+
+    {u.role !== "admin" && (
+
+      <button
+        onClick={() => handleDeleteUser(u._id)}
+        className="px-5 py-2 rounded-xl bg-red-100 text-red-600 hover:bg-red-500 hover:text-white transition"
+      >
+        Delete
+      </button>
+
+    )}
+
+  </td>
+
+</tr>
+
+))
+
+)}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+{/* Product Modal */}
+
+{showProductModal && (
+
+<div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+
+<div className="bg-white rounded-[32px] shadow-2xl w-full max-w-2xl p-8 max-h-[90vh] overflow-y-auto">
+
+<h2 className="text-3xl font-bold text-[#3B2418] mb-8">
+Add New Product
+</h2>
+
+<form
+onSubmit={handleAddProduct}
+className="space-y-5"
+><div className="grid md:grid-cols-2 gap-5">
+
+<input
+type="text"
+placeholder="Product Name"
+value={productData.name}
+onChange={(e)=>setProductData({...productData,name:e.target.value})}
+className="w-full rounded-2xl border border-orange-200 bg-[#FFF8F1] p-4 outline-none focus:border-[#F97354]"
+required
+/>
+
+<input
+type="text"
+placeholder="Category"
+value={productData.category}
+onChange={(e)=>setProductData({...productData,category:e.target.value})}
+className="w-full rounded-2xl border border-orange-200 bg-[#FFF8F1] p-4 outline-none focus:border-[#F97354]"
+required
+/>
+
+<input
+type="number"
+placeholder="MRP"
+value={productData.mrp}
+onChange={(e)=>setProductData({...productData,mrp:e.target.value})}
+className="w-full rounded-2xl border border-orange-200 bg-[#FFF8F1] p-4 outline-none"
+required
+/>
+
+<input
+type="number"
+placeholder="Discount (%)"
+value={productData.discount}
+onChange={(e)=>setProductData({...productData,discount:e.target.value})}
+className="w-full rounded-2xl border border-orange-200 bg-[#FFF8F1] p-4 outline-none"
+required
+/>
+
+<input
+type="number"
+placeholder="Selling Price"
+value={productData.price}
+onChange={(e)=>setProductData({...productData,price:e.target.value})}
+className="w-full rounded-2xl border border-orange-200 bg-[#FFF8F1] p-4 outline-none"
+required
+/>
+
+<input
+type="text"
+placeholder="Unit (1L,500gm...)"
+value={productData.unit}
+onChange={(e)=>setProductData({...productData,unit:e.target.value})}
+className="w-full rounded-2xl border border-orange-200 bg-[#FFF8F1] p-4 outline-none"
+required
+/>
+
+</div>
+
+<textarea
+rows="4"
+placeholder="Description"
+value={productData.description}
+onChange={(e)=>setProductData({...productData,description:e.target.value})}
+className="w-full rounded-2xl border border-orange-200 bg-[#FFF8F1] p-4 outline-none resize-none"
+/>
+
+<textarea
+rows="3"
+placeholder="Ingredients"
+value={productData.ingredients}
+onChange={(e)=>setProductData({...productData,ingredients:e.target.value})}
+className="w-full rounded-2xl border border-orange-200 bg-[#FFF8F1] p-4 outline-none resize-none"
+/>
+
+<textarea
+rows="3"
+placeholder="Nutritional Information"
+value={productData.nutritionalInfo}
+onChange={(e)=>setProductData({...productData,nutritionalInfo:e.target.value})}
+className="w-full rounded-2xl border border-orange-200 bg-[#FFF8F1] p-4 outline-none resize-none"
+/>
+
+<div>
+
+<label className="block text-[#3B2418] font-semibold mb-2">
+Upload Product Images
+</label>
+
+<input
+type="file"
+multiple
+accept="image/*"
+onChange={(e)=>
+setProductData((prev)=>{
+const files=Array.from(e.target.files);
+const existing=new Set(prev.images.map(f=>f.name));
+const unique=files.filter(f=>!existing.has(f.name));
+
+return{
+...prev,
+images:[...prev.images,...unique],
+};
+})
+}
+className="block w-full rounded-xl border border-orange-200 bg-[#FFF8F1] p-3"
+/>
+
+{productData.images.length>0&&(
+
+<div className="mt-4 flex flex-wrap gap-2">
+
+{productData.images.map((file,index)=>(
+
+<span
+key={index}
+className="px-3 py-2 rounded-full bg-orange-100 text-[#F97354] text-sm"
+>
+{file.name}
+</span>
+
+))}
+
+</div>
+
+)}
+
+</div>
+
+<div className="flex items-center gap-3">
+
+<input
+type="checkbox"
+checked={productData.inStock}
+onChange={(e)=>setProductData({...productData,inStock:e.target.checked})}
+/>
+
+<span className="text-[#3B2418] font-medium">
+Product In Stock
+</span>
+
+</div>
+
+<div className="flex justify-end gap-4 pt-4">
+
+<button
+type="button"
+onClick={()=>setShowProductModal(false)}
+className="px-6 py-3 rounded-2xl border border-orange-200 hover:bg-orange-50 transition"
+>
+Cancel
+</button>
+
+<button
+type="submit"
+className="px-8 py-3 rounded-2xl bg-[#F97354] hover:bg-[#ea6847] text-white font-semibold transition"
+>
+Add Product
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+)}
+{/* Offer Modal */}
+
+{showOfferModal && (
+
+<div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+
+<div className="bg-white rounded-[32px] shadow-2xl w-full max-w-xl p-8">
+
+<h2 className="text-3xl font-bold text-[#3B2418] mb-8">
+Upload New Offer
+</h2>
+
+<form
+onSubmit={handleAddOffer}
+className="space-y-5"
+>
+
+<input
+type="text"
+placeholder="Offer Title"
+value={offerData.title}
+onChange={(e)=>setOfferData({...offerData,title:e.target.value})}
+className="w-full rounded-2xl border border-orange-200 bg-[#FFF8F1] p-4 outline-none focus:border-[#F97354]"
+required
+/>
+
+<textarea
+rows="4"
+placeholder="Offer Description"
+value={offerData.description}
+onChange={(e)=>setOfferData({...offerData,description:e.target.value})}
+className="w-full rounded-2xl border border-orange-200 bg-[#FFF8F1] p-4 outline-none resize-none"
+required
+/>
+
+<input
+type="text"
+placeholder="Offer Image URL"
+value={offerData.imageUrl}
+onChange={(e)=>setOfferData({...offerData,imageUrl:e.target.value})}
+className="w-full rounded-2xl border border-orange-200 bg-[#FFF8F1] p-4 outline-none focus:border-[#F97354]"
+required
+/>
+
+<input
+type="text"
+placeholder="Product Name"
+value={offerData.productName}
+onChange={(e)=>setOfferData({...offerData,productName:e.target.value})}
+className="w-full rounded-2xl border border-orange-200 bg-[#FFF8F1] p-4 outline-none focus:border-[#F97354]"
+required
+/>
+
+<input
+type="number"
+placeholder="Discount (%)"
+value={offerData.discount}
+onChange={(e)=>setOfferData({...offerData,discount:e.target.value})}
+className="w-full rounded-2xl border border-orange-200 bg-[#FFF8F1] p-4 outline-none focus:border-[#F97354]"
+required
+/>
+
+<div className="flex justify-end gap-4 pt-4">
+
+<button
+type="button"
+onClick={()=>setShowOfferModal(false)}
+className="px-6 py-3 rounded-2xl border border-orange-200 hover:bg-orange-50 transition"
+>
+Cancel
+</button>
+
+<button
+type="submit"
+className="px-8 py-3 rounded-2xl bg-[#3B2418] hover:bg-[#2b1b12] text-white font-semibold transition"
+>
+🎁 Upload Offer
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+)}
+</div>
+
+</div>
+
+
+);
 };
 
 export default AdminDashboard;
-
-
-

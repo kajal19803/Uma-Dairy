@@ -1,77 +1,186 @@
-import React from 'react';
+import React from "react";
 
+const sections = [
+  {
+    icon: "🔒",
+    title: "Privacy Policy",
+    content:
+      "Uma Dairy respects your privacy. We collect only the information required to process orders, improve our services, and provide a better shopping experience.",
+    points: [
+      "Personal information such as name, phone number and address",
+      "Order history and basic usage analytics",
+      "Your information is never sold to third parties",
+      "Only trusted delivery and payment partners receive required data",
+    ],
+  },
+  {
+    icon: "💸",
+    title: "Refund & Cancellation",
+    content:
+      "Orders can be cancelled within 10 minutes of placement. Due to the perishable nature of dairy products, returns are generally not accepted.",
+    points: [
+      "Refund if the order was not delivered",
+      "Refund for damaged or expired products",
+      "Issue must be reported within 24 hours with proof",
+      "Support: support@umadairy.com",
+    ],
+  },
+  {
+    icon: "🚚",
+    title: "Shipping & Delivery",
+    content:
+      "We deliver fresh dairy products to selected service locations. Delivery time may vary depending on weather, festivals, or local conditions.",
+    points: [
+      "Fast doorstep delivery",
+      "Fresh products packed hygienically",
+      "Delivery timeline depends on location",
+    ],
+  },
+  {
+    icon: "📜",
+    title: "Terms & Conditions",
+    content:
+      "By using Uma Dairy, you agree to follow our latest terms and conditions.",
+    points: [
+      "Provide accurate delivery information",
+      "Prices may change without notice",
+      "Any misuse may lead to account suspension",
+    ],
+  },
+  {
+    icon: "🧑‍⚖️",
+    title: "User Conduct",
+    content:
+      "Users must use the platform responsibly and ethically.",
+    points: [
+      "No fake orders",
+      "No abusive behaviour",
+      "No fraudulent activities",
+    ],
+  },
+  {
+    icon: "⚠️",
+    title: "Liability Disclaimer",
+    content:
+      "Uma Dairy strives to maintain the highest quality standards, but natural products may vary slightly.",
+    points: [
+      "Weather may affect delivery",
+      "Natural variations in dairy products are possible",
+    ],
+  },
+  {
+    icon: "⚖️",
+    title: "Governing Law",
+    content:
+      "These policies are governed by the laws of India.",
+    points: [
+      "Jurisdiction: Jabalpur, Madhya Pradesh",
+    ],
+  },
+];
 
-const Policy = () => (
-  <div className="w-screen min-h-screen bg-gradient-to-br from-blue-100 via-green-100 to-teal-200 flex justify-center items-start py-10 px-4">
-    <div className="max-w-4xl w-full text-center text-green-900 space-y-6">
+const Policy = () => {
+  return (
+    <div className="min-h-screen w-screen bg-[#FFF8F1] pt-28 pb-20">
 
-      <h1 className="text-4xl font-bold border-b-2 border-green-800 pb-2">Uma Dairy – Policy Center</h1>
+      <div className="max-w-7xl mx-auto px-5">
 
-      {/* Privacy Policy */}
-      <section>
-        <h2 className="text-2xl font-semibold mt-6">🔒 Privacy Policy</h2>
-        <p>Uma Dairy respects your privacy. We collect limited information to process orders, enhance user experience, and provide better service.</p>
-        <ul className="list-disc list-inside text-left mt-2">
-          <li>Personal data: Name, address, phone number, etc.</li>
-          <li>Usage data: Analytics, device info, order history</li>
-        </ul>
-        <p>We do not sell your data. Only trusted delivery/payment partners may access it for service fulfillment.</p>
-      </section>
+        {/* Header */}
 
-      {/* Refund & Cancellation Policy */}
-      <section>
-        <h2 className="text-2xl font-semibold mt-6">💸 Refund & Cancellation Policy</h2>
-        <p>Orders can be cancelled within 10 minutes of placement. No returns are accepted due to perishability.</p>
-        <p>Refunds are allowed only in these cases:</p>
-        <ul className="list-disc list-inside text-left mt-2">
-          <li>Product not delivered</li>
-          <li>Damaged or expired items (must be reported within 24 hrs with proof)</li>
-        </ul>
-        <p>Contact: <strong>support@umadairy.com</strong></p>
-      </section>
+        <div className="text-center mb-16">
 
-      {/* Shipping & Delivery */}
-      <section>
-        <h2 className="text-2xl font-semibold mt-6">🚚 Shipping & Delivery</h2>
-        <p>We deliver to select pin codes within Madhya Pradesh. Orders are usually dispatched within a few hours depending on availability and time of day.</p>
-        <p>Delivery timelines may vary due to weather, festivals, or logistical challenges.</p>
-      </section>
+          <div className="inline-flex px-5 py-2 rounded-full bg-orange-100 text-[#F97354] font-semibold">
+            Legal Information
+          </div>
 
-      {/* Terms & Conditions */}
-      <section>
-        <h2 className="text-2xl font-semibold mt-6">📜 Terms & Conditions</h2>
-        <ul className="list-disc list-inside text-left mt-2">
-          <li>Provide accurate and updated delivery details</li>
-          <li>Use our platform lawfully; any misuse can lead to legal action</li>
-          <li>Prices and availability are subject to change without prior notice</li>
-        </ul>
-        <p>Continued use of Uma Dairy means acceptance of the latest terms.</p>
-      </section>
+          <h1 className="mt-6 text-5xl md:text-6xl font-bold text-[#3B2418]">
+            Policy Center
+          </h1>
 
-      {/* User Conduct */}
-      <section>
-        <h2 className="text-2xl font-semibold mt-6">🧑‍⚖️ User Conduct</h2>
-        <p>Any form of abusive behavior, spamming, fake orders, or fraudulent claims will lead to account suspension and legal action.</p>
-      </section>
+          <p className="mt-5 text-lg text-gray-600 max-w-3xl mx-auto">
+            Transparency and trust are the foundation of Uma Dairy.
+            Please read our policies carefully before using our services.
+          </p>
 
-      {/* Liability Disclaimer */}
-      <section>
-        <h2 className="text-2xl font-semibold mt-6">⚠️ Liability Disclaimer</h2>
-        <p>Uma Dairy is not responsible for delays due to unforeseen conditions. We ensure best quality, but product outcomes may vary slightly due to environmental factors.</p>
-      </section>
+        </div>
 
-      {/* Governing Law */}
-      <section>
-        <h2 className="text-2xl font-semibold mt-6">⚖️ Governing Law & Jurisdiction</h2>
-        <p>This agreement shall be governed by the laws of India. All legal matters are subject to Jabalpur jurisdiction.</p>
-      </section>
+        {/* Cards */}
 
-      <footer className="mt-10 text-sm text-gray-600">
-        Last updated: June 2025
-      </footer>
+        <div className="grid md:grid-cols-2 gap-8">
+
+          {sections.map((section, index) => (
+
+            <div
+              key={index}
+              className="bg-white rounded-[30px] shadow-xl p-8 hover:-translate-y-2 hover:shadow-2xl transition duration-300"
+            >
+
+              <div className="w-16 h-16 rounded-2xl bg-orange-100 flex items-center justify-center text-3xl mb-6">
+                {section.icon}
+              </div>
+
+              <h2 className="text-3xl font-bold text-[#3B2418] mb-5">
+                {section.title}
+              </h2>
+
+              <p className="text-gray-600 leading-8 mb-6">
+                {section.content}
+              </p>
+
+              <ul className="space-y-3">
+
+                {section.points.map((item, i) => (
+
+                  <li
+                    key={i}
+                    className="flex items-start gap-3 text-gray-600"
+                  >
+
+                    <span className="text-[#F97354] font-bold">
+                      ✔
+                    </span>
+
+                    <span>{item}</span>
+
+                  </li>
+
+                ))}
+
+              </ul>
+
+            </div>
+
+          ))}
+
+        </div>
+
+        {/* Footer */}
+
+        <div className="mt-16 bg-white rounded-[30px] shadow-xl p-8 text-center">
+
+          <h3 className="text-3xl font-bold text-[#3B2418]">
+            Need Help?
+          </h3>
+
+          <p className="mt-4 text-gray-600 text-lg">
+            If you have any questions regarding our policies,
+            please contact our support team.
+          </p>
+
+          <div className="mt-6 inline-flex px-6 py-3 rounded-full bg-orange-100 text-[#F97354] font-semibold">
+            📧 support@umadairy.com
+          </div>
+
+          <p className="mt-8 text-gray-400 text-sm">
+            Last Updated • June 2025
+          </p>
+
+        </div>
+
+      </div>
 
     </div>
-  </div>
-);
+  );
+};
 
 export default Policy;
