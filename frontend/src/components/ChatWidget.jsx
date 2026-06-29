@@ -1,292 +1,893 @@
-import { useState, useRef, useEffect } from 'react';
-import { MessageCircle } from 'lucide-react';
-import useUserStore from '../store/userStore';
+import React, { useEffect, useRef, useState } from "react";
+import {
+  MessageCircle,
+  Send,
+  Bot,
+  User,
+  Image as ImageIcon,
+  X,
+} from "lucide-react";
 
 const API_BASE = import.meta.env.VITE_BACKEND_BASE_URL;
 
 const ChatWidget = () => {
-  const [messages, setMessages] = useState([]);
-  const [inputValue, setInputValue] = useState('');
+  // ===========================
+  // UI
+  // ===========================
+
   const [isOpen, setIsOpen] = useState(false);
+  const [inputValue, setInputValue] = useState("");
   const [isBotTyping, setIsBotTyping] = useState(false);
+
+  // ===========================
+  // Messages
+  // ===========================
+
+  const [messages, setMessages] = useState([
+    {
+      sender: "bot",
+      text:
+`👋 Welcome to Uma Dairy!
+
+I'm your Uma Assistant.
+
+I can help you with:
+
+🧀 Products
+📦 Orders
+🚚 Delivery
+💳 Payments
+🎫 Support Tickets
+💰 Refunds
+❓ General Questions
+
+How may I help you today?`,
+    },
+  ]);
+
+  // ===========================
+  // Ticket Flow
+  // ===========================
+
   const [flowStep, setFlowStep] = useState(null);
-  const [recentOrders, setRecentOrders] = useState([]);
+
   const [ticketData, setTicketData] = useState({
-    issueType: '',
-    message: '',
+    issueType: "",
+    message: "",
     image: null,
-    orderId: '',
-    productNames: []
+    orderId: "",
+    productNames: [],
   });
 
-  const { user } = useUserStore();
-  const isLoggedIn = !!user?.email;
+  // ===========================
+  // Orders
+  // ===========================
+
+  const [recentOrders, setRecentOrders] = useState([]);
+
+  // ===========================
+  // Refs
+  // ===========================
 
   const chatRef = useRef(null);
-  const chatMessagesRef = useRef(null);
+  const messagesRef = useRef(null);
+  const imageInputRef = useRef(null);
 
-  const fetchRecentOrder = async () => {
-    const token = localStorage.getItem('token');
-    try {
-      const res = await fetch(`${API_BASE}/api/payment/recent`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (data?.orders?.length > 0) {
-        setRecentOrders(data.orders);
-        setFlowStep('selectOrder');
-        setMessages(prev => [
-          ...prev,
-          {
-            sender: 'bot',
-            text: `Here are your recent orders. Please enter the number of the order you want to raise an issue for:\n` +
-              data.orders.map((order, i) => `${i + 1}. 📦 Order ID: ${order.orderId} 🛒 Products: ${order.productNames.join(', ')}`).join('\n')
-          }
-        ]);
-      }
-    } catch (err) {
-      console.error('❌ Error fetching recent order:', err);
-    }
+  // ===========================
+  // Auth
+  // ===========================
+
+  const token = localStorage.getItem("token");
+  const isLoggedIn = !!token;
+
+  // ===========================
+  // Delay Bot Message
+  // ===========================
+
+  const delayBotMessage = (text, callback = null) => {
+    setIsBotTyping(true);
+
+    setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "bot",
+          text,
+        },
+      ]);
+
+      setIsBotTyping(false);
+
+      if (callback) callback();
+    }, 800);
   };
+
+  // ===========================
+  // Send Normal Chat Message
+  // ===========================
 
   const sendMessage = async (message) => {
-    setMessages((prev) => [...prev, { sender: 'user', text: message }]);
+    setMessages((prev) => [
+      ...prev,
+      {
+        sender: "user",
+        text: message,
+      },
+    ]);
+
     setIsBotTyping(true);
+
     try {
       const res = await fetch(`${API_BASE}/api/chat`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
         },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({
+          message,
+        }),
       });
+
       const data = await res.json();
+
       setTimeout(() => {
-        setMessages((prev) => [...prev, { sender: 'bot', text: data.reply }]);
-        if (data.askToRaiseTicket) {
-          setTicketData((prev) => ({ ...prev, message }));
-          setMessages((prev) => [
-            ...prev,
-            {
-              sender: 'bot',
-              text: `Would you like to raise a support ticket${data.category ? ` for this \"${data.category}\" issue` : ''}? (yes/no)`
-            },
-          ]);
-          setFlowStep('confirmRaise');
-        }
+        setMessages((prev) => [
+          ...prev,
+          {
+            sender: "bot",
+            text:
+              data.reply ||
+              "Sorry, I couldn't understand your question.",
+          },
+        ]);
+
         setIsBotTyping(false);
-      }, 1000);
+
+        if (data.askToRaiseTicket) {
+          setFlowStep("confirmRaise");
+
+          delayBotMessage(
+`⚠️ This issue may require assistance from our support team.
+
+Would you like to raise a support ticket?
+
+Reply with:
+
+✅ yes
+❌ no`
+          );
+        }
+      }, 700);
     } catch (err) {
+      console.error(err);
+
       setIsBotTyping(false);
-      setMessages((prev) => [...prev, { sender: 'bot', text: '❌ Server error. Try later.' }]);
+
+      delayBotMessage(
+        "❌ Server unavailable. Please try again later."
+      );
+    }
+  };
+    // ===========================
+  // Fetch Recent Orders
+  // ===========================
+
+  const fetchRecentOrders = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/payment/recent`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (!Array.isArray(data) || data.length === 0) {
+        delayBotMessage(
+          "📦 No previous orders were found in your account."
+        );
+        setFlowStep(null);
+        return;
+      }
+
+      setRecentOrders(data);
+
+      const orderList = data
+        .slice(0, 5)
+        .map(
+          (order, index) =>
+            `${index + 1}. ${order.orderId} (${order.items.length} item${
+              order.items.length > 1 ? "s" : ""
+            })`
+        )
+        .join("\n");
+
+      setFlowStep("selectOrder");
+
+      delayBotMessage(
+`Please select the order related to your issue.
+
+${orderList}
+
+Reply with the order number.
+Example:
+1`
+      );
+    } catch (err) {
+      console.error(err);
+
+      delayBotMessage(
+        "❌ Unable to fetch your orders."
+      );
+
+      setFlowStep(null);
     }
   };
 
-  const delayBotMessage = (text, cb = null) => {
-    setIsBotTyping(true);
-    setTimeout(() => {
-      setMessages((prev) => [...prev, { sender: 'bot', text }]);
-      setIsBotTyping(false);
-      if (cb) cb();
-    }, 1000);
+  // ===========================
+  // Create Ticket
+  // ===========================
+
+  const createTicket = async () => {
+    try {
+      const formData = new FormData();
+
+      formData.append("issueType", ticketData.issueType);
+      formData.append("message", ticketData.message);
+      formData.append("orderId", ticketData.orderId);
+
+      formData.append(
+        "productNames",
+        JSON.stringify(ticketData.productNames)
+      );
+
+      if (ticketData.image) {
+        formData.append("images", ticketData.image);
+      }
+
+      const res = await fetch(`${API_BASE}/api/tickets`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error);
+      }
+
+      delayBotMessage(
+`🎉 Ticket Created Successfully
+
+━━━━━━━━━━━━━━
+
+🎫 Ticket Number
+${data.ticketNumber}
+
+📌 Status
+Open
+
+📧 A confirmation email has been sent to your registered email.
+
+Our support team will contact you shortly.
+
+Thank you for choosing Uma Dairy 💚`
+      );
+
+      setFlowStep(null);
+
+      setTicketData({
+        issueType: "",
+        message: "",
+        image: null,
+        orderId: "",
+        productNames: [],
+      });
+
+    } catch (err) {
+      console.error(err);
+
+      delayBotMessage(
+        "❌ Failed to create support ticket."
+      );
+
+      setFlowStep(null);
+    }
   };
 
+  // ===========================
+  // Handle User Reply
+  // ===========================
+
   const handleUserReply = async (message) => {
+
     switch (flowStep) {
-      case 'confirmRaise':
-        setMessages(prev => [...prev, { sender: 'user', text: message }]);
-        if (message.toLowerCase() === 'yes') {
-          if (!isLoggedIn) return delayBotMessage('⚠️ Please login to raise a support ticket.');
-          fetchRecentOrder();
-        } else {
-          setFlowStep(null);
-          setTicketData({ issueType: '', message: '', image: null, orderId: '', productNames: [] });
-          delayBotMessage('Alright! Let me know if you need anything else.');
-        }
-        break;
 
-      case 'selectOrder': {
-        const index = parseInt(message) - 1;
-        if (recentOrders[index]) {
-          const selectedOrder = recentOrders[index];
-          setTicketData(prev => ({ ...prev, orderId: selectedOrder.orderId, productNames: selectedOrder.productNames }));
-          setFlowStep('selectProducts');
-          setMessages(prev => [...prev, { sender: 'user', text: message }]);
+      case "confirmRaise":
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            sender: "user",
+            text: message,
+          },
+        ]);
+
+        if (message.toLowerCase() !== "yes") {
+
           delayBotMessage(
-            `Which product(s) do you want to raise issue for?\n` +
-            selectedOrder.productNames.map((p, i) => `${i + 1}. ${p}`).join('\n') +
-            `\nPlease enter numbers separated by commas (e.g., 1,3)`
+            "Alright 😊 Let me know if you need anything else."
           );
-        } else {
-          delayBotMessage('Invalid selection. Please enter a number between 1 and 3.');
+
+          setFlowStep(null);
+
+          return;
         }
+
+        if (!isLoggedIn) {
+
+          delayBotMessage(
+            "⚠️ Please login first to raise a support ticket."
+          );
+
+          setFlowStep(null);
+
+          return;
+        }
+
+        fetchRecentOrders();
+
+        break;
+
+      case "selectOrder": {
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            sender: "user",
+            text: message,
+          },
+        ]);
+
+        const index = Number(message) - 1;
+
+        if (
+          index < 0 ||
+          index >= recentOrders.length
+        ) {
+          delayBotMessage(
+            "❌ Invalid order number."
+          );
+          return;
+        }
+
+        const order = recentOrders[index];
+
+        setTicketData((prev) => ({
+          ...prev,
+          orderId: order.orderId,
+          productNames: order.items.map(
+            (item) => item.name
+          ),
+        }));
+
+        setFlowStep("selectProducts");
+
+        delayBotMessage(
+`Please select affected product(s).
+
+${order.items
+  .map(
+    (item, i) =>
+      `${i + 1}. ${item.name}`
+  )
+  .join("\n")}
+
+Example:
+1
+or
+1,2`
+        );
+
+        break;
+      }
+            case "selectProducts": {
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            sender: "user",
+            text: message,
+          },
+        ]);
+
+        const indexes = message
+          .split(",")
+          .map((i) => Number(i.trim()) - 1);
+
+        const selectedProducts = indexes
+          .filter((i) => recentOrders.find(o => o.orderId === ticketData.orderId)?.items[i])
+          .map((i) =>
+            recentOrders
+              .find(o => o.orderId === ticketData.orderId)
+              .items[i].name
+          );
+
+        if (!selectedProducts.length) {
+          delayBotMessage(
+            "❌ Invalid product selection.\nPlease enter valid product number(s)."
+          );
+          return;
+        }
+
+        setTicketData((prev) => ({
+          ...prev,
+          productNames: selectedProducts,
+        }));
+
+        setFlowStep("selectIssue");
+
+        delayBotMessage(
+`Please select Issue Type
+
+1️⃣ Order Issue
+2️⃣ Payment & Refund
+3️⃣ Product Quality
+4️⃣ Delivery Issue
+5️⃣ Account & Login
+6️⃣ Website Bug
+7️⃣ Other`
+        );
+
         break;
       }
 
-      case 'selectProducts': {
-        setMessages(prev => [...prev, { sender: 'user', text: message }]);
-        const indexes = message.split(',').map(m => parseInt(m.trim()) - 1);
-        const validProducts = indexes.filter(i => ticketData.productNames[i]).map(i => ticketData.productNames[i]);
-        if (validProducts.length > 0) {
-          setTicketData(prev => ({ ...prev, productNames: validProducts }));
-          setFlowStep('selectType');
-          delayBotMessage(`Please select your issue type:\n1. Order Issue\n2. Payment & Refunds\n3. Product Issue\n4. Account & Login\n5. Website Bug/Technical Problem\n6. Request Related`);
-        } else {
-          delayBotMessage('Invalid product selection. Please try again.');
+      case "selectIssue": {
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            sender: "user",
+            text: message,
+          },
+        ]);
+
+        const issueTypes = [
+          "Order Issue",
+          "Payment & Refund",
+          "Product Quality",
+          "Delivery Issue",
+          "Account & Login",
+          "Website Bug",
+          "Other",
+        ];
+
+        const issue = issueTypes[Number(message) - 1];
+
+        if (!issue) {
+          delayBotMessage(
+            "❌ Please choose a valid issue type."
+          );
+          return;
         }
+
+        setTicketData((prev) => ({
+          ...prev,
+          issueType: issue,
+        }));
+
+        setFlowStep("enterDescription");
+
+        delayBotMessage(
+          "📝 Please describe your issue in detail."
+        );
+
         break;
       }
 
-      case 'selectType': {
-        const types = ['Order Issue', 'Payment & Refunds', 'Product Issue', 'Account & Login', 'Website Bug/Technical Problem', 'Request Related'];
-        const index = parseInt(message) - 1;
-        setMessages((prev) => [...prev, { sender: 'user', text: message }]);
-        if (types[index]) {
-          setTicketData((prev) => ({ ...prev, issueType: types[index] }));
-          setFlowStep('enterMessage');
-          delayBotMessage('Please describe your issue.');
-        } else {
-          delayBotMessage('Invalid selection. Please enter a number from 1 to 6.');
-        }
+      case "enterDescription":
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            sender: "user",
+            text: message,
+          },
+        ]);
+
+        setTicketData((prev) => ({
+          ...prev,
+          message,
+        }));
+
+        setFlowStep("askScreenshot");
+
+        delayBotMessage(
+`📷 Do you want to upload any screenshot?
+
+Reply:
+
+✅ yes
+
+or
+
+❌ no`
+        );
+
         break;
-      }
 
-      case 'enterMessage':
-        setTicketData((prev) => ({ ...prev, message }));
-        setMessages((prev) => [...prev, { sender: 'user', text: message }]);
-        setFlowStep('askImage');
-        delayBotMessage('Do you have any screenshot or image related to this issue? (yes/no)');
-        break;
+      case "askScreenshot":
 
-      case 'askImage':
-        setMessages((prev) => [...prev, { sender: 'user', text: message }]);
-        if (message.toLowerCase() === 'yes') {
-          document.getElementById('chat-image-upload').click();
-          setFlowStep('waitImage');
+        setMessages((prev) => [
+          ...prev,
+          {
+            sender: "user",
+            text: message,
+          },
+        ]);
+
+        if (message.toLowerCase() === "yes") {
+
+          imageInputRef.current.click();
+
+          setFlowStep("waitingImage");
+
         } else {
-          setFlowStep('anyOther');
-          delayBotMessage('Do you have any other issue to report? (yes/no)');
-        }
-        break;
 
-      case 'anyOther':
-        setMessages((prev) => [...prev, { sender: 'user', text: message }]);
-        if (message.toLowerCase() === 'no') {
-          const formData = new FormData();
-          formData.append('issueType', ticketData.issueType);
-          formData.append('message', ticketData.message);
-          formData.append('orderId', ticketData.orderId || '');
-          formData.append('productNames', JSON.stringify(ticketData.productNames || []));
-          if (ticketData.image) formData.append('images', ticketData.image);
+          delayBotMessage(
+            "🎫 Creating your support ticket..."
+          );
 
-          try {
-            setIsBotTyping(true);
-            const res = await fetch(`${API_BASE}/api/tickets`, {
-              method: 'POST',
-              headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-              body: formData,
-            });
-            const data = await res.json();
-            delayBotMessage(`✅ Ticket raised! Ticket ID: ${data.ticketNumber}`);
-          } catch (err) {
-            delayBotMessage('❌ Failed to raise ticket. Try again later.');
-          } finally {
-            setFlowStep(null);
-            setTicketData({ issueType: '', message: '', image: null, orderId: '', productNames: [] });
-          }
-        } else {
-          setFlowStep('selectType');
-          delayBotMessage(`Please select your issue type:\n1. Order Issue\n2. Payment & Refunds\n3. Product Issue\n4. Account & Login\n5. Website Bug/Technical Problem\n6. Request Related`);
+          await createTicket();
+
         }
+
         break;
 
       default:
-        if (flowStep === null) sendMessage(message);
+
+        sendMessage(message);
+
+        break;
     }
   };
+    // ===========================
+  // Handle Image Upload
+  // ===========================
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        sender: "user",
+        text: "📷 Screenshot uploaded",
+      },
+    ]);
+
+    setTicketData((prev) => ({
+      ...prev,
+      image: file,
+    }));
+
+    delayBotMessage("📤 Uploading screenshot...");
+
+    // Wait for state update
+    setTimeout(async () => {
+      await createTicket();
+    }, 300);
+  };
+
+  // ===========================
+  // Handle Form Submit
+  // ===========================
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (inputValue.trim()) {
-      handleUserReply(inputValue.trim());
-      setInputValue('');
-    }
+
+    if (!inputValue.trim()) return;
+
+    const msg = inputValue.trim();
+
+    setInputValue("");
+
+    handleUserReply(msg);
   };
 
-  const handleImageChange = (e) => {
-    if (e.target.files[0]) {
-      setTicketData((prev) => ({ ...prev, image: e.target.files[0] }));
-      setFlowStep('anyOther');
-      setMessages((prev) => [...prev, { sender: 'bot', text: 'Do you have any other issue to report? (yes/no)' }]);
-    }
-  };
+  // ===========================
+  // Auto Scroll
+  // ===========================
 
   useEffect(() => {
-    if (chatMessagesRef.current) {
-      chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
+    if (messagesRef.current) {
+      messagesRef.current.scrollTop =
+        messagesRef.current.scrollHeight;
     }
   }, [messages, isBotTyping]);
 
+  // ===========================
+  // Close Chat on Outside Click
+  // ===========================
+
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (chatRef.current && !chatRef.current.contains(event.target)) {
+    const handleOutsideClick = (e) => {
+      if (
+        chatRef.current &&
+        !chatRef.current.contains(e.target)
+      ) {
         setIsOpen(false);
       }
     };
+
+    document.addEventListener(
+      "mousedown",
+      handleOutsideClick
+    );
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleOutsideClick
+      );
+    };
+  }, []);
+
+  // ===========================
+  // ESC Key Close
+  // ===========================
+
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleEsc);
+
+    return () => {
+      window.removeEventListener(
+        "keydown",
+        handleEsc
+      );
+    };
+  }, []);
+
+  // ===========================
+  // Focus Input on Open
+  // ===========================
+
+  const inputRef = useRef(null);
+
+  useEffect(() => {
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 300);
     }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
+ return (
+    <>
+      {/* Floating Button */}
 
-  return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
-      {isOpen && (
-        <div ref={chatRef} className="chat-widget border rounded-lg p-4 shadow-2xl w-80 bg-white mb-2">
-          <div className="font-semibold text-lg mb-2 text-blue-700">Uma Assistant</div>
-          <div ref={chatMessagesRef} className="chat-messages h-64 overflow-y-auto space-y-2 mb-3 flex flex-col">
-            {messages.map((msg, i) => (
-              <div
-                key={i}
-                className={`p-2 rounded-lg max-w-xs text-sm ${msg.sender === 'user'
-                  ? 'bg-blue-100 self-end ml-auto'
-                  : 'bg-gray-100 self-start'}`}
-              >
-                {msg.text}
-              </div>
-            ))}
-            {isBotTyping && <div className="text-gray-500 text-xs self-start animate-pulse">Typing...</div>}
-          </div>
-
-          <form onSubmit={handleSubmit} className="flex gap-2">
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder={isLoggedIn ? "Type your message..." : "Login to raise tickets"}
-              disabled={!isLoggedIn && flowStep === 'confirmRaise'}
-              className={`flex-1 border p-2 rounded-md text-sm ${!isLoggedIn && flowStep === 'confirmRaise' ? 'bg-gray-100 text-gray-400' : 'bg-white'}`}
-            />
-            <button
-              type="submit"
-              disabled={!isLoggedIn && flowStep === 'confirmRaise'}
-              className={`px-3 py-2 rounded-md text-sm ${!isLoggedIn && flowStep === 'confirmRaise'
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-blue-600 text-white hover:bg-blue-700'}`}
-            >
-              Send
-            </button>
-          </form>
-          <input id="chat-image-upload" type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
-        </div>
+      {!isOpen && (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full bg-gradient-to-r from-[#F97354] to-[#ff9b6b] text-white shadow-2xl hover:scale-110 transition duration-300 flex items-center justify-center"
+        >
+          <MessageCircle size={28} />
+        </button>
       )}
 
-      <button onClick={() => setIsOpen(!isOpen)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full shadow flex items-center gap-2">
-        <MessageCircle size={18} />
-        Uma Assistant
-      </button>
-    </div>
+      {/* Chat Window */}
+
+      {isOpen && (
+        <div
+          ref={chatRef}
+          className="fixed bottom-6 right-6 w-[390px] h-[680px] bg-white rounded-[30px] shadow-2xl overflow-hidden flex flex-col border border-orange-100 z-50"
+        >
+          {/* Header */}
+
+          <div className="bg-gradient-to-r from-[#F97354] to-[#ff9b6b] px-6 py-5">
+
+            <div className="flex justify-between items-center">
+
+              <div className="flex items-center gap-4">
+
+                <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center">
+
+                  <Bot size={30} color="#F97354" />
+
+                </div>
+
+                <div>
+
+                  <h2 className="text-white text-xl font-bold">
+
+                    Uma Assistant
+
+                  </h2>
+
+                  <p className="text-orange-100 text-sm">
+
+                    Fresh • Pure • Farm to Home
+
+                  </p>
+
+                </div>
+
+              </div>
+
+              <button
+                onClick={() => setIsOpen(false)}
+                className="text-white hover:rotate-90 transition"
+              >
+                <X size={24} />
+              </button>
+
+            </div>
+
+          </div>
+
+          {/* Messages */}
+
+          <div
+            ref={messagesRef}
+            className="flex-1 overflow-y-auto bg-[#FFF8F1] px-4 py-5 space-y-5"
+          >
+
+            {messages.map((msg, index) => (
+
+              <div
+                key={index}
+                className={`flex ${
+                  msg.sender === "user"
+                    ? "justify-end"
+                    : "justify-start"
+                }`}
+              >
+
+                {msg.sender === "bot" && (
+
+                  <div className="mr-3 w-10 h-10 rounded-full bg-[#F97354] flex items-center justify-center shrink-0">
+
+                    <Bot size={18} color="white" />
+
+                  </div>
+
+                )}
+
+                <div
+                  className={`max-w-[78%] px-5 py-4 rounded-3xl whitespace-pre-line shadow-md leading-7 text-[15px]
+                  ${
+                    msg.sender === "user"
+                      ? "bg-[#F97354] text-white rounded-br-md"
+                      : "bg-white text-gray-700 rounded-bl-md"
+                  }`}
+                >
+
+                  {msg.text}
+
+                </div>
+
+                {msg.sender === "user" && (
+
+                  <div className="ml-3 w-10 h-10 rounded-full bg-[#3B2418] flex items-center justify-center shrink-0">
+
+                    <User size={18} color="white" />
+
+                  </div>
+
+                )}
+
+              </div>
+
+            ))}
+
+            {/* Typing Animation */}
+
+            {isBotTyping && (
+
+              <div className="flex items-center">
+
+                <div className="mr-3 w-10 h-10 rounded-full bg-[#F97354] flex items-center justify-center">
+
+                  <Bot size={18} color="white" />
+
+                </div>
+
+                <div className="bg-white rounded-3xl px-5 py-4 shadow-md">
+
+                  <div className="flex gap-2">
+
+                    <span className="w-2 h-2 bg-orange-400 rounded-full animate-bounce"></span>
+
+                    <span className="w-2 h-2 bg-orange-400 rounded-full animate-bounce [animation-delay:.2s]"></span>
+
+                    <span className="w-2 h-2 bg-orange-400 rounded-full animate-bounce [animation-delay:.4s]"></span>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            )}
+
+            {/* Hidden Image Input */}
+
+            <input
+              ref={imageInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageUpload}
+            />
+
+          </div>
+                    {/* Bottom Input */}
+
+          <form
+            onSubmit={handleSubmit}
+            className="bg-white border-t border-orange-100 p-4"
+          >
+            <div className="flex items-center gap-3">
+
+              {/* Upload Image */}
+
+              <button
+                type="button"
+                onClick={() => imageInputRef.current.click()}
+                className="w-11 h-11 rounded-full bg-orange-100 hover:bg-orange-200 transition flex items-center justify-center shrink-0"
+              >
+                <ImageIcon
+                  size={20}
+                  className="text-[#F97354]"
+                />
+              </button>
+
+              {/* Input */}
+
+              <input
+                ref={inputRef}
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Type your message..."
+                className="flex-1 h-12 rounded-full border border-orange-200 px-5 outline-none focus:ring-2 focus:ring-[#F97354] bg-[#FFF8F1]"
+              />
+
+              {/* Send */}
+
+              <button
+                type="submit"
+                disabled={!inputValue.trim()}
+                className="w-12 h-12 rounded-full bg-[#F97354] hover:bg-[#ea6847] disabled:bg-gray-300 text-white flex items-center justify-center transition shrink-0"
+              >
+                <Send size={20} />
+              </button>
+
+            </div>
+
+            <p className="mt-3 text-center text-xs text-gray-400">
+              Powered by{" "}
+              <span className="font-semibold text-[#F97354]">
+                Uma Assistant
+              </span>
+            </p>
+
+          </form>
+
+        </div>
+      )}
+    </>
   );
 };
 

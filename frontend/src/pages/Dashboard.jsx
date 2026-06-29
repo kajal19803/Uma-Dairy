@@ -389,67 +389,75 @@ Save your favourite dairy products here.
 
 <div>
 
-<h2 className="text-4xl font-bold text-[#3B2418] mb-8">
+<h2 className="text-3xl font-bold text-[#3B2418] mb-6">
 My Orders
 </h2>
 
 {orders.length ? (
 
-<div className="space-y-8">
+<div className="space-y-6">
 
 {orders.map((order) => (
 
 <div
 key={order._id}
-className="bg-white rounded-3xl shadow-xl overflow-hidden"
+className="bg-white rounded-2xl shadow-lg overflow-hidden border border-orange-100"
 >
 
-{/* Header */}
+{/* ================= Header ================= */}
 
-<div className="bg-[#FFF8F1] border-b border-orange-100 px-8 py-6">
+<div className="px-6 py-5 bg-[#FFF8F1] border-b border-orange-100">
 
-<div className="flex flex-col lg:flex-row lg:justify-between gap-6">
+<div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 
 <div>
 
-<h3 className="text-2xl font-bold text-[#3B2418]">
+<h3 className="text-xl font-bold text-[#3B2418]">
 Order #{order.orderId}
 </h3>
 
-<p className="mt-2 text-gray-500">
+<p className="text-sm text-gray-500 mt-1">
 📅 {new Date(order.createdAt).toLocaleString("en-IN")}
 </p>
 
-<p className="mt-1 text-gray-500">
+<p className="text-sm text-gray-500">
 📞 {order.phone}
 </p>
 
 </div>
 
-<div className="flex flex-wrap gap-3">
+<div className="flex flex-wrap gap-2">
 
-<span className={`px-4 py-2 rounded-full text-sm font-semibold ${
+<span
+className={`px-3 py-1 rounded-full text-xs font-semibold ${
 order.orderStatus === "PLACED"
 ? "bg-green-100 text-green-700"
 : "bg-yellow-100 text-yellow-700"
-}`}>
+}`}
+>
 📦 {order.orderStatus}
 </span>
 
-<span className={`px-4 py-2 rounded-full text-sm font-semibold ${
+<span
+className={`px-3 py-1 rounded-full text-xs font-semibold ${
 order.paymentStatus === "PAID"
 ? "bg-green-100 text-green-700"
 : "bg-orange-100 text-orange-700"
-}`}>
+}`}
+>
 💳 {order.paymentStatus}
 </span>
 
-<span className={`px-4 py-2 rounded-full text-sm font-semibold ${
+<span
+className={`px-3 py-1 rounded-full text-xs font-semibold ${
 order.paymentMethod === "COD"
 ? "bg-blue-100 text-blue-700"
 : "bg-purple-100 text-purple-700"
-}`}>
-{order.paymentMethod === "COD" ? "💵 COD" : "🌐 ONLINE"}
+}`}
+>
+{order.paymentMethod === "COD"
+? "💵 COD"
+: "🌐 ONLINE"}
 </span>
 
 </div>
@@ -458,27 +466,27 @@ order.paymentMethod === "COD"
 
 </div>
 
-{/* Delivery Address */}
+{/* ================= Address ================= */}
 
 {order.address && (
 
-<div className="px-8 pt-6">
+<div className="px-6 pt-5">
 
-<h4 className="font-semibold text-[#3B2418] mb-2">
+<h4 className="font-semibold text-[#3B2418] text-sm mb-2">
 📍 Delivery Address
 </h4>
 
-<div className="bg-orange-50 rounded-2xl p-5">
+<div className="bg-orange-50 rounded-xl p-4">
 
-<p className="font-semibold">
+<p className="font-semibold text-[#3B2418]">
 {order.address.fullName}
 </p>
 
-<p className="text-gray-600 mt-1">
+<p className="text-sm text-gray-600 mt-1">
 {order.address.street}
 </p>
 
-<p className="text-gray-600">
+<p className="text-sm text-gray-600">
 {order.address.city}, {order.address.state} - {order.address.zip}
 </p>
 
@@ -488,15 +496,15 @@ order.paymentMethod === "COD"
 
 )}
 
-{/* Products */}
+{/* ================= Products ================= */}
 
-<div className="px-8 py-6 space-y-5">
+<div className="px-6 py-5 space-y-4">
 
 {order.items.map((item,index)=>(
 
 <div
 key={index}
-className="flex flex-col md:flex-row gap-5 border border-orange-100 rounded-2xl p-5 hover:shadow-md transition"
+className="flex items-center gap-4 border border-orange-100 rounded-xl p-4 hover:shadow-sm transition"
 >
 
 <img
@@ -508,40 +516,40 @@ item.images?.[0]
 : "/placeholder.jpg"
 }
 alt={item.name}
-className="w-32 h-32 rounded-2xl object-cover border border-orange-100"
+className="w-20 h-20 rounded-xl object-cover border border-orange-100"
 />
 
 <div className="flex-1">
 
-<h4 className="text-xl font-bold text-[#3B2418]">
+<h4 className="text-lg font-bold text-[#3B2418]">
 {item.name}
 </h4>
 
-<p className="mt-2 text-gray-600">
+<p className="text-sm text-gray-500 mt-1">
 Category :
 <span className="font-medium">
 {" "}{item.category}
 </span>
 </p>
 
-<p className="text-gray-600">
+<p className="text-sm text-gray-500">
 Unit :
 <span className="font-medium">
 {" "}{item.unit}
 </span>
 </p>
 
-<div className="flex flex-wrap items-center gap-3 mt-3">
+<div className="flex items-center gap-2 mt-2">
 
-<span className="text-2xl font-bold text-[#F97354]">
+<span className="text-xl font-bold text-[#F97354]">
 ₹{item.price}
 </span>
 
-<span className="line-through text-gray-400">
+<span className="text-sm text-gray-400 line-through">
 ₹{item.mrp}
 </span>
 
-<span className="bg-red-100 text-red-600 text-xs px-3 py-1 rounded-full">
+<span className="text-[11px] bg-red-100 text-red-600 px-2 py-1 rounded-full">
 {item.discount}% OFF
 </span>
 
@@ -549,17 +557,17 @@ Unit :
 
 </div>
 
-<div className="text-right flex flex-col justify-center">
+<div className="text-right">
 
-<p className="text-gray-500">
+<p className="text-sm text-gray-500">
 Qty : {item.quantity}
 </p>
 
-<p className="mt-2 text-lg font-semibold text-[#3B2418]">
+<p className="font-semibold text-[#3B2418] mt-1">
 ₹{item.price} × {item.quantity}
 </p>
 
-<p className="text-3xl font-bold text-[#F97354] mt-2">
+<p className="text-2xl font-bold text-[#F97354] mt-1">
 ₹{(item.price * item.quantity).toFixed(2)}
 </p>
 
@@ -568,20 +576,21 @@ Qty : {item.quantity}
 </div>
 
 ))}
-
 </div>
 
-{/* Footer */}
+{/* ================= Footer ================= */}
 
-<div className="border-t border-orange-100 px-8 py-6 flex flex-col md:flex-row justify-between items-center gap-5">
+<div className="border-t border-orange-100 px-6 py-5">
+
+<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
 <div>
 
-<p className="text-gray-500">
+<p className="text-sm text-gray-500">
 Grand Total
 </p>
 
-<h3 className="text-4xl font-bold text-[#F97354]">
+<h3 className="text-3xl font-bold text-[#F97354]">
 ₹{Number(order.totalPrice).toFixed(2)}
 </h3>
 
@@ -592,7 +601,7 @@ order.paymentStatus === "PENDING" && (
 
 <button
 onClick={() => navigate("/payment", { state: { order } })}
-className="bg-[#F97354] hover:bg-[#ea6847] text-white px-8 py-4 rounded-2xl font-semibold transition"
+className="bg-[#F97354] hover:bg-[#ea6847] text-white px-6 py-3 rounded-xl font-semibold transition duration-300 shadow-md hover:shadow-lg"
 >
 
 💳 Complete Payment
@@ -605,25 +614,36 @@ className="bg-[#F97354] hover:bg-[#ea6847] text-white px-8 py-4 rounded-2xl font
 
 </div>
 
+</div>
+
 ))}
 
 </div>
 
 ) : (
 
-<div className="bg-white rounded-3xl shadow-xl p-20 text-center">
+<div className="bg-white rounded-2xl shadow-lg p-12 text-center border border-orange-100">
 
-<div className="text-7xl">
+<div className="text-6xl">
 📦
 </div>
 
-<h3 className="mt-6 text-3xl font-bold text-[#3B2418]">
+<h3 className="mt-4 text-2xl font-bold text-[#3B2418]">
 No Orders Yet
 </h3>
 
-<p className="mt-3 text-gray-500">
-Your placed orders will appear here.
+<p className="mt-2 text-gray-500">
+You haven't placed any orders yet.
 </p>
+
+<button
+onClick={() => navigate("/products")}
+className="mt-6 bg-[#F97354] hover:bg-[#ea6847] text-white px-6 py-3 rounded-xl font-semibold transition"
+>
+
+🛒 Shop Now
+
+</button>
 
 </div>
 
@@ -731,61 +751,199 @@ Add Phone
 
 )}
 
-{/* TICKETS */}
+{/* ================= SUPPORT TICKETS ================= */}
 
-{activeSection==="tickets"&&(
+{activeSection === "tickets" && (
 
 <div>
 
-<h2 className="text-4xl font-bold text-[#3B2418] mb-8">
+<h2 className="text-3xl font-bold text-[#3B2418] mb-6">
 Support Tickets
 </h2>
 
-<div className="space-y-6">
+{tickets.length ? (
 
-{tickets.length?tickets.map((ticket,i)=>(
+<div className="space-y-5">
 
-<div key={i} className="bg-white rounded-3xl shadow-xl p-6">
+{tickets.map((ticket) => (
 
-<div className="flex justify-between">
+<div
+key={ticket._id}
+className="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden"
+>
 
-<h3 className="font-bold text-[#3B2418]">
-{ticket.issueType}
+{/* Header */}
+
+<div className="bg-[#FFF8F1] border-b border-orange-100 px-6 py-4">
+
+<div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
+
+<div>
+
+<h3 className="text-lg font-bold text-[#3B2418]">
+🎫 {ticket.issueType}
 </h3>
 
-<span className="bg-orange-100 text-[#F97354] px-4 py-2 rounded-full">
+<p className="text-sm text-gray-500 mt-1">
+Ticket : {ticket.ticketNumber}
+</p>
+
+<p className="text-sm text-gray-500">
+📅 {new Date(ticket.createdAt).toLocaleString("en-IN")}
+</p>
+
+</div>
+
+<span
+className={`px-3 py-1 rounded-full text-xs font-semibold ${
+ticket.status === "Resolved"
+? "bg-green-100 text-green-700"
+: ticket.status === "Open"
+? "bg-red-100 text-red-600"
+: "bg-yellow-100 text-yellow-700"
+}`}
+>
 {ticket.status}
 </span>
 
 </div>
 
-<p className="text-gray-600 mt-3">
+</div>
+
+{/* Body */}
+
+<div className="p-6 space-y-5">
+
+{/* Order */}
+
+<div>
+
+<p className="text-xs uppercase tracking-wider text-gray-500">
+Related Order
+</p>
+
+<p className="font-semibold text-[#3B2418]">
+{ticket.orderId}
+</p>
+
+</div>
+
+{/* Products */}
+
+{ticket.productNames?.length > 0 && (
+
+<div>
+
+<p className="text-xs uppercase tracking-wider text-gray-500 mb-2">
+Products
+</p>
+
+<div className="flex flex-wrap gap-2">
+
+{ticket.productNames.map((product,index)=>(
+
+<span
+key={index}
+className="px-3 py-1 rounded-full bg-orange-100 text-[#F97354] text-sm font-medium"
+>
+
+{product}
+
+</span>
+
+))}
+
+</div>
+
+</div>
+
+)}
+
+{/* Message */}
+
+<div>
+
+<p className="text-xs uppercase tracking-wider text-gray-500 mb-2">
+Issue Description
+</p>
+
+<div className="bg-orange-50 rounded-xl p-4 text-gray-700 leading-7">
+
 {ticket.message}
-</p>
-
-<p className="mt-3 text-gray-500">
-Ticket : {ticket.ticketNumber}
-</p>
 
 </div>
 
-)):(
-<div className="bg-white rounded-3xl shadow-xl p-16 text-center">
-🎫 No Support Tickets
 </div>
+
+{/* Images */}
+
+{ticket.images?.length > 0 && (
+
+<div>
+
+<p className="text-xs uppercase tracking-wider text-gray-500 mb-3">
+Evidence
+</p>
+
+<div className="flex flex-wrap gap-3">
+
+{ticket.images.map((image,index)=>(
+
+<img
+key={index}
+src={`${API_URL}${image}`}
+alt="ticket"
+className="w-24 h-24 rounded-xl object-cover border border-orange-100 hover:scale-105 transition"
+/>
+
+))}
+
+</div>
+
+</div>
+
 )}
 
 </div>
 
 </div>
 
+))}
+
+</div>
+
+) : (
+
+<div className="bg-white rounded-2xl shadow-lg border border-orange-100 p-12 text-center">
+
+<div className="text-6xl">
+🎫
+</div>
+
+<h3 className="mt-4 text-2xl font-bold text-[#3B2418]">
+No Support Tickets
+</h3>
+
+<p className="mt-2 text-gray-500">
+You haven't raised any support ticket yet.
+</p>
+
+</div>
+
 )}
 
 </div>
 
+)}
 </div>
 
 </div>
+
+
+
+</div>
+
+
 
 );
 
