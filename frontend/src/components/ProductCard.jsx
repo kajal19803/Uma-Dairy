@@ -1,4 +1,5 @@
 import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { useCart } from "../context/CartContext";
 
 const ProductCard = ({
   product,
@@ -35,109 +36,167 @@ const ProductCard = ({
       : category === "Milk"
       ? { text: "Daily", color: "bg-blue-100 text-blue-700" }
       : { text: "Natural", color: "bg-orange-100 text-[#F97354]" };
+  const { cartItems, addToCart, updateQuantity } = useCart();
+
+  const quantity =
+    cartItems.find((item) => item._id === _id)?.quantity || 0;
 
   return (
+  <div
+    onClick={onClick}
+    onMouseEnter={onHover}
+    onMouseLeave={onLeave}
+    className="group relative bg-white rounded-3xl overflow-hidden border border-orange-100 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer"
+  >
+    {/* Badge */}
     <div
-      onClick={onClick}
-      onMouseEnter={onHover}
-      onMouseLeave={onLeave}
-      className="group relative bg-white rounded-3xl overflow-hidden border border-orange-100 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer"
+      className={`absolute top-4 left-4 z-20 px-3 py-1 rounded-full text-xs font-semibold ${badge.color}`}
     >
-      {/* Badge */}
+      {badge.text}
+    </div>
+
+    {/* Wishlist */}
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        toggleWishlist(e, _id);
+      }}
+      className="absolute top-4 right-4 z-20 w-11 h-11 rounded-full bg-white shadow-lg flex items-center justify-center hover:scale-110 transition"
+    >
+      {isWishlisted ? (
+        <FaHeart className="text-[#F97354] text-xl" />
+      ) : (
+        <FaRegHeart className="text-[#F97354] text-xl" />
+      )}
+    </button>
+
+    {/* Image Slider */}
+    <div className="relative h-64 overflow-hidden bg-[#FFF8F1]">
+
       <div
-        className={`absolute top-4 left-4 z-20 px-3 py-1 rounded-full text-xs font-semibold ${badge.color}`}
+        className="absolute top-0 left-0 h-full flex transition-transform duration-500"
+        style={{
+          transform: `translateX(-${(imageIndex % safeImages.length) * 100}%)`,
+          width: `${safeImages.length * 100}%`,
+        }}
       >
-        {badge.text}
+        {safeImages.map((img, index) => (
+          <div
+            key={index}
+            className="w-full h-full flex-shrink-0"
+          >
+            <img
+              src={
+                img.startsWith("/uploads")
+                  ? `${backendUrl}${img}`
+                  : img
+              }
+              alt={name}
+              className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+            />
+          </div>
+        ))}
       </div>
 
-      {/* Wishlist */}
-      <button
-        onClick={(e) => toggleWishlist(e, _id)}
-        className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center text-[#F97354] hover:scale-110 transition"
-      >
-        {isWishlisted ? <FaHeart /> : <FaRegHeart />}
-      </button>
+    </div>
 
-      {/* Image */}
-      <div className="relative h-64 overflow-hidden bg-[#FFF8F1]">
-        <img
-          src={
-            currentImage.startsWith("/uploads")
-              ? `${backendUrl}${currentImage}`
-              : currentImage
-          }
-          alt={name}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-        />
+    {/* Content */}
+    <div className="p-5">
+
+      <h2 className="text-xl font-bold text-[#3B2418] truncate">
+        {name}
+      </h2>
+
+      <p className="text-gray-500 text-sm mt-1">
+        {category}
+      </p>
+
+      <p className="text-gray-400 text-sm">
+        {unit}
+      </p>
+
+      {/* Price */}
+            <div className="flex items-center flex-wrap gap-2 mt-3">
+        <span className="text-2xl font-bold text-[#F97354]">
+          ₹{price}
+        </span>
+
+        {mrp && (
+          <>
+            <span className="text-gray-400 line-through">
+              ₹{mrp}
+            </span>
+
+            <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full">
+              {discount}% OFF
+            </span>
+          </>
+        )}
       </div>
 
-      {/* Content */}
-      <div className="p-5">
+      {/* Stock */}
+      <div className="mt-3">
+        <span
+          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+            inStock
+              ? "bg-green-100 text-green-700"
+              : "bg-red-100 text-red-600"
+          }`}
+        >
+          {inStock ? "✔ In Stock" : "✖ Out of Stock"}
+        </span>
+      </div>
 
-        <h2 className="text-xl font-bold text-[#3B2418] truncate">
-          {name}
-        </h2>
-
-        <p className="text-gray-500 text-sm mt-1">
-          {category}
-        </p>
-
-        <p className="text-gray-400 text-sm">
-          {unit}
-        </p>
-
-        {/* Price */}
-        <div className="flex items-center flex-wrap gap-2 mt-3">
-
-          <span className="text-2xl font-bold text-[#F97354]">
-            ₹{price}
-          </span>
-
-          {mrp && (
-            <>
-              <span className="text-gray-400 line-through">
-                ₹{mrp}
-              </span>
-
-              <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full">
-                {discount}% OFF
-              </span>
-            </>
-          )}
-
-        </div>
-
-        {/* Stock */}
-        <div className="mt-3">
-
-          <span
-            className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+      {/* Add to Cart */}
+      <div className="mt-5">
+        {quantity === 0 ? (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              addToCart(product);
+            }}
+            disabled={!inStock}
+            className={`w-full py-3 rounded-xl font-semibold transition ${
               inStock
-                ? "bg-green-100 text-green-700"
-                : "bg-red-100 text-red-600"
+                ? "bg-[#F97354] hover:bg-[#ea6847] text-white"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
             }`}
           >
-            {inStock ? "✔ In Stock" : "✖ Out of Stock"}
-          </span>
+            🛒 Add to Cart
+          </button>
+        ) : (
+          <div className="flex items-center justify-between border border-orange-200 rounded-xl overflow-hidden bg-orange-50">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                updateQuantity(_id, quantity - 1);
+              }}
+              className="w-12 h-12 bg-[#F97354] hover:bg-[#ea6847] text-white text-xl font-bold transition"
+            >
+              −
+            </button>
 
-        </div>
+            <span className="text-lg font-bold text-[#3B2418]">
+              {quantity}
+            </span>
 
-        {/* Button */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-          className="mt-5 w-full bg-[#F97354] hover:bg-[#ea6847] text-white py-3 rounded-xl font-semibold transition-all duration-300"
-        >
-          🛒 Add to Cart
-        </button>
-
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                updateQuantity(_id, quantity + 1);
+              }}
+              className="w-12 h-12 bg-[#F97354] hover:bg-[#ea6847] text-white text-xl font-bold transition"
+            >
+              +
+            </button>
+          </div>
+        )}
       </div>
+
     </div>
-  );
+  </div>
+);
+
 };
 
 export default ProductCard;
-
-
-
