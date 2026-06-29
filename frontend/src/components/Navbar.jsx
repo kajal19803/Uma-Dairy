@@ -73,11 +73,29 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-        <div className="text-2xl font-bold text-blue-600">
-          <Link to="/" onClick={() => setMenuOpen(false)}>Uma Dairy</Link>
-        </div>
+    <nav className="fixed top-0 left-0 w-full z-50 bg-[#FFF8F1]/90 backdrop-blur-xl border-b border-orange-100 shadow-sm">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <Link
+    to="/"
+    onClick={() => setMenuOpen(false)}
+    className="flex items-center gap-3"
+>
+    <img
+        src="/logo.png"
+        alt="Uma Dairy"
+        className="h-14 w-14 rounded-full object-cover shadow-md border border-orange-100"
+    />
+
+    <div>
+        <h1 className="text-3xl font-bold text-[#4E342E] leading-none">
+            Uma Dairy
+        </h1>
+
+        <p className="text-xs text-gray-500">
+            Pure by Nature, Trusted by You
+        </p>
+    </div>
+</Link>
 
         <div className="flex items-center space-x-4" ref={dropdownRef}>
           {/* Desktop Search */}
@@ -85,7 +103,7 @@ const Navbar = () => {
             <input
               type="text"
               placeholder="Search..."
-              className="border px-3 py-1 rounded-md w-full bg-gray-100 text-black"
+              className="w-full rounded-full border border-orange-200 bg-white px-5 py-2 text-black outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-200"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={handleSearchKeyDown}
@@ -95,7 +113,7 @@ const Navbar = () => {
           {/* Mobile Search */}
           <div className="md:hidden">
             <button onClick={() => setShowSearch(!showSearch)} aria-label="Toggle search">
-              <Search className="w-5 h-5 text-gray-700" />
+              <Search className="w-6 h-6 text-[#5C3A2E] hover:text-[#F97354] transition" />
             </button>
           </div>
 
@@ -103,10 +121,10 @@ const Navbar = () => {
           {userRole !== "admin" && (
             <div className="relative">
               <Link to="/cart" onClick={() => setMenuOpen(false)} aria-label="Cart">
-                <ShoppingCart className="w-5 h-5 text-gray-700" />
+                <ShoppingCart className="w-6 h-6 text-[#5C3A2E] hover:text-[#F97354] transition" />
               </Link>
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="absolute -top-2 -right-2 bg-[#F97354] text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center shadow">
                   {cartCount}
                 </span>
               )}
@@ -114,20 +132,25 @@ const Navbar = () => {
           )}
 
           {/* Desktop Links */}
-          <div className="hidden md:flex items-center space-x-4 font-medium text-gray-700">
+          <div className="hidden lg:flex items-center gap-8 font-medium text-[#5C3A2E]">
             {!isLoggedIn ? (
-              <Link to="/login" onClick={() => setMenuOpen(false)}>Login</Link>
+             <Link
+    to="/login"
+    className="rounded-full border border-orange-300 px-5 py-2 transition hover:bg-[#F97354] hover:text-white"
+>
+    Login
+</Link>
             ) : (
               <>
                 {userRole === "admin" ? (
-                  <Link to="/admindashboard" onClick={() => setMenuOpen(false)}>Admin Dashboard</Link>
+                  <Link to="/admindashboard"className="hover:text-[#F97354] transition" onClick={() => setMenuOpen(false)}>Admin Dashboard</Link>
                 ) : (
-                  <Link to="/dashboard" onClick={() => setMenuOpen(false)}>Profile</Link>
+                  <Link to="/dashboard" className="hover:text-[#F97354] transition" onClick={() => setMenuOpen(false)}>Profile</Link>
                 )}
                 <button
                  type="button"
                  onClick={handleLogout}
-                 className="bg-red-600 px-3 py-1 rounded hover:bg-red-700 text-white transition"
+                 className="rounded-full bg-[#F97354] px-5 py-2 text-white transition hover:bg-[#e95d3d]"
                  >
                  Logout
                 </button>
@@ -141,30 +164,30 @@ const Navbar = () => {
             aria-label="Toggle menu"
             className="ml-1 p-0 bg-transparent border-none outline-none"
           >
-            {menuOpen ? <X className="w-6 h-6 text-black" /> : <MoreVertical className="w-6 h-6 text-black" />}
+            {menuOpen ? <MoreVertical className="w-6 h-6 text-[#5C3A2E]" /> : <MoreVertical className="w-6 h-6 text-[#5C3A2E]" />}
           </button>
 
           {/* Mobile Dropdown */}
           {menuOpen && (
-            <div className="absolute top-full right-0 mt-2 w-48 bg-white shadow-md rounded-md z-50 flex flex-col text-gray-700">
-              <Link to="/" className="px-4 py-2 hover:bg-gray-100 border-b" onClick={() => setMenuOpen(false)}>Home</Link>
-              <Link to="/features" className="px-4 py-2 hover:bg-gray-100 border-b" onClick={() => setMenuOpen(false)}>Features</Link>
-              <Link to="/team" className="px-4 py-2 hover:bg-gray-100 border-b" onClick={() => setMenuOpen(false)}>Team</Link>
-              <Link to="/contact" className="px-4 py-2 hover:bg-gray-100 border-b" onClick={() => setMenuOpen(false)}>Contact Us</Link>
+            <div className="absolute top-full right-0 mt-3 w-60 rounded-2xl bg-[#FFF8F1] shadow-2xl border border-orange-100 overflow-hidden z-50 flex flex-col">
+              <Link to="/" className="px-4 py-2 hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Home</Link>
+              <Link to="/features" className="px-4 py-2 hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Features</Link>
+              <Link to="/team" className="px-4 py-2 hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Team</Link>
+              <Link to="/contact" className="px-4 py-2 hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Contact Us</Link>
 
               {!isLoggedIn ? (
-                <Link to="/login" className="px-4 py-2 hover:bg-gray-100 border-b" onClick={() => setMenuOpen(false)}>Login</Link>
+                <Link to="/login" className="px-4 py-2 hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Login</Link>
               ) : (
                 <>
                   {userRole === "admin" ? (
-                    <Link to="/admindashboard" className="px-4 py-2 hover:bg-gray-100 border-b" onClick={() => setMenuOpen(false)}>Admin Dashboard</Link>
+                    <Link to="/admindashboard" className="px-4 py-2 hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Admin Dashboard</Link>
                   ) : (
-                    <Link to="/dashboard" className="px-4 py-2 hover:bg-gray-100 border-b" onClick={() => setMenuOpen(false)}>Profile</Link>
+                    <Link to="/dashboard" className="px-4 py-2 hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Profile</Link>
                   )}
                   <button
                    type="button"
                    onClick={handleLogout}
-                   className="px-4 py-2 text-left hover:bg-gray-100 text-red-600 font-semibold"
+                   className="px-4 py-3 text-left text-[#F97354] font-semibold hover:bg-orange-50"
                    >
                    Logout
                   </button>
@@ -177,11 +200,11 @@ const Navbar = () => {
 
       {/* Mobile Search Input */}
       {showSearch && (
-        <div className="absolute top-full left-0 w-full bg-white p-4 shadow-md md:hidden">
+        <div className="absolute top-full left-0 w-full bg-[#FFF8F1] p-4 shadow-xl md:hidden">
           <input
             type="text"
             placeholder="Search..."
-            className="border px-3 py-2 w-full rounded-md bg-gray-100 text-black"
+            className="w-full rounded-full border border-orange-200 bg-white px-5 py-3 text-black outline-none focus:border-orange-400"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={handleSearchKeyDown}
