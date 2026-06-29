@@ -164,7 +164,7 @@ const Navbar = () => {
             aria-label="Toggle menu"
             className="ml-1 p-0 bg-transparent border-none outline-none"
           >
-            {menuOpen ? <MoreVertical className="w-6 h-6 text-[#5C3A2E]" /> : <MoreVertical className="w-6 h-6 text-[#5C3A2E]" />}
+            {menuOpen ? <X className="w-6 h-6 text-[#5C3A2E]"/> : <MoreVertical className="w-6 h-6 text-[#5C3A2E]" />}
           </button>
 
           {/* Mobile Dropdown */}
