@@ -287,6 +287,7 @@ Edit Details
 </button>
 
 </div>
+</div>
 
 </div>
 {/* RIGHT SIDE */}
