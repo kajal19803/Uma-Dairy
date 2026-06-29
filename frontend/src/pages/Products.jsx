@@ -114,55 +114,95 @@ const Products = () =>{
 
 
   return (
-    <div className="w-screen min-h-screen bg-gradient-to-br from-blue-100 via-green-100 to-teal-200 p-6">
+    <div className="min-h-screen w-screen bg-[#FFF8F1]">
+
+  {/* Header */}
+
+  <div className="pt-28 pb-8 text-center">
+
+    <h1 className="text-5xl font-bold text-[#3B2418]">
+      Our Products
+    </h1>
+
+    <p className="mt-4 text-lg text-gray-600">
+      Fresh • Pure • Farm to Home
+    </p>
+
+    <div className="mt-4 inline-flex px-5 py-2 rounded-full bg-orange-100 text-[#F97354] font-medium">
+      {products.length} Products Available
+    </div>
+
+  </div>
       <h1 className="text-3xl font-bold text-center text-green-700 mb-6">All Products</h1>
 
       {/* Filters */}
-      <div className="mb-6 flex flex-wrap gap-4 justify-center">
-        <select
-          value={filters.category}
-          onChange={e => setFilters(prev => ({ ...prev, category: e.target.value }))}
-          className="p-2 border bg-white rounded text-black"
-        >
-          <option value="">All Categories</option>
-          <option value="Dairy">Dairy</option>
-          <option value="Paneer">Paneer</option>
-          <option value="Ghee">Ghee</option>
-        </select>
+      <div className="max-w-7xl mx-auto mb-10">
 
-        <select
-          value={filters.inStock}
-          onChange={e => setFilters(prev => ({ ...prev, inStock: e.target.value }))}
-          className="p-2 border bg-white rounded text-black"
-        >
-          <option value="">Stock Status</option>
-          <option value="true">In Stock</option>
-          <option value="false">Out of Stock</option>
-        </select>
+<div className="bg-white rounded-3xl shadow-lg p-6 flex flex-wrap justify-center gap-5">
 
-        <select
-          value={filters.unit}
-          onChange={e => setFilters(prev => ({ ...prev, unit: e.target.value }))}
-          className="p-2 border bg-white rounded text-black"
-        >
-          <option value="">All Units</option>
-          <option value="litre">Litre</option>
-          <option value="kg">Kilogram</option>
-          <option value="gm">Gram</option>
-        </select>
+<select
+value={filters.category}
+onChange={(e)=>setFilters(prev=>({...prev,category:e.target.value}))}
+className="rounded-xl border border-orange-200 px-5 py-3 bg-[#FFF8F1] text-[#3B2418] outline-none"
+>
 
-        <button
-          onClick={() => setFilters({ category: '', inStock: '', unit: '' })}
-          className="px-4 py-2 bg-gray-200 rounded text-black"
-        >
-          Reset Filters
-        </button>
-      </div>
+<option value="">All Categories</option>
+<option value="Dairy">Dairy</option>
+<option value="Paneer">Paneer</option>
+<option value="Ghee">Ghee</option>
+
+</select>
+
+<select
+value={filters.inStock}
+onChange={(e)=>setFilters(prev=>({...prev,inStock:e.target.value}))}
+className="rounded-xl border border-orange-200 px-5 py-3 bg-[#FFF8F1]"
+>
+
+<option value="">Stock Status</option>
+<option value="true">In Stock</option>
+<option value="false">Out of Stock</option>
+
+</select>
+
+<select
+value={filters.unit}
+onChange={(e)=>setFilters(prev=>({...prev,unit:e.target.value}))}
+className="rounded-xl border border-orange-200 px-5 py-3 bg-[#FFF8F1]"
+>
+
+<option value="">All Units</option>
+<option value="litre">Litre</option>
+<option value="kg">Kilogram</option>
+<option value="gm">Gram</option>
+
+</select>
+
+<button
+onClick={()=>setFilters({category:"",inStock:"",unit:""})}
+className="px-6 py-3 rounded-xl bg-[#F97354] text-white hover:bg-[#ea6b4b] transition"
+>
+
+Reset Filters
+
+</button>
+
+</div>
+
+</div>
 
       {/* Product Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="max-w-7xl mx-auto grid
+grid-cols-1
+sm:grid-cols-2
+lg:grid-cols-3
+xl:grid-cols-4
+gap-8
+pb-20">
         {products.length === 0 && (
-          <p className="col-span-full text-center">No products available</p>
+          <p className="col-span-full text-center text-xl text-gray-500 py-20">
+No Products Found 🥛
+</p>
         )}
 
         {products.map((product, index) => (
