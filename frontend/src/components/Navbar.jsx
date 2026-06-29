@@ -100,7 +100,7 @@ const Navbar = () => {
         <div className="flex items-center space-x-4" ref={dropdownRef}>
           {/* Desktop Search */}
           <div className="hidden md:flex items-center relative w-[320px]">
-  <SearchIcon
+  <Search
     className="absolute left-4 h-5 w-5 text-gray-400"
   />
 
