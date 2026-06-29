@@ -196,233 +196,397 @@ const Login = () => {
   };
 
   return (
-    <div className="w-screen h-screen bg-gradient-to-br from-blue-100 via-green-100 to-teal-200 flex items-center justify-center p-4">
-      <ToastContainer />
-      <div className="bg-white p-8 rounded-md shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold text-green-700 text-center mb-6">
-          {isLogin ? 'Login to Uma Dairy' : 'Register for Uma Dairy'}
-        </h2>
+<div className="min-h-screen w-screen bg-[#FFF8F1] flex items-center justify-center px-5 py-24">
 
-        <form onSubmit={handleSubmit} noValidate>
-          {!isLogin && (
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-black">Full Name</label>
-              <input
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="w-full p-2 border bg-white text-black border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-600"
-                placeholder="Enter your full name"
-              />
-              {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-            </div>
-          )}
+<ToastContainer/>
 
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-black">Email</label>
-            <input
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full p-2 border bg-white text-black border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-600"
-              placeholder="Enter your email"
-            />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+<div className="w-full max-w-6xl bg-white rounded-[40px] shadow-2xl overflow-hidden grid lg:grid-cols-2">
 
-            {!isLogin && (
-              <button
-                type="button"
-                onClick={sendOtp}
-                disabled={otpSent}
-                className="text-green-600 hover:underline text-sm focus:outline-none bg-transparent p-0 border-0 mt-1"
-              >
-                {otpSent ? 'OTP Sent' : 'Send OTP'}
-              </button>
-            )}
-          </div>
+{/* LEFT SIDE */}
 
-          {otpSent && !isOtpVerified && !isLogin && (
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-black">Enter OTP</label>
-              <input
-                value={otp}
-                onChange={e => setOtp(e.target.value)}
-                className="w-full p-2 border bg-white border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-600"
-                placeholder="Enter the OTP"
-              />
-              <button
-                type="button"
-                onClick={verifyOtp}
-                className="text-green-600 hover:underline text-sm focus:outline-none bg-transparent p-0 border-0 mt-1"
-              >
-                Verify OTP
-              </button>
-              {errors.otp && <p className="text-red-500 text-sm mt-1">{errors.otp}</p>}
-            </div>
-          )}
+<div className="hidden lg:flex flex-col justify-center bg-gradient-to-br from-[#FFF3E8] to-[#FFE4C7] p-14">
 
-          <div className="mb-4 relative">
-            <label className="block text-sm font-medium text-black">Password</label>
-            <input
-              name="password"
-              type={showPass ? 'text' : 'password'}
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full p-2 border text-black bg-white border-gray-300 rounded pr-10 focus:outline-none focus:ring-2 focus:ring-green-600"
-              placeholder="Enter your password"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPass(prev => !prev)}
-              className="absolute right-2 bg-transparent border-none outline-none top-[65%] transform -translate-y-1/2 text-gray-600 focus:outline-none focus:ring-0"
-              tabIndex={-1}
-              aria-label={showPass ? 'Hide password' : 'Show password'}
-            >
-              {showPass ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
-            </button>
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
-          </div>
+<div className="inline-flex w-fit bg-orange-100 text-[#F97354] px-5 py-2 rounded-full font-semibold mb-8">
+🌿 Welcome to Uma Dairy
+</div>
 
-          {!isLogin && (
-            <div className="mb-4 relative">
-              <label className="block text-sm font-medium text-black">Confirm Password</label>
-              <input
-                name="confirmPassword"
-                type={showConfirmPass ? 'text' : 'password'}
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className="w-full p-2 border text-black bg-white border-gray-300 rounded pr-10 focus:outline-none focus:ring-2 focus:ring-green-600"
-                placeholder="Confirm your password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPass(prev => !prev)}
-                className="absolute right-2 top-[65%] bg-transparent border-none outline-none transform -translate-y-1/2 text-gray-600 focus:outline-none focus:ring-0"
-                tabIndex={-1}
-                aria-label={showConfirmPass ? 'Hide confirm password' : 'Show confirm password'}
-              >
-                {showConfirmPass ? <EyeSlashIcon className="h-4 bg-white w-5" /> : <EyeIcon className="h-5 w-5" />}
-              </button>
-              {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
-            </div>
-          )}
-          {!isLogin && (
-  <div className="mb-4">
-    <label className="flex items-start gap-2 text-sm text-black">
-      <input
-        type="checkbox"
-        checked={formData.termsAccepted}
-        onChange={(e) =>
-          setFormData({ ...formData, termsAccepted: e.target.checked })
-        }
-        className="mt-1"
-      />
-      <span>
-        I agree to the{' '}
-        <Link to="/policy" className="text-green-600 underline hover:text-green-800">
-          Terms & Conditions
-        </Link>
-        .
-      </span>
-    </label>
-    {errors.termsAccepted && (
-      <p className="text-red-500 text-sm mt-1">{errors.termsAccepted}</p>
-    )}
-  </div>
+<h1 className="text-6xl font-extrabold text-[#3B2418] leading-tight">
+Fresh Dairy,
+<br/>
+Fresh Life.
+</h1>
+
+<p className="mt-8 text-lg text-gray-600 leading-8">
+Experience farm fresh milk, pure desi ghee,
+paneer and homemade dairy products
+delivered directly to your doorstep.
+</p>
+
+<img
+src="/hero.png"
+alt="Uma Dairy"
+className="mt-12 rounded-3xl shadow-xl object-cover"
+/>
+
+</div>
+
+{/* RIGHT SIDE */}
+
+<div className="p-8 lg:p-12">
+
+<div className="text-center mb-8">
+
+<h2 className="text-4xl font-bold text-[#3B2418]">
+{isLogin ? "Welcome Back 👋" : "Create Account"}
+</h2>
+
+<p className="mt-3 text-gray-500">
+{isLogin
+? "Login to continue shopping."
+: "Register to start shopping."}
+</p>
+
+</div>
+
+<form onSubmit={handleSubmit} noValidate>
+
+{!isLogin && (
+
+<div className="mb-5">
+
+<label className="block mb-2 font-medium text-[#3B2418]">
+Full Name
+</label>
+
+<input
+name="name"
+value={formData.name}
+onChange={handleChange}
+placeholder="Enter your full name"
+className="w-full rounded-xl border border-orange-200 bg-[#FFF8F1] px-4 py-3 text-[#3B2418] outline-none focus:border-[#F97354]"
+/>
+
+{errors.name && (
+<p className="text-red-500 text-sm mt-1">
+{errors.name}
+</p>
 )}
 
+</div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-colors disabled:opacity-50"
-          >
-            {loading ? 'Please wait...' : isLogin ? 'Login' : 'Register'}
-          </button>
-        </form>
+)}
 
-        {isLogin && (
-          <div className="flex justify-end mt-2">
-             <button
-             onClick={() => setShowForgot(true)}
-             className="text-green-600 bg-transparent border-none outline-none hover:underline focus:outline-none focus:ring-0"
-             >
-             Forgot Password?
-            </button>
-          </div>
-        )}
+<div className="mb-5">
 
-        <p className="mt-4 text-center text-gray-600 text-sm">
-          {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
-          <button onClick={toggleForm} className="text-green-600 focus:outline-none focus:ring-0 hover:underline bg-transparent border-none outline-none text-sm">
-            {isLogin ? 'Register here' : 'Login here'}
-          </button>
-        </p>
+<label className="block mb-2 font-medium text-[#3B2418]">
+Email
+</label>
 
-        <div className="flex justify-center mt-6">
-          <GoogleLogin onSuccess={handleGoogleLoginSuccess} onError={handleGoogleLoginError} />
-        </div>
-      </div>
+<input
+name="email"
+type="email"
+value={formData.email}
+onChange={handleChange}
+placeholder="Enter your email"
+className="w-full rounded-xl border border-orange-200 bg-[#FFF8F1] px-4 py-3 text-[#3B2418] outline-none focus:border-[#F97354]"
+/>
 
-      {/* Forgot Password Modal */}
-      {showForgot && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-          <div className="bg-white p-6 rounded w-96 shadow-lg">
-            <h3 className="text-lg font-semibold text-green-700 mb-4">Reset Password</h3>
-            {fpStep === 1 && (
-              <input
-                type="email"
-                name="email"
-                placeholder="Enter email"
-                value={fpData.email}
-                onChange={handleFpChange}
-                className="w-full p-2 border text-black bg-white border-gray-300 rounded mb-4"
-              />
-            )}
-            {fpStep === 2 && (
-              <input
-                name="otp"
-                placeholder="Enter OTP"
-                value={fpData.otp}
-                onChange={handleFpChange}
-                className="w-full p-2 border text-black bg-white border-gray-300 rounded mb-4"
-              />
-            )}
-            {fpStep === 3 && (
-              <input
-                name="newPassword"
-                type="password"
-                placeholder="New Password"
-                value={fpData.newPassword}
-                onChange={handleFpChange}
-                className="w-full p-2 border  text-black bg-white border-gray-300 rounded mb-4"
-              />
-            )}
-            <div className="flex justify-between">
-              <button
-                onClick={() => {
-                  setShowForgot(false);
-                  setFpStep(1);
-                  setFpData({ email: '', otp: '', newPassword: '' });
-                }}
-                className="text-green-600 bg-transparent border-none outline-none hover:underline text-sm"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleFp}
-                className="text-green-600 bg-transparent border-none outline-none hover:underline text-sm"
-              >
-                {fpStep === 1 ? 'Send OTP' : fpStep === 2 ? 'Verify OTP' : 'Reset Password'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+{errors.email && (
+<p className="text-red-500 text-sm mt-1">
+{errors.email}
+</p>
+)}
 
+{!isLogin && (
+
+<button
+type="button"
+onClick={sendOtp}
+disabled={otpSent}
+className="mt-2 text-[#F97354] hover:underline">
+
+{otpSent ? "OTP Sent" : "Send OTP"}
+
+</button>
+
+)}
+
+</div>
+
+{otpSent && !isOtpVerified && !isLogin && (
+
+<div className="mb-5">
+
+<label className="block mb-2 font-medium text-[#3B2418]">
+OTP
+</label>
+
+<input
+value={otp}
+onChange={(e)=>setOtp(e.target.value)}
+placeholder="Enter OTP"
+className="w-full rounded-xl border border-orange-200 bg-[#FFF8F1] px-4 py-3"
+/>
+
+<button
+type="button"
+onClick={verifyOtp}
+className="mt-2 text-[#F97354] hover:underline">
+
+Verify OTP
+
+</button>
+
+{errors.otp && (
+<p className="text-red-500 text-sm mt-1">
+{errors.otp}
+</p>
+)}
+
+</div>
+
+)}
+
+<div className="mb-5 relative">
+
+<label className="block mb-2 font-medium text-[#3B2418]">
+Password
+</label>
+
+<input
+name="password"
+type={showPass?"text":"password"}
+value={formData.password}
+onChange={handleChange}
+placeholder="Enter password"
+className="w-full rounded-xl border border-orange-200 bg-[#FFF8F1] px-4 py-3 pr-12 text-[#3B2418]"
+/>
+
+<button
+type="button"
+onClick={()=>setShowPass(!showPass)}
+className="absolute right-4 top-[50px]">
+
+{showPass?<EyeSlashIcon className="h-5 w-5"/>:<EyeIcon className="h-5 w-5"/>}
+
+</button>
+
+{errors.password && (
+<p className="text-red-500 text-sm mt-1">
+{errors.password}
+</p>
+)}
+
+</div>
+{!isLogin&&(
+
+<div className="mb-5 relative">
+
+<label className="block mb-2 font-medium text-[#3B2418]">
+Confirm Password
+</label>
+
+<input
+name="confirmPassword"
+type={showConfirmPass?"text":"password"}
+value={formData.confirmPassword}
+onChange={handleChange}
+placeholder="Confirm password"
+className="w-full rounded-xl border border-orange-200 bg-[#FFF8F1] px-4 py-3 pr-12 text-[#3B2418]"
+/>
+
+<button
+type="button"
+onClick={()=>setShowConfirmPass(!showConfirmPass)}
+className="absolute right-4 top-[50px]">
+
+{showConfirmPass?<EyeSlashIcon className="h-5 w-5"/>:<EyeIcon className="h-5 w-5"/>}
+
+</button>
+
+{errors.confirmPassword&&(
+<p className="text-red-500 text-sm mt-1">
+{errors.confirmPassword}
+</p>
+)}
+
+</div>
+
+)}
+
+{!isLogin&&(
+
+<div className="mb-5">
+
+<label className="flex items-start gap-3 text-sm text-[#3B2418]">
+
+<input
+type="checkbox"
+checked={formData.termsAccepted}
+onChange={(e)=>setFormData({...formData,termsAccepted:e.target.checked})}
+className="mt-1 accent-[#F97354]"
+/>
+
+<span>
+I agree to the{" "}
+<Link
+to="/policy"
+className="text-[#F97354] underline">
+Terms & Conditions
+</Link>
+</span>
+
+</label>
+
+{errors.termsAccepted&&(
+<p className="text-red-500 text-sm mt-1">
+{errors.termsAccepted}
+</p>
+)}
+
+</div>
+
+)}
+
+<button
+type="submit"
+disabled={loading}
+className="w-full py-4 rounded-xl bg-[#F97354] hover:bg-[#ea6847] text-white font-bold text-lg transition disabled:opacity-50">
+
+{loading?"Please wait...":isLogin?"Login":"Register"}
+
+</button>
+
+</form>
+
+{isLogin&&(
+
+<div className="text-right mt-4">
+
+<button
+onClick={()=>setShowForgot(true)}
+className="text-[#F97354] hover:underline">
+
+Forgot Password?
+
+</button>
+
+</div>
+
+)}
+
+<div className="mt-8 flex items-center">
+
+<div className="flex-1 border-t border-orange-200"/>
+
+<span className="mx-4 text-gray-400">
+OR
+</span>
+
+<div className="flex-1 border-t border-orange-200"/>
+
+</div>
+
+<div className="mt-6 flex justify-center">
+<GoogleLogin
+onSuccess={handleGoogleLoginSuccess}
+onError={handleGoogleLoginError}
+/>
+</div>
+
+<p className="mt-8 text-center text-gray-600">
+
+{isLogin?"Don't have an account?":"Already have an account?"}
+
+<button
+onClick={toggleForm}
+className="ml-2 text-[#F97354] font-semibold hover:underline">
+
+{isLogin?"Register":"Login"}
+
+</button>
+
+</p>
+
+</div>
+
+</div>
+
+{showForgot&&(
+
+<div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+
+<div className="bg-white rounded-3xl shadow-2xl p-8 w-[420px]">
+
+<h3 className="text-2xl font-bold text-[#3B2418] mb-6">
+Reset Password
+</h3>
+
+{fpStep===1&&(
+<input
+type="email"
+name="email"
+placeholder="Enter email"
+value={fpData.email}
+onChange={handleFpChange}
+className="w-full rounded-xl border border-orange-200 bg-[#FFF8F1] px-4 py-3 mb-5"
+/>
+)}
+
+{fpStep===2&&(
+<input
+name="otp"
+placeholder="Enter OTP"
+value={fpData.otp}
+onChange={handleFpChange}
+className="w-full rounded-xl border border-orange-200 bg-[#FFF8F1] px-4 py-3 mb-5"
+/>
+)}
+
+{fpStep===3&&(
+<input
+name="newPassword"
+type="password"
+placeholder="New Password"
+value={fpData.newPassword}
+onChange={handleFpChange}
+className="w-full rounded-xl border border-orange-200 bg-[#FFF8F1] px-4 py-3 mb-5"
+/>
+)}
+
+<div className="flex justify-between">
+
+<button
+onClick={()=>{
+setShowForgot(false);
+setFpStep(1);
+setFpData({email:"",otp:"",newPassword:""});
+}}
+className="px-5 py-2 rounded-xl border border-orange-200">
+
+Cancel
+
+</button>
+
+<button
+onClick={handleFp}
+className="px-6 py-2 rounded-xl bg-[#F97354] text-white">
+
+{fpStep===1?"Send OTP":fpStep===2?"Verify OTP":"Reset"}
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+)}
+
+</div>
+
+);
 };
 
 export default Login;
