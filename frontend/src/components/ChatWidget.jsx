@@ -434,13 +434,13 @@ const selectedProducts = indexes
 `Please select Issue Type
 
 1️⃣ Order Issue
-2️⃣ Payment & Refund
-3️⃣ Product Quality
-4️⃣ Delivery Issue
-5️⃣ Account & Login
-6️⃣ Website Bug
+2️⃣ Payment & Refunds
+3️⃣ Product Issue
+4️⃣ Account & Login
+5️⃣ Website Bug / Technical Problem
+6️⃣ Request Related
 7️⃣ Other`
-        );
+);
 
         break;
       }
@@ -456,14 +456,14 @@ const selectedProducts = indexes
         ]);
 
         const issueTypes = [
-          "Order Issue",
-          "Payment & Refund",
-          "Product Quality",
-          "Delivery Issue",
-          "Account & Login",
-          "Website Bug",
-          "Other",
-        ];
+  "Order Issue",
+  "Payment & Refunds",
+  "Product Issue",
+  "Account & Login",
+  "Website Bug/Technical Problem",
+  "Request Related",
+  "Other",
+];
 
         const issue = issueTypes[Number(message) - 1];
 
