@@ -135,17 +135,17 @@ const Navbar = () => {
           <div className="hidden lg:flex items-center gap-8 font-medium text-[#5C3A2E]">
             {!isLoggedIn ? (
              <Link
-    to="/login"
-    className="rounded-full border border-orange-300 px-5 py-2 transition hover:bg-[#F97354] hover:text-white"
->
-    Login
-</Link>
+                to="/login"
+                className="rounded-full text-[#4E342E] border border-orange-300 px-5 py-2 transition hover:bg-[#F97354] hover:text-white"
+             >
+             Login
+           </Link>
             ) : (
               <>
                 {userRole === "admin" ? (
-                  <Link to="/admindashboard"className="hover:text-[#F97354] transition" onClick={() => setMenuOpen(false)}>Admin Dashboard</Link>
+                  <Link to="/admindashboard"className="hover:text-[#F97354] text-[#4E342E] transition" onClick={() => setMenuOpen(false)}>Admin Dashboard</Link>
                 ) : (
-                  <Link to="/dashboard" className="hover:text-[#F97354] transition" onClick={() => setMenuOpen(false)}>Profile</Link>
+                  <Link to="/dashboard" className="hover:text-[#F97354] text-[#4E342E] transition" onClick={() => setMenuOpen(false)}>Profile</Link>
                 )}
                 <button
                  type="button"
@@ -170,19 +170,19 @@ const Navbar = () => {
           {/* Mobile Dropdown */}
           {menuOpen && (
             <div className="absolute top-full right-0 mt-3 w-60 rounded-2xl bg-[#FFF8F1] shadow-2xl border border-orange-100 overflow-hidden z-50 flex flex-col">
-              <Link to="/" className="px-4 py-2 hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Home</Link>
-              <Link to="/features" className="px-4 py-2 hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Features</Link>
-              <Link to="/team" className="px-4 py-2 hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Team</Link>
-              <Link to="/contact" className="px-4 py-2 hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Contact Us</Link>
+              <Link to="/" className="px-4 py-2  text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Home</Link>
+              <Link to="/features" className="px-4 py-2 text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Features</Link>
+              <Link to="/team" className="px-4 py-2 text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Team</Link>
+              <Link to="/contact" className="px-4 py-2 text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Contact Us</Link>
 
               {!isLoggedIn ? (
-                <Link to="/login" className="px-4 py-2 hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Login</Link>
+                <Link to="/login" className="px-4 py-2 text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Login</Link>
               ) : (
                 <>
                   {userRole === "admin" ? (
-                    <Link to="/admindashboard" className="px-4 py-2 hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Admin Dashboard</Link>
+                    <Link to="/admindashboard" className="px-4 py-2 text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Admin Dashboard</Link>
                   ) : (
-                    <Link to="/dashboard" className="px-4 py-2 hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Profile</Link>
+                    <Link to="/dashboard" className="px-4 py-2 text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Profile</Link>
                   )}
                   <button
                    type="button"
