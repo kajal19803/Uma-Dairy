@@ -461,3 +461,6 @@ className="mt-8 w-full py-4 rounded-xl bg-[#F97354] hover:bg-[#ea6847] text-whit
 </div>
 
 );
+};
+
+export default Cart;
