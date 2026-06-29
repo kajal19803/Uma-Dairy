@@ -303,7 +303,7 @@ className="w-full rounded-xl border border-orange-200 bg-[#FFF8F1] px-4 py-3 tex
 type="button"
 onClick={sendOtp}
 disabled={otpSent}
-className="mt-2 text-[#F97354] hover:underline">
+className="mt-0 text-[#F97354] bg-transparent hover:underline border-none outline-none focus:outline-none focus:ring-0 active:outline-none active:ring-0 shadow-none">
 
 {otpSent ? "OTP Sent" : "Send OTP"}
 
@@ -331,7 +331,7 @@ className="w-full rounded-xl border border-orange-200 bg-[#FFF8F1] px-4 py-3"
 <button
 type="button"
 onClick={verifyOtp}
-className="mt-2 text-[#F97354] hover:underline">
+className="mt-2 text-[#F97354] border-none outline-none focus:outline-none focus:ring-0 active:outline-none active:ring-0 shadow-none bg-transparent hover:underline">
 
 Verify OTP
 
@@ -365,7 +365,7 @@ className="w-full rounded-xl border border-orange-200 bg-[#FFF8F1] px-4 py-3 pr-
 <button
 type="button"
 onClick={()=>setShowPass(!showPass)}
-className="absolute right-4 top-[50px]">
+className="absolute right-0 top-[15px] h-full px-6 flex items-center justify-center bg-transparent border-none outline-none focus:outline-none focus:ring-0 active:outline-none active:ring-0 shadow-none text-[#F97354] hover:text-[#ea6847]">
 
 {showPass?<EyeSlashIcon className="h-5 w-5"/>:<EyeIcon className="h-5 w-5"/>}
 
@@ -398,9 +398,9 @@ className="w-full rounded-xl border border-orange-200 bg-[#FFF8F1] px-4 py-3 pr-
 <button
 type="button"
 onClick={()=>setShowConfirmPass(!showConfirmPass)}
-className="absolute right-4 top-[50px]">
+className="absolute right-0 top-[15px] h-full px-6 flex items-center justify-center bg-transparent border-none outline-none focus:outline-none focus:ring-0 active:outline-none active:ring-0 shadow-none text-[#F97354] hover:text-[#ea6847]">
 
-{showConfirmPass?<EyeSlashIcon className="h-5 w-5"/>:<EyeIcon className="h-5 w-5"/>}
+{showConfirmPass?<EyeSlashIcon className="h-5 hover:border-none w-5"/>:<EyeIcon className="h-5 bg-transparent w-5"/>}
 
 </button>
 
@@ -465,7 +465,7 @@ className="w-full py-4 rounded-xl bg-[#F97354] hover:bg-[#ea6847] text-white fon
 
 <button
 onClick={()=>setShowForgot(true)}
-className="text-[#F97354] hover:underline">
+className="text-[#F97354] bg-transparent hover:underline">
 
 Forgot Password?
 
@@ -500,7 +500,7 @@ onError={handleGoogleLoginError}
 
 <button
 onClick={toggleForm}
-className="ml-2 text-[#F97354] font-semibold hover:underline">
+className="ml-2 text-[#F97354] font-semibold bg-transparent hover:underline border-none outline-none focus:outline-none focus:ring-0 active:outline-none active:ring-0 shadow-none">
 
 {isLogin?"Register":"Login"}
 

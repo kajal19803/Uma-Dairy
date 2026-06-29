@@ -155,254 +155,510 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex w-screen min-h-screen bg-gradient-to-br from-blue-100 via-green-100 to-teal-200">
-      <Navbar />
-      <aside className="w-64 bg-white shadow p-4 space-y-4">
-        <h2 className="text-lg text-black font-bold">My Dashboard</h2>
-        <button onClick={() => setActiveSection('profile')} className="block bg-white text-black w-full text-left">Profile</button>
-        <button onClick={() => setActiveSection('wishlist')} className="block bg-white text-black w-full text-left">Wishlist</button>
-        <button onClick={() => setActiveSection('addresses')} className="block bg-white text-black w-full text-left">Addresses</button>
-        <button onClick={() => setActiveSection('phones')} className="block bg-white text-black w-full text-left">Phone Numbers</button>
-        <button onClick={() => setActiveSection('orders')} className="block bg-white text-black w-full text-left">Orders</button>
-        <button onClick={() => setActiveSection('tickets')} className="block bg-white text-black w-full text-left">Your Tickets</button>
-      </aside>
-      <main className="flex-grow p-6 text-black">
-        {activeSection === 'profile' && (
-          <div>
-            <h1 className="text-2xl text-black font-bold mb-4">Welcome {user?.name}</h1>
-            <p>Email: {user?.email}</p>
-          </div>
-        )}
+<div className="min-h-screen w-screen bg-[#FFF8F1]">
 
-        {activeSection === 'wishlist' && (
-          <div>
-            <h2 className="text-xl font-bold mb-4 text-green-700">My Wishlist</h2>
-            {wishlist.length ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {wishlist.map((item, i) => (
-                  <div key={item._id || i} className="border bg-white rounded shadow p-4">
-                    <Link to={`/product/${item._id}`}>
-                      <img
-                        src={item.images?.[0]
-                          ? item.images[0].startsWith('/uploads')
-                            ? `${API_URL}${item.images[0]}`
-                            : `${API_URL}/uploads/${item.images[0]}`
-                          : '/placeholder.jpg'}
-                        alt={item.name}
-                        className="w-full h-40 object-cover rounded mb-2"
-                        onError={(e) => { e.target.src = '/placeholder.jpg'; }}
-                      />
-                      <h3 className="text-lg font-semibold">{item.name || 'Product Name'}</h3>
-                      <p className="text-green-600 font-bold">
-                        ₹ {item.price || 'N/A'}{' '}
-                        <span className="text-sm text-red-500">({item.discount || 0}% OFF)</span>
-                      </p>
-                      <p className={`text-sm font-medium ${item.inStock ? 'text-green-600' : 'text-red-500'}`}>
-                        {item.inStock ? 'In Stock' : 'Out of Stock'}
-                      </p>
-                    </Link>
-                    <button
-                      onClick={() => removeFromWishlist(item._id)}
-                      className="bg-black text-white px-3 py-1 rounded mt-2"
-                    >
-                      <FaHeart />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p>No items in wishlist.</p>
-            )}
-          </div>
-        )}
+<Navbar/>
 
-{activeSection === 'orders' && (
-  <div>
-    <h2 className="text-2xl font-bold mb-4 text-indigo-800">My Orders</h2>
-    {orders.length ? (
-      <div className="space-y-4">
-        {orders.map((order, i) => (
-          <div key={i} className="bg-white border rounded-lg shadow p-4">
-            <div className="flex justify-between items-center">
-              <span className={`text-sm font-semibold px-2 py-1 rounded ${
-                order.status === 'cancelled'
-                  ? 'bg-red-100 text-red-700'
-                  : order.status === 'delivered'
-                  ? 'bg-green-100 text-green-700'
-                  : 'bg-yellow-100 text-yellow-700'
-              }`}>
-                {order.status?.toUpperCase() || 'PROCESSING'}
-              </span>
-              <span className="text-gray-500 text-sm">
-                {new Date(order.createdAt).toLocaleDateString('en-IN', {
-                  weekday: 'short',
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                })}
-              </span>
-            </div>
+<div className="max-w-7xl mx-auto pt-28 pb-16 px-5 grid lg:grid-cols-4 gap-8">
 
-            <p className="text-sm text-gray-500 mt-1">Order ID: {order.orderId}</p>
-               <p className="text-sm text-gray-700">Payment:{order.paymentMethod}</p>
-               <p className="text-black "><strong>🏠 Delivery Address:</strong></p>
-                   {typeof order.address === 'object' ? (
-                   <p className="ml-2 text-sm text-gray-700">
-                     {order.address.fullName}, {order.address.street}, {order.address.city}, {order.address.state} - {order.address.zip}
-                   </p>
-                  ) : (
-               <p className="ml-2 text-sm text-gray-700">{order.address}</p>
-                   )}
+{/* SIDEBAR */}
 
-                 <p className="text-sm text-gray-700">Phone: {order.phone}</p>
-             { order.items.map((item, idx) => (
-              <div key={idx} className="flex items-start gap-4 mt-3">
-                <img
-                  src={
-                     item.productId?.images?.[0]
-                     ? item.productId.images[0].startsWith('/uploads')
-                     ? `${API_URL}${item.productId.images[0]}`
-                     : `${API_URL}/uploads/${item.productId.images[0]}`
-                    : '/placeholder.jpg'
-                      }
-                  alt={item.product?.name || 'Product'}
-                  className="w-24 h-24 object-cover rounded"
-                  onError={(e) => { e.target.src = '/placeholder.jpg'; }}
-                />
-                <div>
-                   <h3 className="font-bold">{item.name}</h3>
-                  <p className="text-sm text-gray-700">Quantity: {item.quantity}</p>
-                  <p className="text-sm text-gray-700">Price: ₹{item.price}</p>
-                  
-  
-                 
-                </div>
-                
-            </div>
-            
-            
-              
-           ))}
+<div className="lg:col-span-1">
 
-            <Link
-              to={`/order/${order._id}`}
-              className="text-indigo-600 underline text-sm mt-2 inline-block"
-            >
-              View Details
-            </Link>
-            {order.status === 'pending' && (
-                    <button
-                   onClick={() => navigate('/payment', { state: { order } })}
-                  className="mt-2 bg-indigo-600 text-white text-sm px-3 py-1 rounded hover:bg-indigo-700"
-                   >
-                 Complete Payment
-                   </button>
-                    ) }
+<div className="bg-white rounded-3xl shadow-xl p-6 sticky top-28">
 
-          </div>
-        ))}
-      </div>
-    ) : (
-      <p>No orders placed yet.</p>
-    )}
-  </div>
+<div className="text-center">
+
+<div className="w-24 h-24 rounded-full bg-orange-100 mx-auto flex items-center justify-center text-4xl">
+👤
+</div>
+
+<h2 className="mt-4 text-2xl font-bold text-[#3B2418]">
+{user?.name}
+</h2>
+
+<p className="text-gray-500 text-sm mt-1">
+{user?.email}
+</p>
+
+</div>
+
+<hr className="my-6"/>
+
+<div className="space-y-2">
+
+<button onClick={()=>setActiveSection("profile")} className={`w-full text-left px-5 py-3 rounded-xl transition ${activeSection==="profile"?"bg-[#F97354] text-white":"hover:bg-orange-50 text-[#3B2418]"}`}>
+👤 My Profile
+</button>
+
+<button onClick={()=>setActiveSection("wishlist")} className={`w-full text-left px-5 py-3 rounded-xl transition ${activeSection==="wishlist"?"bg-[#F97354] text-white":"hover:bg-orange-50 text-[#3B2418]"}`}>
+❤️ Wishlist
+</button>
+
+<button onClick={()=>setActiveSection("orders")} className={`w-full text-left px-5 py-3 rounded-xl transition ${activeSection==="orders"?"bg-[#F97354] text-white":"hover:bg-orange-50 text-[#3B2418]"}`}>
+📦 Orders
+</button>
+
+<button onClick={()=>setActiveSection("addresses")} className={`w-full text-left px-5 py-3 rounded-xl transition ${activeSection==="addresses"?"bg-[#F97354] text-white":"hover:bg-orange-50 text-[#3B2418]"}`}>
+📍 Addresses
+</button>
+
+<button onClick={()=>setActiveSection("phones")} className={`w-full text-left px-5 py-3 rounded-xl transition ${activeSection==="phones"?"bg-[#F97354] text-white":"hover:bg-orange-50 text-[#3B2418]"}`}>
+📞 Phone Numbers
+</button>
+
+<button onClick={()=>setActiveSection("tickets")} className={`w-full text-left px-5 py-3 rounded-xl transition ${activeSection==="tickets"?"bg-[#F97354] text-white":"hover:bg-orange-50 text-[#3B2418]"}`}>
+🎫 Support Tickets
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+{/* MAIN */}
+
+<div className="lg:col-span-3">
+
+{/* PROFILE */}
+
+{activeSection==="profile"&&(
+
+<div className="bg-white rounded-3xl shadow-xl p-10">
+
+<h1 className="text-4xl font-bold text-[#3B2418]">
+Welcome Back 👋
+</h1>
+
+<p className="mt-2 text-gray-500">
+Manage your account information and orders.
+</p>
+
+<div className="grid md:grid-cols-2 gap-6 mt-10">
+
+<div className="rounded-2xl bg-[#FFF8F1] p-6">
+
+<p className="text-gray-500">
+Name
+</p>
+
+<h3 className="text-xl font-bold text-[#3B2418] mt-2">
+{user?.name}
+</h3>
+
+</div>
+
+<div className="rounded-2xl bg-[#FFF8F1] p-6">
+
+<p className="text-gray-500">
+Email
+</p>
+
+<h3 className="text-xl font-bold text-[#3B2418] mt-2">
+{user?.email}
+</h3>
+
+</div>
+
+<div className="rounded-2xl bg-[#FFF8F1] p-6">
+
+<p className="text-gray-500">
+Saved Addresses
+</p>
+
+<h3 className="text-4xl font-bold text-[#F97354] mt-2">
+{addresses.length}
+</h3>
+
+</div>
+
+<div className="rounded-2xl bg-[#FFF8F1] p-6">
+
+<p className="text-gray-500">
+Orders
+</p>
+
+<h3 className="text-4xl font-bold text-[#F97354] mt-2">
+{orders.length}
+</h3>
+
+</div>
+
+</div>
+
+</div>
+
 )}
 
+{/* WISHLIST */}
 
-        {activeSection === 'addresses' && (
-          <div>
-            <h2 className="text-xl text-black font-bold mb-2">Delivery Addresses</h2>
-            {addresses.map((addr, i) => (
-              <div key={i} className="mb-2 border p-2 rounded">
-                <p className="text-black">{addr.fullName}, {addr.street}</p>
-                <p className="text-black">{addr.city}, {addr.state} - {addr.zip}</p>
-                <button onClick={() => removeAddress(addr)} className="text-sm bg-white text-red-600 underline">Remove</button>
-              </div>
-            ))}
-            <h3 className="mt-4 font-semibold">Add New Address</h3>
-            <input className="block text-black bg-white mb-2 p-1 border" placeholder="Full Name" value={newAddress.fullName} onChange={e => setNewAddress({ ...newAddress, fullName: e.target.value })} />
-            <input className="block text-black bg-white mb-2 p-1 border" placeholder="Street" value={newAddress.street} onChange={e => setNewAddress({ ...newAddress, street: e.target.value })} />
-            <input className="block text-black bg-white mb-2 p-1 border" placeholder="City" value={newAddress.city} onChange={e => setNewAddress({ ...newAddress, city: e.target.value })} />
-            <input className="block text-black bg-white mb-2 p-1 border" placeholder="State" value={newAddress.state} onChange={e => setNewAddress({ ...newAddress, state: e.target.value })} />
-            <input className="block text-black bg-white mb-2 p-1 border" placeholder="ZIP" value={newAddress.zip} onChange={e => setNewAddress({ ...newAddress, zip: e.target.value })} />
-            <button className="bg-green-600 text-white px-4 py-1 rounded" onClick={handleAddAddress}>Add Address</button>
-          </div>
-        )}
+{activeSection==="wishlist"&&(
 
-        {activeSection === 'phones' && (
-          <div>
-            <h2 className="text-xl text-black font-bold mb-2">Phone Numbers</h2>
-            {phoneNumbers.map((phone, i) => (
-              <div key={i} className="flex justify-between items-center mb-2">
-                <p className="text-black">{phone}</p>
-                <button onClick={() => removePhone(phone)} className="text-sm bg-white text-red-600 underline">Remove</button>
-              </div>
-            ))}
-            <input className="block text-black bg-white mb-2 p-1 border" placeholder="New Phone Number" value={newPhone} onChange={e => setNewPhone(e.target.value)} />
-            <button className="bg-blue-600 text-white px-4 py-1 rounded" onClick={handleAddPhone}>Add Phone</button>
-          </div>
-        )}
-        {activeSection === 'tickets' && (
-      <div>
-        <h2 className="text-xl font-bold mb-4 text-purple-700">My Support Tickets</h2>
-         {tickets.length ? (
-          <div className="space-y-4">
-             {tickets.map((ticket, idx) => (
-              <div key={idx} className="bg-white border rounded p-4">
-                <div className="flex justify-between items-center">
-                 <span className={`text-sm font-semibold px-2 py-1 rounded ${
-                    ticket.status === 'Resolved'
-                      ? 'bg-green-100 text-green-800'
-                     : ticket.status === 'Open'
-                   ? 'bg-yellow-100 text-yellow-800'
-                     : 'bg-red-100 text-red-800'
-                   }`}>
-                   {ticket.status?.toUpperCase() || 'OPEN'}
-                  </span>
-                 <span className="text-sm text-gray-500">
-                   {new Date(ticket.createdAt).toLocaleDateString('en-IN', {
-                    weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
-                   })}
-                 </span>
-               </div>
-              <p className="mt-2 text-sm text-gray-600">Ticket ID: {ticket.ticketNumber}</p>
-              <h3 className="text-lg text-black font-bold mt-2">{ticket.issueType}</h3>
-              <p className="text-sm text-gray-700 mt-1">{ticket.message}</p>
-              <p className="text-sm text-gray-700 mt-1">Order Id: {ticket.orderId}</p>
-               {ticket.images && ticket.images.length > 0 && (
-                <div className="flex gap-2 mt-2">
-                 {ticket.images.map((img, i) => (
-                  <img
-                    key={i}
-                    src={`${API_URL}${ticket.images[0]}`}
-                    alt={`Issue ${i + 1}`}
-                    className="w-32 h-32 object-cover rounded border"
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    ) : (
-      <p>No support tickets raised yet.</p>
-    )}
-  </div>
+<div>
+
+<h2 className="text-4xl font-bold text-[#3B2418] mb-8">
+My Wishlist
+</h2>
+
+{wishlist.length?(
+<div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+{wishlist.map(item=>(
+
+<div key={item._id} className="bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition">
+
+<Link to={`/product/${item._id}`}>
+
+<img
+src={
+item.images?.[0]
+?(item.images[0].startsWith("/uploads")
+?`${API_URL}${item.images[0]}`
+:`${API_URL}/uploads/${item.images[0]}`)
+:"/placeholder.jpg"
+}
+alt={item.name}
+className="w-full h-56 object-cover"
+/>
+
+<div className="p-5">
+
+<h3 className="text-xl font-bold text-[#3B2418]">
+{item.name}
+</h3>
+
+<p className="mt-2 text-2xl font-bold text-[#F97354]">
+₹{item.price}
+</p>
+
+<p className={`mt-2 font-medium ${item.inStock?"text-green-600":"text-red-500"}`}>
+{item.inStock?"In Stock":"Out of Stock"}
+</p>
+
+</div>
+
+</Link>
+
+<div className="px-5 pb-5">
+
+<button
+onClick={()=>removeFromWishlist(item._id)}
+className="w-full bg-[#F97354] hover:bg-[#ea6847] text-white py-3 rounded-xl transition flex justify-center items-center gap-2">
+
+<FaHeart/>
+
+Remove
+
+</button>
+
+</div>
+
+</div>
+
+))}
+
+</div>
+
+):(
+
+<div className="bg-white rounded-3xl shadow-xl p-16 text-center">
+
+<div className="text-7xl">
+❤️
+</div>
+
+<h3 className="mt-5 text-2xl font-bold text-[#3B2418]">
+Your Wishlist is Empty
+</h3>
+
+<p className="mt-2 text-gray-500">
+Save your favourite dairy products here.
+</p>
+
+</div>
+
 )}
 
-      </main>
-    </div>
-  );
+</div>
+
+)}
+{/* ORDERS */}
+
+{activeSection==="orders"&&(
+
+<div>
+
+<h2 className="text-4xl font-bold text-[#3B2418] mb-8">
+My Orders
+</h2>
+
+{orders.length?(
+<div className="space-y-6">
+
+{orders.map((order,i)=>(
+
+<div key={i} className="bg-white rounded-3xl shadow-xl p-6">
+
+<div className="flex flex-wrap justify-between gap-3">
+
+<div>
+
+<h3 className="font-bold text-xl text-[#3B2418]">
+Order #{order.orderId}
+</h3>
+
+<p className="text-gray-500 mt-1">
+{new Date(order.createdAt).toLocaleDateString("en-IN")}
+</p>
+
+</div>
+
+<span className={`px-5 py-2 rounded-full text-sm font-semibold ${
+order.status==="delivered"
+?"bg-green-100 text-green-700"
+:order.status==="cancelled"
+?"bg-red-100 text-red-700"
+:"bg-orange-100 text-[#F97354]"
+}`}>
+{order.status}
+</span>
+
+</div>
+
+<div className="mt-5 space-y-3">
+
+{order.items.map((item,idx)=>(
+
+<div key={idx} className="flex items-center gap-4 border-b border-orange-100 pb-3">
+
+<img
+src={
+item.productId?.images?.[0]
+?(item.productId.images[0].startsWith("/uploads")
+?`${API_URL}${item.productId.images[0]}`
+:`${API_URL}/uploads/${item.productId.images[0]}`)
+:"/placeholder.jpg"}
+className="w-20 h-20 rounded-xl object-cover"
+/>
+
+<div className="flex-1">
+
+<h4 className="font-semibold text-[#3B2418]">
+{item.name}
+</h4>
+
+<p className="text-gray-500">
+Qty : {item.quantity}
+</p>
+
+</div>
+
+<p className="font-bold text-[#F97354]">
+₹{item.price}
+</p>
+
+</div>
+
+))}
+
+</div>
+
+<div className="flex justify-between items-center mt-5">
+
+<p className="text-2xl font-bold text-[#F97354]">
+₹{order.totalAmount}
+</p>
+
+{order.status==="pending"&&(
+
+<button
+onClick={()=>navigate("/payment",{state:{order}})}
+className="bg-[#F97354] hover:bg-[#ea6847] text-white px-6 py-3 rounded-xl">
+
+Complete Payment
+
+</button>
+
+)}
+
+</div>
+
+</div>
+
+))}
+
+</div>
+
+):(
+
+<div className="bg-white rounded-3xl p-16 text-center shadow-xl">
+📦 No Orders Yet
+</div>
+
+)}
+
+</div>
+
+)}
+
+{/* ADDRESSES */}
+
+{activeSection==="addresses"&&(
+
+<div>
+
+<h2 className="text-4xl font-bold text-[#3B2418] mb-8">
+My Addresses
+</h2>
+
+<div className="space-y-5">
+
+{addresses.map((addr,i)=>(
+
+<div key={i} className="bg-white rounded-3xl shadow-lg p-6">
+
+<h3 className="font-bold text-xl text-[#3B2418]">
+{addr.fullName}
+</h3>
+
+<p className="text-gray-600 mt-2">
+{addr.street}
+</p>
+
+<p className="text-gray-600">
+{addr.city}, {addr.state} - {addr.zip}
+</p>
+
+<button
+onClick={()=>removeAddress(addr)}
+className="mt-4 text-red-500 hover:underline">
+
+Remove
+
+</button>
+
+</div>
+
+))}
+
+</div>
+
+</div>
+
+)}
+
+{/* PHONE */}
+
+{activeSection==="phones"&&(
+
+<div>
+
+<h2 className="text-4xl font-bold text-[#3B2418] mb-8">
+Phone Numbers
+</h2>
+
+<div className="bg-white rounded-3xl shadow-xl p-8">
+
+{phoneNumbers.map((phone,i)=>(
+
+<div key={i} className="flex justify-between items-center border-b border-orange-100 py-4">
+
+<span className="font-medium">
+{phone}
+</span>
+
+<button
+onClick={()=>removePhone(phone)}
+className="text-red-500 hover:underline">
+
+Remove
+
+</button>
+
+</div>
+
+))}
+
+<input
+value={newPhone}
+onChange={e=>setNewPhone(e.target.value)}
+placeholder="Add Phone Number"
+className="mt-6 w-full rounded-xl border border-orange-200 bg-[#FFF8F1] px-4 py-3"
+/>
+
+<button
+onClick={handleAddPhone}
+className="mt-5 bg-[#F97354] text-white px-6 py-3 rounded-xl">
+
+Add Phone
+
+</button>
+
+</div>
+
+</div>
+
+)}
+
+{/* TICKETS */}
+
+{activeSection==="tickets"&&(
+
+<div>
+
+<h2 className="text-4xl font-bold text-[#3B2418] mb-8">
+Support Tickets
+</h2>
+
+<div className="space-y-6">
+
+{tickets.length?tickets.map((ticket,i)=>(
+
+<div key={i} className="bg-white rounded-3xl shadow-xl p-6">
+
+<div className="flex justify-between">
+
+<h3 className="font-bold text-[#3B2418]">
+{ticket.issueType}
+</h3>
+
+<span className="bg-orange-100 text-[#F97354] px-4 py-2 rounded-full">
+{ticket.status}
+</span>
+
+</div>
+
+<p className="text-gray-600 mt-3">
+{ticket.message}
+</p>
+
+<p className="mt-3 text-gray-500">
+Ticket : {ticket.ticketNumber}
+</p>
+
+</div>
+
+)):(
+<div className="bg-white rounded-3xl shadow-xl p-16 text-center">
+🎫 No Support Tickets
+</div>
+)}
+
+</div>
+
+</div>
+
+)}
+
+</div>
+
+</div>
+
+</div>
+
+);
+
 };
 
 export default Dashboard;
-
-      
-
-
-
-
-
-
-
-
