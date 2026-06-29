@@ -181,27 +181,28 @@ Reply with:
         },
       });
 
-      const data = await res.json();
+      const response = await res.json();
 
-      if (!Array.isArray(data) || data.length === 0) {
-        delayBotMessage(
-          "📦 No previous orders were found in your account."
-        );
-        setFlowStep(null);
-        return;
-      }
+const orders = response.orders || [];
 
-      setRecentOrders(data);
+if (orders.length === 0) {
+  delayBotMessage(
+    "📦 No previous orders were found in your account."
+  );
+  setFlowStep(null);
+  return;
+}
 
-      const orderList = data
-        .slice(0, 5)
-        .map(
-          (order, index) =>
-            `${index + 1}. ${order.orderId} (${order.items.length} item${
-              order.items.length > 1 ? "s" : ""
-            })`
-        )
-        .join("\n");
+setRecentOrders(orders);
+
+const orderList = orders
+  .slice(0, 5)
+  .map(
+    (order, index) =>
+      `${index + 1}. ${order.orderId} (${order.productNames.length} products)`
+  )
+  .join("\n");
+  
 
       setFlowStep("selectOrder");
 
@@ -370,9 +371,7 @@ Thank you for choosing Uma Dairy 💚`
         setTicketData((prev) => ({
           ...prev,
           orderId: order.orderId,
-          productNames: order.items.map(
-            (item) => item.name
-          ),
+          productNames: order.productNames,
         }));
 
         setFlowStep("selectProducts");
@@ -380,12 +379,12 @@ Thank you for choosing Uma Dairy 💚`
         delayBotMessage(
 `Please select affected product(s).
 
-${order.items
-  .map(
-    (item, i) =>
-      `${i + 1}. ${item.name}`
-  )
-  .join("\n")}
+${order.productNames
+.map(
+(name,i)=>
+`${i+1}. ${name}`
+)
+.join("\n")}
 
 Example:
 1
@@ -409,13 +408,13 @@ or
           .split(",")
           .map((i) => Number(i.trim()) - 1);
 
-        const selectedProducts = indexes
-          .filter((i) => recentOrders.find(o => o.orderId === ticketData.orderId)?.items[i])
-          .map((i) =>
-            recentOrders
-              .find(o => o.orderId === ticketData.orderId)
-              .items[i].name
-          );
+        const order = recentOrders.find(
+  (o) => o.orderId === ticketData.orderId
+);
+
+const selectedProducts = indexes
+  .filter((i) => order?.productNames?.[i])
+  .map((i) => order.productNames[i]);
 
         if (!selectedProducts.length) {
           delayBotMessage(
