@@ -21,7 +21,7 @@ const ProductDetail = () => {
   const [selectedImage, setSelectedImage] = useState(null);
 
   const { cartItems, addToCart, updateQuantity } = useCart();
-  const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
+  const { wishlist, toggleWishlist } = useWishlist();
   
 
   useEffect(() => {
@@ -57,13 +57,9 @@ const ProductDetail = () => {
   };
 
   const handleToggleWishlist = (e, productId) => {
-    e.stopPropagation();
-    if (wishlist.includes(productId)) {
-      removeFromWishlist(productId);
-    } else {
-      addToWishlist(productId);
-    }
-  };
+  e.stopPropagation();
+  toggleWishlist(productId);
+};
 
   const quantity = getQuantity();
 
@@ -71,126 +67,335 @@ const ProductDetail = () => {
   if (!product) return <p className="text-center text-red-500 mt-10">Product not found.</p>;
 
   return (
-    <div className="min-h-screen w-screen bg-gradient-to-br from-blue-100 via-green-100 to-teal-200 py-8 px-4 md:px-16">
-      {/* 🔍 Image Zoom View */}
-      {selectedImage !== null && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50" onClick={() => setSelectedImage(null)}>
-          <div className="relative max-w-[90%] max-h-[90%]" onClick={(e) => e.stopPropagation()}>
-            <img
-              src={`${BACKEND_BASE_URL}${product.images[selectedImage]}`}
-              className="max-h-[80vh] w-auto mx-auto rounded shadow-lg"
-              alt={`Product Image ${selectedImage + 1}`}
-            />
-            {selectedImage > 0 && (
-              <button onClick={() => setSelectedImage((prev) => prev - 1)} className="absolute left-0 top-1/2 transform -translate-y-1/2 text-white text-3xl bg-black bg-opacity-50 px-4 py-2 rounded-r hover:bg-opacity-80">❮</button>
-            )}
-            {selectedImage < product.images.length - 1 && (
-              <button onClick={() => setSelectedImage((prev) => prev + 1)} className="absolute right-0 top-1/2 transform -translate-y-1/2 text-white text-3xl bg-black bg-opacity-50 px-4 py-2 rounded-l hover:bg-opacity-80">❯</button>
-            )}
-          </div>
-        </div>
-      )}
+<div className="min-h-screen w-screen bg-[#FFF8F1] pt-28 pb-20">
 
-      {/* Product Details Section */}
-      <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6 flex flex-col md:flex-row gap-8">
-        <div className="w-full md:w-[40%]">
-          <Swiper pagination={{ clickable: true }} modules={[Pagination]} className="rounded-md">
-            {product.images?.map((img, idx) => (
-              <SwiperSlide key={idx}>
-                <img
-                  src={`${BACKEND_BASE_URL}${img}`}
-                  alt={`${product.name} ${idx + 1}`}
-                  onClick={() => setSelectedImage(idx)}
-                  className="w-full h-[500px] object-cover rounded-md cursor-pointer"
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
+{/* Image Zoom */}
+{selectedImage !== null && (
+<div
+className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+onClick={()=>setSelectedImage(null)}
+>
 
-        <div className="w-full md:w-[60%]">
-          <h1 className="text-3xl font-bold text-gray-800">{product.name}</h1>
-          <p className="text-sm text-gray-500 mt-1 capitalize">{product.category}</p>
+<div
+className="relative max-w-6xl w-full px-10"
+onClick={(e)=>e.stopPropagation()}
+>
 
-          <div className="mt-2 flex items-center gap-2">
-            <p className="text-yellow-600 font-semibold text-lg">⭐ {product.rating?.toFixed(1) || "0.0"}</p>
-            <p className="text-gray-500 text-sm">({product.numRatings || 0} ratings)</p>
-          </div>
+<img
+src={`${BACKEND_BASE_URL}${product.images[selectedImage]}`}
+alt=""
+className="max-h-[85vh] mx-auto rounded-3xl shadow-2xl"
+/>
 
-          <div className="mt-4">
-            <span className="text-2xl font-bold text-green-700">₹{product.price}</span>
-            <span className="line-through text-gray-500 ml-3">₹{product.mrp}</span>
-            <span className="ml-2 text-red-600 text-sm">({product.discount}% OFF)</span>
-            {product.unit && (
-              <span className="ml-4 text-sm text-gray-600">per {product.unit}</span>
-            )}
-          </div>
+{selectedImage>0&&(
+<button
+onClick={()=>setSelectedImage(selectedImage-1)}
+className="absolute left-6 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white text-[#F97354] text-3xl shadow-xl"
+>
+❮
+</button>
+)}
 
-          <p className="mt-4 text-gray-700 whitespace-pre-line">{product.description}</p>
-          <p className={`mt-4 font-medium ${product.inStock ? 'text-green-600' : 'text-red-500'}`}>
-            {product.inStock ? 'In Stock' : 'Out of Stock'}
-          </p>
+{selectedImage<product.images.length-1&&(
+<button
+onClick={()=>setSelectedImage(selectedImage+1)}
+className="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white text-[#F97354] text-3xl shadow-xl"
+>
+❯
+</button>
+)}
 
-          <div className="mt-4 flex items-center gap-2 text-red-600 cursor-pointer w-fit" onClick={(e) => handleToggleWishlist(e, product._id)}>
-            {wishlist.includes(product._id) ? <FaHeart /> : <FaRegHeart />}
-            <span className="text-sm">{wishlist.includes(product._id) ? 'Remove from Wishlist' : 'Add to Wishlist'}</span>
-          </div>
+</div>
 
-          {product.ingredients && (
-            <div className="mt-4">
-              <h3 className="font-semibold text-gray-800">Ingredients:</h3>
-              <p className="text-gray-700">{product.ingredients}</p>
-            </div>
-          )}
+</div>
+)}
 
-          {product.nutritionalInfo && (
-            <div className="mt-4">
-              <h3 className="font-semibold text-gray-800">Nutritional Information:</h3>
-              <p className="text-gray-700 whitespace-pre-line">{product.nutritionalInfo}</p>
-            </div>
-          )}
+<div className="max-w-7xl mx-auto px-5">
 
-          {product.inStock && (
-            <div className="mt-6">
-              {quantity === 0 ? (
-                <button onClick={() => addToCart(product)} className="px-6 py-2 bg-yellow-800 text-white rounded hover:bg-yellow-700 transition">Add to Cart</button>
-              ) : (
-                <div className="flex items-center space-x-4">
-                  <button onClick={handleDecrement} className="px-3 py-1 bg-yellow-800 text-white rounded hover:bg-yellow-700 transition">-</button>
-                  <span className="text-lg font-semibold">{quantity}</span>
-                  <button onClick={handleIncrement} className="px-3 py-1 bg-yellow-800 text-white rounded hover:bg-yellow-700 transition">+</button>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
+<div className="grid lg:grid-cols-2 gap-10 items-start">
 
-      {/* Related Products */}
-      {relatedProducts.length > 0 && (
-        <div className="max-w-6xl mx-auto mt-10">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Related Products</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {relatedProducts.map((item, index) => (
-              <ProductCard
-                key={item._id}
-                product={item}
-                isWishlisted={wishlist.includes(item._id)}
-                imageIndex={0} // no slider needed
-                onClick={() => navigate(`/product/${item._id}`)}
-                onHover={() => {}}
-                onLeave={() => {}}
-                toggleWishlist={handleToggleWishlist}
-                backendUrl={BACKEND_BASE_URL}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
+{/* LEFT */}
+
+<div className="bg-white rounded-[32px] shadow-xl p-6 sticky top-28">
+
+<Swiper
+pagination={{clickable:true}}
+modules={[Pagination]}
+className="rounded-[28px]"
+>
+
+{product.images?.map((img,index)=>(
+<SwiperSlide key={index}>
+
+<img
+src={`${BACKEND_BASE_URL}${img}`}
+alt=""
+onClick={()=>setSelectedImage(index)}
+className="w-full h-[620px] object-cover rounded-[28px] cursor-zoom-in"
+/>
+
+</SwiperSlide>
+))}
+
+</Swiper>
+
+<div className="grid grid-cols-4 gap-3 mt-5">
+
+{product.images?.map((img,index)=>(
+
+<img
+key={index}
+src={`${BACKEND_BASE_URL}${img}`}
+onClick={()=>setSelectedImage(index)}
+className="h-24 w-full rounded-2xl object-cover cursor-pointer border-2 border-orange-100 hover:border-[#F97354]"
+alt=""
+/>
+
+))}
+
+</div>
+
+</div>
+
+{/* RIGHT */}
+
+<div className="bg-white rounded-[32px] shadow-xl p-10">
+
+<div className="flex justify-between items-start">
+
+<div>
+
+<div className="inline-flex px-4 py-2 rounded-full bg-orange-100 text-[#F97354] font-semibold">
+{product.category}
+</div>
+
+<h1 className="mt-5 text-5xl font-bold text-[#3B2418]">
+{product.name}
+</h1>
+
+<div className="flex items-center gap-3 mt-4">
+
+<span className="text-yellow-500 text-xl">
+⭐ {product.rating?.toFixed(1)||"0.0"}
+</span>
+
+<span className="text-gray-500">
+({product.numRatings||0} Ratings)
+</span>
+
+</div>
+
+</div>
+
+<button
+onClick={(e)=>handleToggleWishlist(e,product._id)}
+className="w-14 h-14 rounded-full bg-white shadow-xl flex items-center justify-center border border-orange-100"
+>
+
+{wishlist.includes(product._id)?
+<FaHeart size={28} color="#F97354"/>:
+<FaRegHeart size={28} color="#F97354"/>
+}
+
+</button>
+
+</div>
+
+<div className="flex items-end gap-4 mt-8">
+
+<span className="text-5xl font-bold text-[#F97354]">
+₹{product.price}
+</span>
+
+<span className="line-through text-2xl text-gray-400">
+₹{product.mrp}
+</span>
+
+<span className="bg-red-100 text-red-600 px-3 py-1 rounded-full">
+{product.discount}% OFF
+</span>
+
+</div>
+
+<p className="mt-8 text-lg leading-8 text-gray-600">
+{product.description}
+</p>
+
+<div className="mt-8">
+<span className={`px-4 py-2 rounded-full font-semibold ${
+product.inStock
+?"bg-green-100 text-green-700"
+:"bg-red-100 text-red-600"
+}`}>
+{product.inStock?"✔ In Stock":"✖ Out of Stock"}
+</span>
+</div>
+{/* Ingredients */}
+
+{product.ingredients && (
+
+<div className="mt-10">
+
+<h3 className="text-2xl font-bold text-[#3B2418] mb-3">
+Ingredients
+</h3>
+
+<div className="bg-[#FFF8F1] rounded-2xl p-5 text-gray-600 leading-8">
+{product.ingredients}
+</div>
+
+</div>
+
+)}
+
+{/* Nutritional Information */}
+
+{product.nutritionalInfo && (
+
+<div className="mt-8">
+
+<h3 className="text-2xl font-bold text-[#3B2418] mb-3">
+Nutritional Information
+</h3>
+
+<div className="bg-[#FFF8F1] rounded-2xl p-5 whitespace-pre-line leading-8 text-gray-600">
+{product.nutritionalInfo}
+</div>
+
+</div>
+
+)}
+
+{/* Quantity */}
+
+<div className="mt-10">
+
+{product.inStock && (
+
+quantity===0?
+
+<button
+onClick={()=>addToCart(product)}
+className="w-full bg-[#F97354] hover:bg-[#ea6847] text-white py-4 rounded-2xl font-bold text-lg transition"
+>
+
+🛒 Add To Cart
+
+</button>
+
+:
+
+<div className="flex items-center justify-between rounded-2xl overflow-hidden border border-orange-200 bg-orange-50">
+
+<button
+onClick={handleDecrement}
+className="w-16 h-16 bg-[#F97354] text-white text-3xl hover:bg-[#ea6847] transition"
+>
+
+−
+
+</button>
+
+<div className="text-2xl font-bold text-[#3B2418]">
+
+{quantity}
+
+</div>
+
+<button
+onClick={handleIncrement}
+className="w-16 h-16 bg-[#F97354] text-white text-3xl hover:bg-[#ea6847] transition"
+>
+
++
+
+</button>
+
+</div>
+
+)}
+
+</div>
+
+{/* Features */}
+
+<div className="grid grid-cols-3 gap-5 mt-12">
+
+<div className="bg-[#FFF8F1] rounded-2xl p-5 text-center">
+
+<div className="text-4xl">
+🌿
+</div>
+
+<p className="mt-3 font-semibold text-[#3B2418]">
+100% Natural
+</p>
+
+</div>
+
+<div className="bg-[#FFF8F1] rounded-2xl p-5 text-center">
+
+<div className="text-4xl">
+🚚
+</div>
+
+<p className="mt-3 font-semibold text-[#3B2418]">
+Fast Delivery
+</p>
+
+</div>
+
+<div className="bg-[#FFF8F1] rounded-2xl p-5 text-center">
+
+<div className="text-4xl">
+🛡️
+</div>
+
+<p className="mt-3 font-semibold text-[#3B2418]">
+Quality Assured
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{/* Related Products */}
+
+<div className="mt-20">
+
+<h2 className="text-4xl font-bold text-[#3B2418] mb-8">
+Related Products
+</h2>
+
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+
+  {relatedProducts.map((item) => (
+    <ProductCard
+      key={item._id}
+      product={item}
+      isWishlisted={wishlist.includes(item._id)}
+      imageIndex={0}
+      onClick={() => navigate(`/product/${item._id}`)}
+      onHover={() => {}}
+      onLeave={() => {}}
+      toggleWishlist={handleToggleWishlist}
+      backendUrl={BACKEND_BASE_URL}
+    />
+  ))}
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+);
 };
 
 export default ProductDetail;
-
-

@@ -61,7 +61,7 @@ const ProductCard = ({
         e.stopPropagation();
         toggleWishlist(e, _id);
       }}
-      className="absolute top-4 right-4 z-20 w-11 h-11 rounded-full bg-white shadow-lg flex items-center justify-center hover:scale-110 transition"
+      className="absolute top-4 right-4 z-20 w-14 h-14 rounded-full bg-white/95 backdrop-blur shadow-2xl border border-orange-100 flex items-center justify-center hover:scale-110 transition"
     >
       {isWishlisted ? (
         <FaHeart className="text-[#F97354] text-xl" />
