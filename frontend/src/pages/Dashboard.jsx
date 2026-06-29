@@ -187,27 +187,27 @@ const Dashboard = () => {
 
 <div className="space-y-2">
 
-<button onClick={()=>setActiveSection("profile")} className={`w-full text-left px-5 py-3 rounded-xl transition ${activeSection==="profile"?"bg-[#F97354] text-white":"hover:bg-orange-50 text-[#3B2418]"}`}>
+<button onClick={()=>setActiveSection("profile")} className={`w-full text-left px-5 py-3 rounded-xl transition border border-orange-100 ${activeSection==="profile"?"bg-[#F97354] text-white border-[#F97354]":"bg-white text-[#3B2418] hover:bg-orange-50"}`}>
 👤 My Profile
 </button>
 
-<button onClick={()=>setActiveSection("wishlist")} className={`w-full text-left px-5 py-3 rounded-xl transition ${activeSection==="wishlist"?"bg-[#F97354] text-white":"hover:bg-orange-50 text-[#3B2418]"}`}>
+<button onClick={()=>setActiveSection("wishlist")} className={`w-full text-left px-5 py-3 rounded-xl transition border border-orange-100 ${activeSection==="wishlist"?"bg-[#F97354] text-white border-[#F97354]":"bg-white text-[#3B2418] hover:bg-orange-50"}`}>
 ❤️ Wishlist
 </button>
 
-<button onClick={()=>setActiveSection("orders")} className={`w-full text-left px-5 py-3 rounded-xl transition ${activeSection==="orders"?"bg-[#F97354] text-white":"hover:bg-orange-50 text-[#3B2418]"}`}>
+<button onClick={()=>setActiveSection("orders")} className={`w-full text-left px-5 py-3 rounded-xl transition border border-orange-100 ${activeSection==="orders"?"bg-[#F97354] text-white border-[#F97354]":"bg-white text-[#3B2418] hover:bg-orange-50"}`}>
 📦 Orders
 </button>
 
-<button onClick={()=>setActiveSection("addresses")} className={`w-full text-left px-5 py-3 rounded-xl transition ${activeSection==="addresses"?"bg-[#F97354] text-white":"hover:bg-orange-50 text-[#3B2418]"}`}>
+<button onClick={()=>setActiveSection("addresses")} className={`w-full text-left px-5 py-3 rounded-xl transition border border-orange-100 ${activeSection==="addresses"?"bg-[#F97354] text-white border-[#F97354]":"bg-white text-[#3B2418] hover:bg-orange-50"}`}>
 📍 Addresses
 </button>
 
-<button onClick={()=>setActiveSection("phones")} className={`w-full text-left px-5 py-3 rounded-xl transition ${activeSection==="phones"?"bg-[#F97354] text-white":"hover:bg-orange-50 text-[#3B2418]"}`}>
+<button onClick={()=>setActiveSection("phones")} className={`w-full text-left px-5 py-3 rounded-xl transition border border-orange-100 ${activeSection==="phones"?"bg-[#F97354] text-white border-[#F97354]":"bg-white text-[#3B2418] hover:bg-orange-50"}`}>
 📞 Phone Numbers
 </button>
 
-<button onClick={()=>setActiveSection("tickets")} className={`w-full text-left px-5 py-3 rounded-xl transition ${activeSection==="tickets"?"bg-[#F97354] text-white":"hover:bg-orange-50 text-[#3B2418]"}`}>
+<button onClick={()=>setActiveSection("tickets")} className={`w-full text-left px-5 py-3 rounded-xl transition border border-orange-100 ${activeSection==="tickets"?"bg-[#F97354] text-white border-[#F97354]":"bg-white text-[#3B2418] hover:bg-orange-50"}`}>
 🎫 Support Tickets
 </button>
 
@@ -421,7 +421,7 @@ order.status==="delivered"
 ?"bg-red-100 text-red-700"
 :"bg-orange-100 text-[#F97354]"
 }`}>
-{order.status}
+{order.paymentStatus || order.status || "Pending"}
 </span>
 
 </div>
@@ -439,7 +439,7 @@ item.productId?.images?.[0]
 ?`${API_URL}${item.productId.images[0]}`
 :`${API_URL}/uploads/${item.productId.images[0]}`)
 :"/placeholder.jpg"}
-className="w-20 h-20 rounded-xl object-cover"
+className="w-24 h-24 rounded-2xl object-cover border border-orange-100"
 />
 
 <div className="flex-1">
@@ -454,9 +454,14 @@ Qty : {item.quantity}
 
 </div>
 
-<p className="font-bold text-[#F97354]">
+<div className="text-right">
+<p className="text-gray-500 text-sm">
+Qty {item.quantity}
+</p>
+<p className="text-2xl font-bold text-[#F97354]">
 ₹{item.price}
 </p>
+</div>
 
 </div>
 
@@ -467,7 +472,7 @@ Qty : {item.quantity}
 <div className="flex justify-between items-center mt-5">
 
 <p className="text-2xl font-bold text-[#F97354]">
-₹{order.totalAmount}
+₹{order.totalAmount||order.totalPrice}
 </p>
 
 {order.status==="pending"&&(
@@ -532,8 +537,8 @@ My Addresses
 
 <button
 onClick={()=>removeAddress(addr)}
-className="mt-4 text-red-500 hover:underline">
 
+className="mt-5 bg-red-50 hover:bg-red-100 text-red-600 px-5 py-2 rounded-xl font-semibold transition">
 Remove
 
 </button>
