@@ -121,129 +121,334 @@ const Payment = () => {
   };
 
   return (
-    <div className="w-screen min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 via-green-100 to-teal-200 p-4">
-      <h2 className="text-2xl font-bold mb-4 text-yellow-900">Payment Page</h2>
+<div className="min-h-screen w-screen bg-[#FFF8F1] pt-28 pb-16 px-5">
 
-      <div className="mb-6 bg-white p-4 rounded shadow w-full max-w-md">
-        <p className="text-sm text-gray-700"><strong>Order ID:</strong> {orderId}</p>
+<div className="text-center mb-12">
+<h1 className="text-5xl font-bold text-[#3B2418]">
+Payment
+</h1>
 
-        <div>
-          <p className="font-semibold text-yellow-800 mb-2">Items:</p>
-          <div className="border rounded">
-            {cartItems.map((item) => (
-              <div
-                key={item._id}
-                className="flex justify-between items-center border-b p-3 text-sm"
-              >
-                <div className="flex items-center space-x-3">
-                  <img
-                    src={
-                       item.images?.[0]
-                         ? `${BACKEND_BASE_URL}${item.images[0]}`
-                        : item.productId?.images?.[0]
-                        ? item.productId.images[0].startsWith('/uploads')
-                        ? `${BACKEND_BASE_URL}${item.productId.images[0]}`
-                        : `${BACKEND_BASE_URL}/uploads/${item.productId.images[0]}`
-                        : '/placeholder.jpg'
-                        }
-                       alt={item.name}
-                      className="w-12 h-12 object-cover rounded"
-                      onError={(e) => {
-                      e.target.src = '/placeholder.jpg';
-                     }}
-                     />
+<p className="mt-3 text-lg text-gray-500">
+Review your order and complete your payment securely
+</p>
+</div>
 
-                  <div>
-                    <p className="font-semibold text-blue-700">{item.name}</p>
-                    <p className="text-gray-500">Product ID: {item._id}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-gray-700">Qty: {item.quantity}</p>
-                  <p className="text-gray-700">Price: ₹{item.price}</p>
-                  <p className="font-semibold text-green-700">Total: ₹{Number(item.price) * item.quantity}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+<div className="max-w-7xl mx-auto grid lg:grid-cols-3 gap-8">
 
-        <h3 className="font-semibold mb-2 text-gray-900 mt-4">Delivery Details</h3>
-        <p className="text-gray-700"><strong>Name:</strong> {user?.name}</p>
-        <p className="text-gray-700"><strong>Email:</strong> {user?.email}</p>
-        <p className="text-gray-700"><strong>Phone:</strong> {phone}</p>
-        <p className="text-black"><strong>🏠 Address:</strong></p>
-        {typeof address === 'object' ? (
-          <p className="ml-2 text-sm text-gray-700">
-            {address.street}, {address.city}, {address.state} - {address.zip || address.pincode}
-          </p>
-        ) : (
-          <p className="ml-2 text-sm text-gray-700">{address}</p>
-        )}
+{/* LEFT SIDE */}
 
-        <button
-          className="text-blue-600 bg-white underline mt-2"
-          onClick={() => navigate('/cart')}
-        >
-          ✏️ Edit Details
-        </button>
-      </div>
+<div className="lg:col-span-2">
 
-      {/* Payment method selector */}
-      <div className="mb-4 w-full max-w-md">
-        <p className="font-semibold text-gray-800 mb-2">Select Payment Method:</p>
-        <div className="flex items-center gap-6">
-          <label className="flex text-gray-700 items-center gap-2">
-            <input
-              type="radio"
-              name="paymentMethod"
-              value="online"
-              checked={paymentMethod === 'online'}
-              onChange={() => setPaymentMethod('online')}
-            />
-            Online Payment
-          </label>
-          <label className="flex text-gray-700 items-center gap-2">
-            <input
-              type="radio"
-              name="paymentMethod"
-              value="cod"
-              checked={paymentMethod === 'cod'}
-              onChange={() => setPaymentMethod('cod')}
-            />
-            Cash on Delivery
-          </label>
-        </div>
-      </div>
+<div className="bg-white rounded-3xl shadow-xl p-8">
 
-      <div className="mb-6 text-xl font-semibold text-yellow-900">
-        Total Amount to Pay: ₹{totalPrice?.toFixed(2)}
-      </div>
+<div className="flex items-center justify-between mb-8">
 
-      {paymentMethod === 'online' ? (
-        <button
-          onClick={handlePayment}
-          disabled={loading || !cfInstance}
-          className="bg-yellow-800 text-white px-6 py-3 rounded hover:bg-yellow-700 disabled:opacity-50"
-        >
-          {loading ? 'Processing...' : 'Pay Now'}
-        </button>
-      ) : (
-        <button
-          onClick={handleCOD}
-          className="bg-green-700 text-white px-6 py-3 rounded hover:bg-green-600"
-        >
-          Confirm Order
-        </button>
-      )}
+<div>
 
-      <div
-        id="cashfree-checkout"
-        className="w-full max-w-md mt-6"
-        style={{ minHeight: '700px' }}
-      />
-    </div>
-  );
+<h2 className="text-2xl font-bold text-[#3B2418]">
+Order Details
+</h2>
+
+<p className="text-gray-500 mt-1">
+Order ID : {orderId}
+</p>
+
+</div>
+
+<div className="bg-orange-100 text-[#F97354] px-5 py-2 rounded-full font-semibold">
+₹{totalPrice?.toFixed(2)}
+</div>
+
+</div>
+
+<div className="space-y-5">
+
+{cartItems.map((item)=>(
+
+<div
+key={item._id}
+className="flex justify-between items-center border border-orange-100 rounded-2xl p-5 hover:shadow-lg transition">
+
+<div className="flex items-center gap-5">
+
+<img
+src={
+item.images?.[0]
+?`${BACKEND_BASE_URL}${item.images[0]}`
+:item.productId?.images?.[0]
+?item.productId.images[0].startsWith('/uploads')
+?`${BACKEND_BASE_URL}${item.productId.images[0]}`
+:`${BACKEND_BASE_URL}/uploads/${item.productId.images[0]}`
+:'/placeholder.jpg'
+}
+alt={item.name}
+className="w-20 h-20 rounded-xl object-cover"
+onError={(e)=>{
+e.target.src="/placeholder.jpg";
+}}
+/>
+
+<div>
+
+<h3 className="font-bold text-xl text-[#3B2418]">
+{item.name}
+</h3>
+
+<p className="text-gray-500 text-sm mt-1">
+Qty : {item.quantity}
+</p>
+
+<p className="mt-2 text-[#F97354] font-bold">
+₹{item.price}
+</p>
+
+</div>
+
+</div>
+
+<div className="text-right">
+
+<p className="text-gray-500">
+Subtotal
+</p>
+
+<p className="text-xl font-bold text-[#F97354]">
+₹{Number(item.price)*item.quantity}
+</p>
+
+</div>
+
+</div>
+
+))}
+
+</div>
+
+<hr className="my-10"/>
+
+<h2 className="text-2xl font-bold text-[#3B2418] mb-6">
+Delivery Details
+</h2>
+
+<div className="bg-[#FFF8F1] rounded-2xl p-6 space-y-3">
+
+<div>
+<span className="font-semibold text-[#3B2418]">
+Customer :
+</span>
+
+<span className="ml-2 text-gray-700">
+{user?.name}
+</span>
+</div>
+
+<div>
+<span className="font-semibold text-[#3B2418]">
+Email :
+</span>
+
+<span className="ml-2 text-gray-700">
+{user?.email}
+</span>
+</div>
+
+<div>
+<span className="font-semibold text-[#3B2418]">
+Phone :
+</span>
+
+<span className="ml-2 text-gray-700">
+{phone}
+</span>
+</div>
+
+<div>
+
+<p className="font-semibold text-[#3B2418] mb-2">
+Delivery Address
+</p>
+
+{typeof address==="object"?(
+<p className="text-gray-600 leading-7">
+{address.street}, {address.city}, {address.state} - {address.zip||address.pincode}
+</p>
+):(
+<p className="text-gray-600">
+{address}
+</p>
+)}
+
+</div>
+
+<button
+onClick={()=>navigate("/cart")}
+className="mt-4 text-[#F97354] underline font-medium">
+Edit Details
+</button>
+
+</div>
+
+</div>
+{/* RIGHT SIDE */}
+
+<div className="lg:col-span-1">
+
+<div className="sticky top-28 bg-white rounded-3xl shadow-xl p-8">
+
+<h2 className="text-2xl font-bold text-[#3B2418]">
+Payment Method
+</h2>
+
+<p className="text-gray-500 mt-2">
+Choose your preferred payment option.
+</p>
+
+<div className="mt-8 space-y-4">
+
+<label className={`flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition ${
+paymentMethod==="online"
+?"border-[#F97354] bg-orange-50"
+:"border-orange-100"
+}`}>
+
+<div>
+
+<p className="font-semibold text-[#3B2418]">
+💳 Online Payment
+</p>
+
+<p className="text-sm text-gray-500">
+UPI • Cards • Net Banking • Wallets
+</p>
+
+</div>
+
+<input
+type="radio"
+name="paymentMethod"
+value="online"
+checked={paymentMethod==="online"}
+onChange={()=>setPaymentMethod("online")}
+/>
+
+</label>
+
+<label className={`flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition ${
+paymentMethod==="cod"
+?"border-[#F97354] bg-orange-50"
+:"border-orange-100"
+}`}>
+
+<div>
+
+<p className="font-semibold text-[#3B2418]">
+🚚 Cash on Delivery
+</p>
+
+<p className="text-sm text-gray-500">
+Pay when your order arrives.
+</p>
+
+</div>
+
+<input
+type="radio"
+name="paymentMethod"
+value="cod"
+checked={paymentMethod==="cod"}
+onChange={()=>setPaymentMethod("cod")}
+/>
+
+</label>
+
+</div>
+
+<hr className="my-8"/>
+
+<div className="space-y-4">
+
+<div className="flex justify-between">
+
+<span className="text-gray-600">
+Items
+</span>
+
+<span className="font-semibold">
+{cartItems.length}
+</span>
+
+</div>
+
+<div className="flex justify-between">
+
+<span className="text-gray-600">
+Delivery
+</span>
+
+<span className="text-green-600 font-semibold">
+FREE
+</span>
+
+</div>
+
+<hr/>
+
+<div className="flex justify-between items-center">
+
+<span className="text-lg font-bold text-[#3B2418]">
+Grand Total
+</span>
+
+<span className="text-4xl font-bold text-[#F97354]">
+₹{totalPrice?.toFixed(2)}
+</span>
+
+</div>
+
+</div>
+
+{paymentMethod==="online" ? (
+
+<button
+onClick={handlePayment}
+disabled={loading || !cfInstance}
+className="mt-8 w-full bg-[#F97354] hover:bg-[#ea6847] text-white py-4 rounded-xl font-bold text-lg transition disabled:opacity-50">
+
+{loading ? "Processing..." : "Pay Securely"}
+
+</button>
+
+):(
+
+<button
+onClick={handleCOD}
+className="mt-8 w-full bg-[#3B2418] hover:bg-[#2b1b12] text-white py-4 rounded-xl font-bold text-lg transition">
+
+Confirm COD Order
+
+</button>
+
+)}
+
+<p className="mt-6 text-center text-sm text-gray-500">
+🔒 100% Secure Payment powered by Cashfree
+</p>
+
+<div
+id="cashfree-checkout"
+className="mt-8"
+style={{minHeight:"700px"}}
+/>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+);
 };
 
 export default Payment;
