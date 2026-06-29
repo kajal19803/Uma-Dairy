@@ -45,15 +45,23 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("userRole");
-    clearUser();
-    setIsLoggedIn(false);
-    setUserRole(null);
-    navigate("/login");
-    setMenuOpen(false);
-  };
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  localStorage.removeItem("userRole");
+
+  clearUser();
+
+  setIsLoggedIn(false);
+  setUserRole(null);
+
+  // Notify other components
+  window.dispatchEvent(new Event("userUpdated"));
+
+  setMenuOpen(false);
+  setShowSearch(false);
+
+  navigate("/", { replace: true });
+};
 
   const handleSearchKeyDown = (e) => {
     if (e.key === "Enter" && searchTerm.trim()) {
@@ -117,10 +125,11 @@ const Navbar = () => {
                   <Link to="/dashboard" onClick={() => setMenuOpen(false)}>Profile</Link>
                 )}
                 <button
-                  onClick={handleLogout}
-                  className="bg-red-600 px-3 py-1 rounded hover:bg-red-700 text-white"
-                >
-                  Logout
+                 type="button"
+                 onClick={handleLogout}
+                 className="bg-red-600 px-3 py-1 rounded hover:bg-red-700 text-white transition"
+                 >
+                 Logout
                 </button>
               </>
             )}
@@ -153,13 +162,11 @@ const Navbar = () => {
                     <Link to="/dashboard" className="px-4 py-2 hover:bg-gray-100 border-b" onClick={() => setMenuOpen(false)}>Profile</Link>
                   )}
                   <button
-                    onClick={() => {
-                      handleLogout();
-                      setMenuOpen(false);
-                    }}
-                    className="px-4 py-2 text-left hover:bg-gray-100 text-red-600 font-semibold"
-                  >
-                    Logout
+                   type="button"
+                   onClick={handleLogout}
+                   className="px-4 py-2 text-left hover:bg-gray-100 text-red-600 font-semibold"
+                   >
+                   Logout
                   </button>
                 </>
               )}
