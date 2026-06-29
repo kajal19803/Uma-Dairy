@@ -81,7 +81,7 @@ const Navbar = () => {
     className="flex items-center gap-3"
 >
     <img
-        src="/logo.png"
+        src="/dairy-logo.png"
         alt="Uma Dairy"
         className="h-14 w-14 rounded-full object-cover shadow-md border border-orange-100"
     />
