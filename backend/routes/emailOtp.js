@@ -3,6 +3,8 @@ const nodemailer = require('nodemailer');
 const router = express.Router();
 
 const otpStore = new Map(); 
+console.log("BREVO_LOGIN =", process.env.BREVO_LOGIN);
+console.log("SMTP KEY LENGTH =", process.env.BREVO_SMTP_KEY?.length);
 
 const transporter = nodemailer.createTransport({
   host: "smtp-relay.brevo.com",
