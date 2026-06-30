@@ -1,7 +1,11 @@
 const mongoose = require ('mongoose');
 
 const orderSchema = new mongoose.Schema({
-  orderId: { type: String, required: true },
+  orderId: {
+  type: String,
+  required: true,
+  unique: true,
+},
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 
   items: [
@@ -40,10 +44,10 @@ const orderSchema = new mongoose.Schema({
     default: 'ONLINE',
   },
   paymentStatus: {
-    type: String,
-    enum: ['PAID', 'PENDING'],
-    default: 'PENDING',
-  },
+  type: String,
+  enum: ['PENDING', 'PAID', 'FAILED'],
+  default: 'PENDING',
+},
   orderStatus: {
     type: String,
     enum: ['PLACED', 'SHIPPED', 'DELIVERED', 'CANCELLED','PENDING'],
@@ -51,7 +55,22 @@ const orderSchema = new mongoose.Schema({
   },
 
   placedAt: { type: Date },
+  razorpayOrderId: {
+  type: String,
+},
+
+razorpayPaymentId: {
+  type: String,
+},
+razorpaySignature: {
+  type: String,
+},
+
+paidAt: {
+  type: Date,
+},
 }, { timestamps: true });
+
 
 module.exports = mongoose.model('Order', orderSchema);
 

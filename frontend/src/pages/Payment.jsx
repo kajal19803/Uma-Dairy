@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { load } from '@cashfreepayments/cashfree-js';
+import axios from "axios";
 import useUserStore from '../store/userStore';
 
 const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
@@ -20,7 +20,6 @@ const Payment = () => {
   const address = order?.address;
   const phone = order?.phone;
 
-  const [cfInstance, setCfInstance] = useState(null);
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('online');
 
@@ -31,68 +30,110 @@ const Payment = () => {
     }
   }, [user, cartItems, totalPrice, orderId, navigate]);
 
-  useEffect(() => {
-    const initCashfree = async () => {
-      try {
-        const cf = await load({ mode: 'production' });
-        setCfInstance(cf);
-      } catch (err) {
-        console.error('Failed to load Cashfree SDK', err);
-      }
-    };
-    initCashfree();
-  }, []);
 
-  const handlePayment = async () => {
-    if (!user?.name || !user?.email) {
-      alert('User info missing. Please login again.');
-      return;
-    }
+ const handlePayment = async () => {
+  if (!user) {
+    alert("Please login first.");
+    return;
+  }
 
-    if (!cfInstance || typeof cfInstance.checkout !== 'function') {
-      alert('Cashfree SDK not ready yet. Please wait...');
-      return;
-    }
-
+  try {
     setLoading(true);
-    try {
-      const token = localStorage.getItem('token');
 
-      const res = await fetch(`${BACKEND_BASE_URL}/api/orders/payment/create-link`, {
-        method: 'POST',
+    const token = localStorage.getItem("token");
+
+    const { data } = await axios.post(
+      `${BACKEND_BASE_URL}/api/orders/payment/make-payment`,
+      {
+        orderId,
+      },
+      {
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          amount: totalPrice,
-          name: user.name,
-          email: user.email,
-          phone,
-          order_id: orderId,
-        }),
-      });
-
-      const data = await res.json();
-     if (!res.ok || !data.session_id) {
-        alert('Failed to create payment session');
-        setLoading(false);
-        return;
       }
+    );
 
-      cfInstance.checkout({
-        paymentSessionId: data.session_id,
-        redirect: true,
-        redirectTarget: "_self",
-        returnUrl: `${window.location.origin}/payment-status?order_id=${orderId}`,
-      });
-    } catch (err) {
-      console.error(' Payment error:', err);
-      alert('Payment failed. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    const options = {
+      key: data.key,
+
+      amount: data.amount,
+
+      currency: data.currency,
+
+      name: "Uma Dairy",
+
+      description: "Order Payment",
+
+      order_id: data.razorpayOrderId,
+
+      prefill: {
+        name: data.customer.name,
+
+        email: data.customer.email,
+
+        contact: data.customer.contact,
+      },
+
+      theme: {
+        color: "#F97354",
+      },
+
+      handler: async function (response) {
+        try {
+          const verify = await axios.post(
+            `${BACKEND_BASE_URL}/api/orders/payment/verify`,
+            {
+              razorpay_order_id: response.razorpay_order_id,
+
+              razorpay_payment_id: response.razorpay_payment_id,
+
+              razorpay_signature: response.razorpay_signature,
+
+              orderId,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          console.log("VERIFY RESPONSE:", verify.data);
+          if (verify.data.success) {
+            clearCart();
+
+            navigate(`/paymentstatus?order_id=${orderId}&payment=success`);
+          } else {
+            alert("Payment verification failed.");
+          }
+        } catch (err) {
+          console.error("VERIFY ERROR:", err);
+
+          alert("Payment verification failed.");
+        }finally {
+    setLoading(false);
+  }
+      },
+
+      modal: {
+        ondismiss: function () {
+          setLoading(false);
+        },
+      },
+    };
+
+    const razorpay = new window.Razorpay(options);
+
+    razorpay.open();
+
+  } catch (err) {
+    console.error(err);
+
+    alert("Payment failed.");
+
+    setLoading(false);
+  }
+};
 
   const handleCOD = async () => {
     try {
@@ -110,7 +151,7 @@ const Payment = () => {
       const data = await res.json();
       if (res.ok) {
         clearCart();
-        navigate(`/paymentstatus?order_id=${orderId}&cod=1`);
+        navigate(`/paymentstatus?order_id=${orderId}&payment=success`);
       } else {
         alert(data.message || 'COD Order Failed');
       }
@@ -412,7 +453,7 @@ Grand Total
 
 <button
 onClick={handlePayment}
-disabled={loading || !cfInstance}
+disabled={loading}
 className="mt-8 w-full bg-[#F97354] hover:bg-[#ea6847] text-white py-4 rounded-xl font-bold text-lg transition disabled:opacity-50">
 
 {loading ? "Processing..." : "Pay Securely"}
@@ -432,14 +473,9 @@ Confirm COD Order
 )}
 
 <p className="mt-6 text-center text-sm text-gray-500">
-🔒 100% Secure Payment powered by Cashfree
+🔒 100% Secure Payment powered by Razorpay
 </p>
 
-<div
-id="cashfree-checkout"
-className="mt-8"
-style={{minHeight:"700px"}}
-/>
 
 </div>
 
