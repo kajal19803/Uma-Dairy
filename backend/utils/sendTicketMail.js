@@ -1,29 +1,26 @@
-const nodemailer = require('nodemailer');
+const axios = require("axios");
+
+const BREVO_API = "https://api.brevo.com/v3/smtp/email";
 
 const sendTicketMail = async ({ to, ticketNumber, issueType, message }) => {
   try {
-    const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.BREVO_LOGIN,
-    pass: process.env.BREVO_SMTP_KEY,
-  },
-});
-transporter.verify((error, success) => {
-  if (error) {
-    console.log("SMTP ERROR:", error);
-  } else {
-    console.log("SMTP READY");
-  }
-});
+    await axios.post(
+      BREVO_API,
+      {
+        sender: {
+          name: "Uma Dairy Support",
+          email: "kajalverma6263@gmail.com",
+        },
 
-    const mailOptions = {
-  from: `"Uma Dairy Support" <kajalverma6263@gmail.com>`,
-  to,
-  subject: `🎫 Support Ticket Received - ${ticketNumber}`,
-  html: `
+        to: [
+          {
+            email: to,
+          },
+        ],
+
+        subject: `🎫 Support Ticket Received - ${ticketNumber}`,
+
+        htmlContent: `
 <!DOCTYPE html>
 <html>
 <head>
@@ -190,14 +187,23 @@ Need help?
 </body>
 </html>
 `,
-};
+      },
+      {
+        headers: {
+          accept: "application/json",
+          "api-key": process.env.BREVO_API_KEY,
+          "content-type": "application/json",
+        },
+      }
+    );
 
-
-    await transporter.sendMail(mailOptions);
+    console.log("✅ Ticket confirmation email sent");
   } catch (error) {
-    console.error('❌ Error sending ticket confirmation email:', error);
+    console.error(
+      "❌ Brevo Ticket Mail Error:",
+      error.response?.data || error.message
+    );
   }
 };
 
 module.exports = sendTicketMail;
-
