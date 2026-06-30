@@ -1,46 +1,61 @@
 # 🥛 Uma Dairy
-<video src="demo/uma-dairy-demo.mp4" controls width="100%"></video>
-[▶️ Watch Demo](demo/uma-dairy-demo.mp4)
-> A full-stack MERN e-commerce platform built to digitize a real local dairy business.
 
-Uma Dairy is an e-commerce platform inspired by my mother's small dairy business. The goal of this project is to make trusted dairy products accessible online while learning how to build a complete production-ready web application.
+https://github.com/user-attachments/assets/757639d2-308b-4227-a45c-c825bb76730a
+
+> A production-ready MERN Stack e-commerce platform built to digitize a real local dairy business.
+
+📹 **If the embedded video doesn't load, you can watch it here:**  
+[▶️ Watch Demo](demo/uma-dairy-demo.mp4)
 
 ---
 
 # 🚀 Live Demo
 
-**Frontend:** https://dairyfrontend.onrender.com
+🌐 **Frontend**  
+https://dairyfrontend.onrender.com
 
-**Backend API:** https://uma-dairy.onrender.com
+⚙️ **Backend API**  
+https://uma-dairy.onrender.com
 
 ---
 
 # 💡 Why I Built This
 
-My mother runs a local dairy business where customers genuinely appreciate the quality of products like milk, ghee, paneer, and buttermilk.
+Uma Dairy is inspired by my mother's local dairy business.
 
-While observing the business, I realized that although people trusted the products, the business had no online presence.
+Although customers trusted the quality of products like ghee, paneer, milk, and buttermilk, the business had no online presence.
 
-This inspired me to build Uma Dairy—not just as a college project, but as a real solution to help a small business reach more customers through technology.
+Instead of building another generic e-commerce website, I wanted to solve a real-world problem by digitizing a small business and helping it reach more customers through technology.
+
+This project gave me hands-on experience with authentication, payments, order management, shipping integration, customer support, and building production-ready full-stack applications.
 
 ---
 
 # ✨ Features
 
-- User Registration & Login (JWT Authentication)
-- Browse Dairy Products
+## 👤 Customer
+
+- JWT Authentication
+- Browse Products
 - Product Search
+- Product Details
 - Shopping Cart
 - Address Management
-- Order Placement
+- Razorpay Payment Gateway
 - Cash on Delivery (COD)
-- Cashfree Payment Gateway Integration
-- AI-powered Uma Assistant
-- Customer Support Ticket System
 - Order History
-- Admin Product Management
-- Protected Routes
+- AI-powered Uma Assistant
+- Automatic Support Ticket Creation
 - Responsive UI
+
+---
+
+## 🛠 Admin
+
+- Admin Dashboard
+- Product Management
+- Order Management
+- Protected Admin Routes
 
 ---
 
@@ -60,7 +75,8 @@ This inspired me to build Uma Dairy—not just as a college project, but as a re
 - MongoDB
 - Mongoose
 - JWT Authentication
-- Cashfree Payment Gateway
+- Razorpay Payment Gateway
+- Shiprocket API
 
 ## Deployment
 
@@ -71,117 +87,199 @@ This inspired me to build Uma Dairy—not just as a college project, but as a re
 
 # 📂 Project Structure
 
-```
+```text
 Uma-Dairy
 │
 ├── frontend
-│
 ├── backend
-│
+├── demo
+├── screenshots
 ├── docker-compose.yml
-│
 └── README.md
 ```
 
 ---
 
-# 🔄 User Flow
+# 🔄 Application Flow
 
-```
+```text
 Browse Products
-      ↓
+        │
+        ▼
 Add to Cart
-      ↓
-Login
-      ↓
-Address
-      ↓
+        │
+        ▼
+Login / Register
+        │
+        ▼
 Checkout
-      ↓
-Cashfree / COD
-      ↓
-Order Success
-      ↓
-My Orders
+        │
+        ▼
+Choose Payment
+
+     ┌───────────────┐
+     │               │
+     ▼               ▼
+
+ Razorpay         Cash on Delivery
+
+     │               │
+     └───────┬───────┘
+             ▼
+
+     Payment Verification
+             │
+             ▼
+
+     Order Confirmation
+             │
+             ▼
+
+     Shiprocket Order
+             │
+             ▼
+
+         My Orders
 ```
 
 ---
 
-# 🤖 Uma Assistant
+# 🤖 AI Support Assistant
 
-Uma Dairy includes an AI-powered support assistant.
+Uma Dairy includes an AI-powered customer support assistant.
 
-Users can simply type queries like:
+Users can simply type queries such as:
 
-- "I have an issue with my order"
-- "Order not delivered"
-- "Payment problem"
+- "My payment failed."
+- "Order not delivered."
+- "I have an issue with my order."
 
-The assistant automatically creates a support ticket for customer assistance.
+The assistant automatically creates support tickets, making customer support faster and more convenient.
 
 ---
 
-# 💳 Payment
+# 💳 Payments
 
-Currently two payment options are available:
+The platform currently supports:
 
-- Cash on Delivery (Recommended for Demo)
-- Cashfree Payment Gateway
+- 💳 Razorpay Online Payments
+- 🚚 Cash on Delivery (COD)
+
+The Razorpay integration includes:
+
+- Secure Order Creation
+- HMAC Signature Verification
+- Payment Verification
+- Order Status Synchronization
+
+---
+
+# 🚚 Shipping
+
+After successful payment (or COD confirmation), the order is automatically sent to **Shiprocket** for shipment creation.
 
 > **Note**
 >
-> The production online payment gateway is currently pending because the Cashfree merchant account is under verification.
->
-> Please use **Cash on Delivery (COD)** while testing the project.
+> Shiprocket integration has been implemented successfully.
+> Shipment creation requires an active Shiprocket seller account.
 
 ---
 
 # 🧩 Biggest Technical Challenge
 
-One of the biggest challenges while building Uma Dairy was integrating the Cashfree payment gateway.
+The most challenging part of this project was implementing a secure payment workflow.
 
-The application flow was working correctly until webhook verification started failing due to a webhook signature mismatch.
+Initially, I integrated the Cashfree Payment Gateway but faced webhook signature mismatch issues while verifying payment callbacks.
 
-Instead of relying only on tutorials, I studied the official Cashfree documentation, added backend logs, debugged the webhook verification process, and learned how production payment systems work.
+To gain a better understanding of production payment systems, I migrated the application to Razorpay and implemented:
 
-This experience significantly improved my debugging and backend development skills.
+- Razorpay Order Creation
+- Secure HMAC Signature Verification
+- Payment Verification API
+- Order Status Synchronization
+- End-to-End Payment Flow
+
+This experience significantly improved my backend debugging skills and my understanding of production-grade payment systems.
 
 ---
 
 # 📸 Screenshots
 
-- Home
-![Home](Home.png)
--Login
-![Login](Login.png)
-- Products
-![Product](Products.png)
-- Product Details
-![Product detail page](ProductDetail.png)
-- Cart
-![Cart](Cart.png)
-- Checkout
-![Checkout](Checkout.png)
-- RazorpayPopup
-![RazorpayPopup](RazorpayPopup.png)
-- PaymentSuccessfull
-![PaymentSuccessfull](PaymentSuccessfull.png)
-- Orders
-![order confirmed](OrderConfirmed.png)
--My orders
-![My orders](MyOrders.png)
-- Admin Dashboard
-![Admin Dashboard](AdminDashboard.png)
+## 🏠 Home
+
+![Home](screenshots/Home.png)
+
+---
+
+## 🔐 Login
+
+![Login](screenshots/Login.png)
+
+---
+
+## 🛍 Products
+
+![Products](screenshots/Products.png)
+
+---
+
+## 📄 Product Details
+
+![Product Details](screenshots/ProductDetail.png)
+
+---
+
+## 🛒 Shopping Cart
+
+![Cart](screenshots/Cart.png)
+
+---
+
+## 📦 Checkout
+
+![Checkout](screenshots/Checkout.png)
+
+---
+
+## 💳 Razorpay Payment
+
+![Razorpay Payment](screenshots/RazorpayPopup.png)
+
+---
+
+## ✅ Payment Successful
+
+![Payment Successful](screenshots/PaymentSuccessfull.png)
+
+---
+
+## 🎉 Order Confirmation
+
+![Order Confirmation](screenshots/OrderConfirmed.png)
+
+---
+
+## 📜 My Orders
+
+![My Orders](screenshots/MyOrders.png)
+
+---
+
+## ⚙️ Admin Dashboard
+
+![Admin Dashboard](screenshots/AdminDashboard.png)
 
 ---
 
 # 🚀 Future Improvements
 
-- Enable Production Cashfree Payments
-- Product Reviews
-- Inventory Analytics
-- Email Notifications
-- Mobile App
+- ⭐ Product Reviews & Ratings
+- ❤️ Wishlist
+- 📧 Email Notifications
+- 📊 Inventory Analytics
+- 📈 Sales Dashboard
+- 📱 Mobile Application
+- 📍 Live Order Tracking
 
 ---
 
@@ -189,14 +287,17 @@ This experience significantly improved my debugging and backend development skil
 
 **Kajal Verma**
 
-B.Tech Computer Science & Engineering
+B.Tech Computer Engineering  
+National Institute of Advanced Manufacturing Technology (NIAMT), Ranchi
 
-National Institute of Advanced Manufacturing Technology (NIAMT)
+### GitHub
 
-GitHub:
 https://github.com/kajal19803
 
-LinkedIn:
+### LinkedIn
+
 https://www.linkedin.com/in/kajal-verma-09a344241
 
 ---
+
+⭐ If you found this project interesting, feel free to give it a **Star**!
