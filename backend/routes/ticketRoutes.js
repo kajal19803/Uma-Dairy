@@ -34,7 +34,7 @@ router.post(
         return res.status(400).json({ error: 'Issue type and message are required.' });
       }
 
-      const images = req.files.map((file) => `/ticket_uploads/${file.filename}`);
+      const images = (req.files || []).map((file) => `/ticket_uploads/${file.filename}`);
       const ticketNumber = `TCK-${uuidv4().split('-')[0].toUpperCase()}`;
 
       const parsedProductNames = productNames ? JSON.parse(productNames) : [];
