@@ -1,6 +1,6 @@
 # 🥛 Uma Dairy
 
-https://github.com/user-attachments/assets/757639d2-308b-4227-a45c-c825bb76730a
+https://github.com/user-attachments/assets/9b437ae1-f951-4de9-96fd-7ce5c331cb9d
 
 > A production-ready MERN Stack e-commerce platform built to digitize a real local dairy business.
 
