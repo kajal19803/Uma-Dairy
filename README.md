@@ -1,4 +1,5 @@
 # 🥛 Uma Dairy
+<video src="demo/uma-dairy-demo.mp4" controls width="100%"></video>
 [▶️ Watch Demo](demo/uma-dairy-demo.mp4)
 > A full-stack MERN e-commerce platform built to digitize a real local dairy business.
 
@@ -161,6 +162,10 @@ This experience significantly improved my debugging and backend development skil
 ![Cart](Cart.png)
 - Checkout
 ![Checkout](Checkout.png)
+- RazorpayPopup
+![RazorpayPopup](RazorpayPopup.png)
+- PaymentSuccessfull
+![PaymentSuccessfull](PaymentSuccessfull.png)
 - Orders
 ![order confirmed](OrderConfirmed.png)
 -My orders
