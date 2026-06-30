@@ -1,7 +1,7 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
 const router = express.Router();
-
+require('dotenv').config();
 const otpStore = new Map(); 
 console.log("BREVO_LOGIN =", process.env.BREVO_LOGIN);
 console.log("SMTP KEY LENGTH =", process.env.BREVO_SMTP_KEY?.length);
