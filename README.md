@@ -1,5 +1,5 @@
 # 🥛 Uma Dairy
-
+[▶️ Watch Demo](demo/uma-dairy-demo.mp4)
 > A full-stack MERN e-commerce platform built to digitize a real local dairy business.
 
 Uma Dairy is an e-commerce platform inspired by my mother's small dairy business. The goal of this project is to make trusted dairy products accessible online while learning how to build a complete production-ready web application.
