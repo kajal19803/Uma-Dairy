@@ -279,7 +279,7 @@ Nutritional Information
 quantity===0?
 
 <button
-onClick={() => addToCart(product._id)}
+onClick={() => addToCart(product)}
 className="w-full bg-[#F97354] hover:bg-[#ea6847] text-white py-4 rounded-2xl font-bold text-lg transition"
 >
 

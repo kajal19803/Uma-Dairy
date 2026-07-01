@@ -13,6 +13,15 @@ const BACKEND_BASE_URL =
 export const CartProvider = ({ children }) => {
 
   const [cartItems, setCartItems] = useState([]);
+  const GUEST_CART_KEY = "guestCart";
+
+const getGuestCart = () => {
+  return JSON.parse(localStorage.getItem(GUEST_CART_KEY)) || [];
+};
+
+const saveGuestCart = (cart) => {
+  localStorage.setItem(GUEST_CART_KEY, JSON.stringify(cart));
+};
 
   // ===========================
   // Fetch Cart
@@ -21,7 +30,7 @@ export const CartProvider = ({ children }) => {
   const fetchCart = async () => {
      const token = localStorage.getItem("token");
     if (!token) {
-      setCartItems([]);
+      setCartItems(getGuestCart());
       return;
     }
 
@@ -36,18 +45,45 @@ export const CartProvider = ({ children }) => {
         }
       );
 
-      const data = await res.json();
+  const data = await res.json();
 
-      if (res.ok) {
+if (!res.ok) {
+  return;
+}
 
-        const formatted = data.cart.map((item) => ({
-          ...item.product,
+const guestCart = getGuestCart();
+
+if (guestCart.length > 0) {
+
+  const mergeRes = await fetch(
+    `${BACKEND_BASE_URL}/api/cart/merge`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        cart: guestCart.map((item) => ({
+          productId: item._id,
           quantity: item.quantity,
-        }));
+        })),
+      }),
+    }
+  );
 
-        setCartItems(formatted);
+  if (mergeRes.ok) {
+    localStorage.removeItem(GUEST_CART_KEY);
+    return fetchCart();
+  }
+}
 
-      }
+const formatted = data.cart.map((item) => ({
+  ...item.product,
+  quantity: item.quantity,
+}));
+
+setCartItems(formatted);
 
     } catch (err) {
 
@@ -77,54 +113,80 @@ export const CartProvider = ({ children }) => {
   // Add To Cart
   // ===========================
 
-const addToCart = async (
-  productId,
-  quantity = 1
-) => {
+const addToCart = async (product, quantity = 1) => {
 
-    const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
-    if (!token) return;
+  // ===========================
+  // Guest User
+  // ===========================
 
-    try {
+  if (!token) {
 
-      const res = await fetch(
-        `${BACKEND_BASE_URL}/api/cart/add`,
-        {
-          method: "POST",
+    const guestCart = getGuestCart();
 
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+    const existing = guestCart.find(
+      (item) => item._id === product._id
+    );
 
-          body: JSON.stringify({
-            productId,
-            quantity,
-          }),
-        }
-      );
+    if (existing) {
+      existing.quantity += quantity;
+    } else {
+      guestCart.push({
+        ...product,
+        quantity,
+      });
+    }
 
-      const data = await res.json();
+    saveGuestCart(guestCart);
+    setCartItems(guestCart);
 
-      if (res.ok) {
+    return;
+  }
 
-        const formatted = data.cart.map((item) => ({
-          ...item.product,
-          quantity: item.quantity,
-        }));
+  // ===========================
+  // Logged In User
+  // ===========================
 
-        setCartItems(formatted);
+  try {
 
+    const res = await fetch(
+      `${BACKEND_BASE_URL}/api/cart/add`,
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+
+        body: JSON.stringify({
+          productId: product._id,
+          quantity,
+        }),
       }
+    );
 
-    } catch (err) {
+    const data = await res.json();
 
-      console.error("Add Cart Error:", err);
+    if (res.ok) {
+
+      const formatted = data.cart.map((item) => ({
+        ...item.product,
+        quantity: item.quantity,
+      }));
+
+      setCartItems(formatted);
 
     }
 
-  };
+  } catch (err) {
+
+    console.error("Add Cart Error:", err);
+
+  }
+
+};
     // ===========================
   // Update Quantity
   // ===========================
@@ -133,7 +195,23 @@ const addToCart = async (
 
     const token = localStorage.getItem("token");
 
-    if (!token) return;
+if (!token) {
+
+  const guestCart = getGuestCart();
+
+  const updated = guestCart
+  .map((item) =>
+    item._id === productId
+      ? { ...item, quantity }
+      : item
+  )
+  .filter((item) => item.quantity > 0);
+
+saveGuestCart(updated);
+setCartItems(updated);
+
+  return;
+}
 
     try {
 
@@ -183,7 +261,19 @@ const addToCart = async (
 
     const token = localStorage.getItem("token");
 
-    if (!token) return;
+if (!token) {
+
+  const guestCart = getGuestCart();
+
+  const updated = guestCart.filter(
+    item => item._id !== productId
+  );
+
+  saveGuestCart(updated);
+  setCartItems(updated);
+
+  return;
+}
 
     try {
 
@@ -230,10 +320,16 @@ const addToCart = async (
 
   const clearCart = async () => {
 
-    const token = localStorage.getItem("token");
+   const token = localStorage.getItem("token");
 
-    if (!token) return;
+if (!token) {
 
+  localStorage.removeItem(GUEST_CART_KEY);
+
+  setCartItems([]);
+
+  return;
+}
     try {
 
       const res = await fetch(
@@ -248,6 +344,7 @@ const addToCart = async (
       );
 
       if (res.ok) {
+        localStorage.removeItem(GUEST_CART_KEY);
         setCartItems([]);
       }
 

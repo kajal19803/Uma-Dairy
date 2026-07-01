@@ -153,7 +153,7 @@ const ProductCard = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              addToCart(_id);
+              addToCart(product);
             }}
             disabled={!inStock}
             className={`w-full py-3 rounded-xl font-semibold transition ${

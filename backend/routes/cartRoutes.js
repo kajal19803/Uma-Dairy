@@ -193,6 +193,73 @@ router.delete("/remove", authMiddleware, async (req, res) => {
     });
   }
 });
+router.post("/merge", authMiddleware, async (req, res) => {
+  try {
+
+    const { cart } = req.body;
+
+    if (!Array.isArray(cart)) {
+      return res.status(400).json({
+        message: "Cart must be an array",
+      });
+    }
+
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    for (const guestItem of cart) {
+
+      const { productId, quantity } = guestItem;
+
+      if (!productId) continue;
+
+      const product = await Product.findById(productId);
+
+      if (!product) continue;
+
+      const existing = user.cart.find(
+        (item) => item.product.toString() === productId
+      );
+
+      if (existing) {
+
+        existing.quantity += Number(quantity || 1);
+
+      } else {
+
+        user.cart.push({
+          product: productId,
+          quantity: Number(quantity || 1),
+        });
+
+      }
+
+    }
+
+    await user.save();
+
+    await user.populate("cart.product");
+
+    res.status(200).json({
+      message: "Cart merged successfully",
+      cart: user.cart,
+    });
+
+  } catch (err) {
+
+    console.error("Merge Cart Error:", err);
+
+    res.status(500).json({
+      message: "Server Error",
+    });
+
+  }
+});
 router.delete("/clear", authMiddleware, async (req, res) => {
   try {
 
