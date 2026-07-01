@@ -5,13 +5,18 @@ const multer = require('multer');
 const Product = require('../models/Product');
 
 const storage = multer.diskStorage({
-  destination: ( cb ) => {
-    cb(null, 'public/uploads/');
+
+  destination: (req, file, cb) => {
+    cb(null, "public/uploads/");
   },
-  filename: ( cb ) => {
-    const uniqueName = Date.now() + '-' + file.originalname;
+
+  filename: (req, file, cb) => {
+    const uniqueName =
+      Date.now() + "-" + file.originalname;
+
     cb(null, uniqueName);
   },
+
 });
 
 const upload = multer({ storage });
@@ -30,25 +35,28 @@ router.post('/add', upload.array('images', 5), async (req, res) => {
       nutritionalInfo,
     } = req.body;
 
-    const price = mrp - (mrp * discount) / 100;
+    const mrpValue = Number(mrp);
+const discountValue = Number(discount);
+
+const price =
+  mrpValue - (mrpValue * discountValue) / 100;
     const imagePaths = Array.isArray(req.files)
       ? req.files.map(file => `/uploads/${file.filename}`)
       : [];
 
     const newProduct = new Product({
-      name,
-      description,
-      mrp,
-      discount,
-      price,
-      unit,
-      ingredients,
-      nutritionalInfo,
-      inStock: inStock === 'true',
-      category,
-      images: imagePaths,
-    });
-
+  name,
+  description,
+  mrp: mrpValue,
+  discount: discountValue,
+  price,
+  unit,
+  ingredients,
+  nutritionalInfo,
+  inStock: inStock === "true",
+  category,
+  images: imagePaths,
+});
     await newProduct.save();
     res.status(201).json({ message: 'Product added successfully', product: newProduct });
   } catch (err) {
