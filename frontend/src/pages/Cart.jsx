@@ -34,6 +34,9 @@ const Cart = () => {
     (total, item) => total + getPriceNumber(item.price) * (item.quantity || 1),
     0
   );
+  const gst = totalPrice * 0.03;
+
+  const finalTotal = totalPrice + gst;
 
   const handlePlaceOrder = async () => {
     if (!user) {
@@ -65,7 +68,7 @@ const Cart = () => {
       _id: item._id,
       quantity: item.quantity,
       })),
-      totalPrice,
+     totalPrice: finalTotal,
       address: addressData,
       phone: phoneData,
    };
@@ -187,10 +190,14 @@ className="w-32 h-32 rounded-2xl object-cover border border-orange-100"/>
 
 <button
 onClick={(e)=>{
-e.stopPropagation();
-updateQuantity(item._id,(item.quantity||1)-1);
+  e.stopPropagation();
+
+  if((item.quantity || 1) > 1){
+    updateQuantity(item._id,(item.quantity || 1)-1);
+  }else{
+    removeFromCart(item._id);
+  }
 }}
-disabled={(item.quantity||1)<=1}
 className="w-10 h-10 rounded-full bg-[#F97354] text-white disabled:opacity-50">
 -
 </button>
@@ -247,7 +254,7 @@ Delivery Address
 <select
 value={JSON.stringify(selectedAddress)}
 onChange={(e)=>setSelectedAddress(JSON.parse(e.target.value))}
-className="flex-1 rounded-xl border border-orange-200 bg-[#FFF8F1] p-4 outline-none">
+className="flex-1 rounded-xl text-[#3B2418] border border-orange-200 bg-[#FFF8F1] p-4 outline-none">
 
 {user.address.map((addr,index)=>(
 
@@ -272,7 +279,7 @@ New
 ):(
 
 <p className="text-red-500">
-No saved address found
+please add an address to your profile to proceed with the order.
 </p>
 
 )}
@@ -313,6 +320,75 @@ placeholder="ZIP Code"
 className="rounded-xl border border-orange-200 bg-[#FFF8F1] p-3 md:col-span-2"
 onChange={(e)=>setFormAddress({...formAddress,zip:e.target.value})}
 />
+<button
+onClick={async()=>{
+
+const { fullName, street, city, state, zip } = formAddress;
+
+if(!fullName || !street || !city || !state || !zip){
+return alert("Fill all fields");
+}
+
+try{
+
+const token=localStorage.getItem("token");
+
+const res=await fetch(
+`${BACKEND_BASE_URL}/api/auth/update-contact`,
+{
+method:"PUT",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`,
+},
+body:JSON.stringify({
+
+phoneNumbers:user.phoneNumber||[],
+
+addresses:[
+...(user.address||[]),
+formAddress
+]
+
+})
+}
+);
+
+const data=await res.json();
+
+if(res.ok){
+
+alert("Address Added");
+
+user.address=data.user.address;
+
+setSelectedAddress(formAddress);
+
+setCustomAddress(false);
+
+setFormAddress({
+fullName:"",
+street:"",
+city:"",
+state:"",
+zip:""
+});
+
+}
+
+}catch(err){
+
+console.log(err);
+
+}
+
+}}
+className="mt-5 bg-[#F97354] text-white px-6 py-3 rounded-xl hover:bg-[#ea6847]"
+>
+
+Add Address
+
+</button>
 
 <button
 onClick={()=>{
@@ -321,7 +397,7 @@ setSelectedAddress(Array.isArray(user.address)?user.address[0]:user.address);
 setCustomAddress(false);
 }
 }}
-className="text-[#F97354] underline md:col-span-2 text-left">
+className="ml-2 text-[#F97354] font-semibold bg-transparent hover:underline border-none outline-none focus:outline-none focus:ring-0 active:outline-none active:ring-0 shadow-none">
 Use Saved Address
 </button>
 
@@ -346,7 +422,7 @@ Phone Number
 <select
 value={selectedPhone}
 onChange={(e)=>setSelectedPhone(e.target.value)}
-className="flex-1 rounded-xl border border-orange-200 bg-[#FFF8F1] p-4">
+className="flex-1 rounded-xl text-[#3B2418] border border-orange-200 bg-[#FFF8F1] p-4">
 
 {user.phoneNumber.map((num,index)=>(
 
@@ -371,7 +447,7 @@ Change
 ):(
 
 <p className="text-red-500">
-No saved phone number found
+please add a phone number to your profile to proceed with the order.
 </p>
 
 )}
@@ -388,18 +464,95 @@ type="tel"
 placeholder="Enter Phone Number"
 value={phone}
 onChange={(e)=>setPhone(e.target.value)}
-className="w-full rounded-xl border border-orange-200 bg-[#FFF8F1] p-4"/>
+className="w-full rounded-xl border text-[#3B2418] border-orange-200 bg-[#FFF8F1] p-4"
+/>
+
+<div className="flex gap-3 mt-5">
+
+<button
+onClick={async()=>{
+
+if(!phone){
+return alert("Enter phone number");
+}
+
+try{
+
+const token=localStorage.getItem("token");
+
+const res=await fetch(
+`${BACKEND_BASE_URL}/api/auth/update-contact`,
+{
+method:"PUT",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`,
+},
+body:JSON.stringify({
+
+phoneNumbers:[
+...(user.phoneNumber||[]),
+phone
+],
+
+addresses:user.address||[]
+
+})
+}
+);
+
+const data=await res.json();
+
+if(res.ok){
+
+alert("Phone Number Added");
+
+user.phoneNumber=data.user.phoneNumber;
+
+setSelectedPhone(phone);
+
+setPhone("");
+
+setCustomPhone(false);
+
+}
+
+}catch(err){
+
+console.log(err);
+
+}
+
+}}
+className="bg-[#F97354] hover:bg-[#ea6847] text-white px-6 py-3 rounded-xl"
+>
+
+Add Phone
+
+</button>
 
 <button
 onClick={()=>{
 if(user?.phoneNumber){
-setSelectedPhone(Array.isArray(user.phoneNumber)?user.phoneNumber[0]:user.phoneNumber);
+
+setSelectedPhone(
+Array.isArray(user.phoneNumber)
+?user.phoneNumber[0]
+:user.phoneNumber
+);
+
 setCustomPhone(false);
+
 }
 }}
-className="mt-4 text-[#F97354] underline">
+className="ml-2 text-[#F97354] font-semibold bg-transparent hover:underline border-none outline-none focus:outline-none focus:ring-0 active:outline-none active:ring-0 shadow-none"
+>
+
 Use Saved Number
+
 </button>
+
+</div>
 
 </div>
 
@@ -426,22 +579,48 @@ Order Summary
 </div>
 
 <div className="flex justify-between text-gray-600">
-<span>Delivery</span>
-<span className="text-green-600 font-semibold">
-Free
+</div>
+<div className="flex justify-between text-gray-600">
+
+<span>Subtotal</span>
+
+<span>
+₹{totalPrice.toFixed(2)}
 </span>
+
 </div>
 
+<div className="flex justify-between text-gray-600">
+
+<span>GST (3%)</span>
+
+<span>
+₹{gst.toFixed(2)}
+</span>
+
+</div>
+
+<div className="flex justify-between text-gray-600">
+
+<span>Delivery</span>
+
+<span className="text-green-600 font-semibold">
+
+FREE
+
+</span>
+
+</div>
 <hr/>
 
 <div className="flex justify-between items-center">
 
-<span className="text-lg font-semibold">
+<span className="text-lg text-[#3B2418] font-semibold">
 Grand Total
 </span>
 
 <span className="text-3xl font-bold text-[#F97354]">
-₹{totalPrice.toFixed(2)}
+₹{finalTotal.toFixed(2)}
 </span>
 
 </div>

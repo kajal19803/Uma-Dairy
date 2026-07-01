@@ -18,48 +18,89 @@ const verifyToken = (req) => {
 };
 
 
-router.put('/update-contact' ,async (req, res) => {
+router.put('/update-contact', async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
-    if (!authHeader)
+
+    if (!authHeader) {
       return res.status(401).json({ message: 'Authorization header missing' });
+    }
 
     const token = authHeader.split(' ')[1];
-    if (!token) return res.status(401).json({ message: 'Token missing' });
+
+    if (!token) {
+      return res.status(401).json({ message: 'Token missing' });
+    }
 
     const decoded = jwt.verify(token, JWT_SECRET);
+
     const { phoneNumbers, addresses } = req.body;
 
-    if (!Array.isArray(phoneNumbers) || phoneNumbers.length === 0) {
-      return res.status(400).json({ message: 'At least one phone number required' });
-    }
-
-    if (!Array.isArray(addresses) || addresses.length === 0) {
-      return res.status(400).json({ message: 'At least one address required' });
-    }
-
     const user = await User.findById(decoded.id);
-    if (!user) return res.status(404).json({ message: 'User not found' });
 
-    
-    user.phoneNumber = [...new Set([...(user.phoneNumber || []), ...phoneNumbers])];
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
-    const existingAddresses = user.address?.map(addr => JSON.stringify(addr)) || [];
-    const newAddresses = addresses
-      .map(addr => JSON.stringify(addr))
-      .filter(addr => !existingAddresses.includes(addr))
-      .map(addr => JSON.parse(addr));
+    let updated = false;
 
-    user.address = [...(user.address || []), ...newAddresses];
+    // ================= PHONE =================
+
+    if (Array.isArray(phoneNumbers)) {
+      user.phoneNumber = [
+        ...new Set([
+          ...(user.phoneNumber || []),
+          ...phoneNumbers.filter(Boolean),
+        ]),
+      ];
+
+      updated = true;
+    }
+
+    // ================= ADDRESS =================
+
+    if (Array.isArray(addresses)) {
+      const existingAddresses =
+        (user.address || []).map((addr) => JSON.stringify(addr));
+
+      const newAddresses = addresses
+        .filter(Boolean)
+        .map((addr) => JSON.stringify(addr))
+        .filter((addr) => !existingAddresses.includes(addr))
+        .map((addr) => JSON.parse(addr));
+
+      user.address = [
+        ...(user.address || []),
+        ...newAddresses,
+      ];
+
+      updated = true;
+    }
+
+    // Nothing received
+
+    if (!updated) {
+      return res.status(400).json({
+        message: 'Nothing to update',
+      });
+    }
 
     await user.save();
+
     const sanitizedUser = user.toObject();
     delete sanitizedUser.password;
 
-    res.json({ message: 'Contact info updated', user: sanitizedUser });
+    res.json({
+      message: 'Contact info updated successfully',
+      user: sanitizedUser,
+    });
+
   } catch (err) {
     console.error('Update contact error:', err);
-    res.status(500).json({ message: 'Internal server error' });
+
+    res.status(500).json({
+      message: 'Internal server error',
+    });
   }
 });
 

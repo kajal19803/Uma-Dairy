@@ -89,11 +89,21 @@ const Dashboard = () => {
   const updateContact = async (updatedPhones, updatedAddresses) => {
     try {
       const res = await fetch(`${API_URL}/api/auth/update-contact`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ phoneNumbers: updatedPhones, addresses: updatedAddresses })
-      });
-      const data = await res.json();
+  method: "PUT",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
+  body: JSON.stringify({
+    phoneNumbers: updatedPhones,
+    addresses: updatedAddresses,
+  }),
+});
+
+const data = await res.json();
+
+console.log(res.status);
+console.log(data);
       if (res.ok) {
         setAddresses(data.user.address);
         setPhoneNumbers(data.user.phoneNumber);
@@ -664,33 +674,104 @@ My Addresses
 
 <div className="space-y-5">
 
-{addresses.map((addr,i)=>(
+{addresses.length > 0 ? (
 
-<div key={i} className="bg-white rounded-3xl shadow-lg p-6">
+  addresses.map((addr,i)=>(
 
-<h3 className="font-bold text-xl text-[#3B2418]">
-{addr.fullName}
+    <div key={i} className="bg-white rounded-3xl shadow-lg p-6">
+
+      <h3 className="font-bold text-xl text-[#3B2418]">
+        {addr.fullName}
+      </h3>
+
+      <p className='text-black'>{addr.street}</p>
+
+      <p className='text-black'>
+        {addr.city}, {addr.state} - {addr.zip}
+      </p>
+
+      <button
+        onClick={()=>removeAddress(addr)}
+        className="mt-4 bg-red-50 text-red-600 px-4 py-2 rounded-xl"
+      >
+        Remove
+      </button>
+
+    </div>
+
+))
+
+) : (
+
+<div className="bg-white rounded-3xl shadow-lg p-8">
+
+<h3 className="text-xl font-bold text-[#3B2418]">
+No Address Found
 </h3>
 
-<p className="text-gray-600 mt-2">
-{addr.street}
+<p className="text-gray-500 mt-2">
+Please add your first delivery address.
 </p>
-
-<p className="text-gray-600">
-{addr.city}, {addr.state} - {addr.zip}
-</p>
-
-<button
-onClick={()=>removeAddress(addr)}
-
-className="mt-5 bg-red-50 hover:bg-red-100 text-red-600 px-5 py-2 rounded-xl font-semibold transition">
-Remove
-
-</button>
 
 </div>
 
-))}
+)}
+
+{/* ---------- ADD ADDRESS FORM ---------- */}
+
+<div className="bg-white rounded-3xl shadow-lg p-8">
+
+<h3 className="text-2xl font-bold text-[#3B2418] mb-6">
+Add New Address
+</h3>
+
+<div className="grid md:grid-cols-2 gap-4">
+
+<input
+placeholder="Full Name"
+value={newAddress.fullName}
+onChange={(e)=>setNewAddress({...newAddress,fullName:e.target.value})}
+className="rounded-xl text-black border border-orange-200 bg-[#FFF8F1] p-3"
+/>
+
+<input
+placeholder="Street"
+value={newAddress.street}
+onChange={(e)=>setNewAddress({...newAddress,street:e.target.value})}
+className="rounded-xl border text-black border-orange-200 bg-[#FFF8F1] p-3"
+/>
+
+<input
+placeholder="City"
+value={newAddress.city}
+onChange={(e)=>setNewAddress({...newAddress,city:e.target.value})}
+className="rounded-xl border text-black border-orange-200 bg-[#FFF8F1] p-3"
+/>
+
+<input
+placeholder="State"
+value={newAddress.state}
+onChange={(e)=>setNewAddress({...newAddress,state:e.target.value})}
+className="rounded-xl border text-black border-orange-200 bg-[#FFF8F1] p-3"
+/>
+
+<input
+placeholder="ZIP Code"
+value={newAddress.zip}
+onChange={(e)=>setNewAddress({...newAddress,zip:e.target.value})}
+className="rounded-xl border text-black border-orange-200 bg-[#FFF8F1] p-3 md:col-span-2"
+/>
+
+</div>
+
+<button
+onClick={handleAddAddress}
+className="mt-6 bg-[#F97354] hover:bg-[#ea6847] text-white px-6 py-3 rounded-xl"
+>
+Add Address
+</button>
+
+</div>
 
 </div>
 
@@ -714,13 +795,13 @@ Phone Numbers
 
 <div key={i} className="flex justify-between items-center border-b border-orange-100 py-4">
 
-<span className="font-medium">
+<span className=" text-black font-medium">
 {phone}
 </span>
 
 <button
 onClick={()=>removePhone(phone)}
-className="text-red-500 hover:underline">
+className="mt-4 bg-red-50 text-red-600 px-4 py-2 rounded-xl">
 
 Remove
 
@@ -734,7 +815,7 @@ Remove
 value={newPhone}
 onChange={e=>setNewPhone(e.target.value)}
 placeholder="Add Phone Number"
-className="mt-6 w-full rounded-xl border border-orange-200 bg-[#FFF8F1] px-4 py-3"
+className="mt-6 w-full  text-black rounded-xl border border-orange-200 bg-[#FFF8F1] px-4 py-3"
 />
 
 <button

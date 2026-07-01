@@ -36,7 +36,7 @@ const ProductCard = ({
       : category === "Milk"
       ? { text: "Daily", color: "bg-blue-100 text-blue-700" }
       : { text: "Natural", color: "bg-orange-100 text-[#F97354]" };
-  const { cartItems, addToCart, updateQuantity } = useCart();
+  const { cartItems, addToCart, updateQuantity, removeFromCart } = useCart();
 
   const quantity =
     cartItems.find((item) => item._id === _id)?.quantity || 0;
@@ -153,7 +153,7 @@ const ProductCard = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              addToCart(product);
+              addToCart(_id);
             }}
             disabled={!inStock}
             className={`w-full py-3 rounded-xl font-semibold transition ${
@@ -169,7 +169,11 @@ const ProductCard = ({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                updateQuantity(_id, quantity - 1);
+                if(quantity > 1){
+                   updateQuantity(_id, quantity - 1);
+                }else{
+                   removeFromCart(_id);
+                }
               }}
               className="w-12 h-12 bg-[#F97354] hover:bg-[#ea6847] text-white text-xl font-bold transition"
             >

@@ -7,7 +7,6 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import { Pagination } from 'swiper/modules';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
-import useUserStore from '../store/userStore';
 import ProductCard from '../components/ProductCard'; 
 
 const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
@@ -20,7 +19,7 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const { cartItems, addToCart, updateQuantity } = useCart();
+  const { cartItems, addToCart, updateQuantity, removeFromCart } = useCart();
   const { wishlist, toggleWishlist } = useWishlist();
   
 
@@ -47,14 +46,19 @@ const ProductDetail = () => {
   };
 
   const handleIncrement = () => {
-    const currentQty = getQuantity();
-    updateQuantity(id, currentQty + 1);
-  };
+  const currentQty = getQuantity();
+  updateQuantity(product._id, currentQty + 1);
+};
 
-  const handleDecrement = () => {
-    const currentQty = getQuantity();
-    if (currentQty > 1) updateQuantity(id, currentQty - 1);
-  };
+const handleDecrement = () => {
+  const currentQty = getQuantity();
+
+  if (currentQty > 1) {
+    updateQuantity(product._id, currentQty - 1);
+  } else {
+    removeFromCart(product._id);
+  }
+};
 
   const handleToggleWishlist = (e, productId) => {
   e.stopPropagation();
@@ -275,7 +279,7 @@ Nutritional Information
 quantity===0?
 
 <button
-onClick={()=>addToCart(product)}
+onClick={() => addToCart(product._id)}
 className="w-full bg-[#F97354] hover:bg-[#ea6847] text-white py-4 rounded-2xl font-bold text-lg transition"
 >
 
