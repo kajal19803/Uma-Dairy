@@ -68,7 +68,7 @@ const Contact = () => {
               <p className="mt-4 text-gray-600 leading-8">
                 Uma Dairy<br />
                 Fresh Dairy Farm<br />
-                Ranchi, Jharkhand
+                Jabalpur, Madhya Pradesh<br />
               </p>
 
             </div>

@@ -106,7 +106,7 @@ const Search = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFF8F1] px-6 py-28">
+    <div className="min-h-screen w-screen bg-[#FFF8F1] px-6 py-28">
 
       <h1 className="text-4xl font-bold text-[#4E342E] mb-2">
         Search Results

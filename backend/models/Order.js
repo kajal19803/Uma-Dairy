@@ -65,6 +65,19 @@ razorpayPaymentId: {
 razorpaySignature: {
   type: String,
 },
+couponCode: {
+  type: String,
+  default: "",
+},
+
+discount: {
+  type: Number,
+  default: 0,
+},
+
+finalAmount: {
+  type: Number,
+},
 
 paidAt: {
   type: Date,

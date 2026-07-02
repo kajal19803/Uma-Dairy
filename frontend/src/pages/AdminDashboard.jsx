@@ -32,6 +32,19 @@ const AdminDashboard = () => {
     productName: '',
     discount: '',
   });
+  const [showCouponModal, setShowCouponModal] = useState(false);
+
+const [couponData, setCouponData] = useState({
+  code: "",
+  description: "",
+  discountType: "PERCENTAGE",
+  discountValue: "",
+  minOrderValue: "",
+  maxDiscount: "",
+  expiryDate: "",
+  usageLimit: 100,
+  firstOrderOnly: false,
+});
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -162,6 +175,43 @@ const AdminDashboard = () => {
       alert(err.message);
     }
   };
+  const handleCreateCoupon = async (e) => {
+  e.preventDefault();
+
+  try {
+    const res = await fetch(`${BACKEND_BASE_URL}/api/coupon/create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(couponData),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.message);
+
+    alert("Coupon created successfully!");
+
+    setShowCouponModal(false);
+
+    setCouponData({
+      code: "",
+      description: "",
+      discountType: "PERCENTAGE",
+      discountValue: "",
+      minOrderValue: "",
+      maxDiscount: "",
+      expiryDate: "",
+      usageLimit: 100,
+      firstOrderOnly: false,
+    });
+
+  } catch (err) {
+    alert(err.message);
+  }
+};
 
   const handleDeleteUser = async (userId) => {
     if (!window.confirm('Delete this user?')) return;
@@ -226,6 +276,12 @@ const AdminDashboard = () => {
           >
             ➕ Add Product
           </button>
+          <button
+  onClick={() => setShowCouponModal(true)}
+  className="px-6 py-4 rounded-2xl bg-green-600 hover:bg-green-700 text-white font-semibold shadow-lg transition"
+>
+  🎟️ Create Coupon
+</button>
 
         </div>
 
@@ -674,6 +730,127 @@ type="submit"
 className="px-8 py-3 rounded-2xl bg-[#3B2418] hover:bg-[#2b1b12] text-white font-semibold transition"
 >
 🎁 Upload Offer
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+)}
+{showCouponModal && (
+
+<div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+
+<div className="bg-white rounded-[32px] shadow-2xl w-full max-w-xl p-8">
+
+<h2 className="text-3xl font-bold mb-6">
+Create Coupon
+</h2>
+
+<form onSubmit={handleCreateCoupon} className="space-y-4">
+
+<input
+type="text"
+placeholder="Coupon Code"
+value={couponData.code}
+onChange={(e)=>setCouponData({...couponData,code:e.target.value})}
+className="w-full p-4 rounded-xl border"
+/>
+
+<input
+type="text"
+placeholder="Description"
+value={couponData.description}
+onChange={(e)=>setCouponData({...couponData,description:e.target.value})}
+className="w-full p-4 rounded-xl border"
+/>
+
+<select
+value={couponData.discountType}
+onChange={(e)=>setCouponData({...couponData,discountType:e.target.value})}
+className="w-full p-4 rounded-xl border"
+>
+
+<option value="PERCENTAGE">Percentage</option>
+
+<option value="FLAT">Flat</option>
+
+</select>
+
+<input
+type="number"
+placeholder="Discount Value"
+value={couponData.discountValue}
+onChange={(e)=>setCouponData({...couponData,discountValue:e.target.value})}
+className="w-full p-4 rounded-xl border"
+/>
+
+<input
+type="number"
+placeholder="Minimum Order"
+value={couponData.minOrderValue}
+onChange={(e)=>setCouponData({...couponData,minOrderValue:e.target.value})}
+className="w-full p-4 rounded-xl border"
+/>
+
+<input
+type="number"
+placeholder="Maximum Discount"
+value={couponData.maxDiscount}
+onChange={(e)=>setCouponData({...couponData,maxDiscount:e.target.value})}
+className="w-full p-4 rounded-xl border"
+/>
+
+<input
+type="date"
+value={couponData.expiryDate}
+onChange={(e)=>setCouponData({...couponData,expiryDate:e.target.value})}
+className="w-full p-4 rounded-xl border"
+/>
+
+<input
+type="number"
+placeholder="Usage Limit"
+value={couponData.usageLimit}
+onChange={(e)=>setCouponData({...couponData,usageLimit:e.target.value})}
+className="w-full p-4 rounded-xl border"
+/>
+
+<label className="flex items-center gap-3">
+
+<input
+type="checkbox"
+checked={couponData.firstOrderOnly}
+onChange={(e)=>setCouponData({...couponData,firstOrderOnly:e.target.checked})}
+/>
+
+First Order Only
+
+</label>
+
+<div className="flex justify-end gap-4">
+
+<button
+type="button"
+onClick={()=>setShowCouponModal(false)}
+className="px-6 py-3 rounded-xl border"
+>
+
+Cancel
+
+</button>
+
+<button
+type="submit"
+className="px-6 py-3 rounded-xl bg-green-600 text-white"
+>
+
+Create Coupon
+
 </button>
 
 </div>

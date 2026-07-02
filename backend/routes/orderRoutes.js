@@ -6,6 +6,10 @@ const axios = require('axios');
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
 require('dotenv').config();
+const User = require("../models/User");
+const Coupon = require("../models/couponSchema");
+
+const {  sendOrderConfirmation,sendAdminOrder } = require("../utils/sendOrderEmail");
 const Product = require('../models/Product');
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -99,7 +103,7 @@ router.post('/', authMiddleware , async (req, res) => {
 });
 router.post("/payment/make-payment", authMiddleware, async (req, res) => {
   try {
-    const { orderId } = req.body;
+    const { orderId, couponCode, finalAmount } = req.body;
 
     if (!orderId) {
       return res.status(400).json({
@@ -135,8 +139,7 @@ router.post("/payment/make-payment", authMiddleware, async (req, res) => {
     }
 
     // Amount in paisa
-    const amount = Math.round(order.totalPrice * 100);
-
+    const amount = Math.round(finalAmount * 100);
     const razorpayOrder = await razorpay.orders.create({
       amount,
       currency: "INR",
@@ -189,6 +192,9 @@ console.log("USER:", req.user._id);
       razorpay_payment_id,
       razorpay_signature,
       orderId,
+      couponCode,
+  discount,
+  finalAmount,
     } = req.body;
 
     if (
@@ -260,8 +266,37 @@ console.log("USER:", req.user._id);
 
     order.paidAt = new Date();
     order.placedAt = new Date();
+    // Save coupon information
+order.couponCode = couponCode || "";
+order.discount = discount || 0;
+order.finalAmount = finalAmount || order.totalPrice;
    console.log("Saving order...");
+   if (couponCode) {
+
+  const coupon = await Coupon.findOne({
+    code: couponCode.toUpperCase(),
+  });
+
+  if (coupon) {
+
+    coupon.usedCount += 1;
+
+    const alreadyUsed = coupon.usersUsed.some(
+  (id) => id.toString() === req.user._id.toString()
+);
+
+if (!alreadyUsed) {
+  coupon.usersUsed.push(req.user._id);
+}
+
+    await coupon.save();
+  }
+}
     await order.save();
+    const user = await User.findById(order.userId);
+
+    sendOrderConfirmation(order, user);
+    sendAdminOrder(order, user);
     console.log("Order saved successfully");
 
     return res.status(200).json({
@@ -280,7 +315,7 @@ console.log("USER:", req.user._id);
     });
   }
 });
-
+/*
 router.post('/place-cod', authMiddleware, async (req, res) => {
   try {
     const { orderId } = req.body;
@@ -318,6 +353,6 @@ router.post('/place-cod', authMiddleware, async (req, res) => {
     console.error('❌ Error placing COD order:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
-});
+});*/
 
 module.exports = router;

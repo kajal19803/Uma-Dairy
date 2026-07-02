@@ -125,10 +125,6 @@ export default function Footer() {
 
             <div className="space-y-4 text-gray-600">
 
-              <div className="flex gap-3">
-                <Phone className="text-[#F97354]" size={18} />
-                <span>+91 XXXXXXXXXX</span>
-              </div>
 
               <div className="flex gap-3">
                 <Mail className="text-[#F97354]" size={18} />
@@ -137,7 +133,7 @@ export default function Footer() {
 
               <div className="flex gap-3">
                 <MapPin className="text-[#F97354]" size={18} />
-                <span>Ranchi, Jharkhand</span>
+                <span>Jabalpur, Madhya Pradesh</span>
               </div>
 
             </div>

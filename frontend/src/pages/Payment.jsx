@@ -21,7 +21,20 @@ const Payment = () => {
   const phone = order?.phone;
 
   const [loading, setLoading] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+
+const [discount, setDiscount] = useState(0);
+
+const [finalAmount, setFinalAmount] = useState(totalPrice);
+
+const [couponLoading, setCouponLoading] = useState(false);
+
+const [couponApplied, setCouponApplied] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('online');
+
+  useEffect(() => {
+  setFinalAmount(totalPrice);
+}, [totalPrice]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -29,6 +42,48 @@ const Payment = () => {
       navigate('/cart');
     }
   }, [user, cartItems, totalPrice, orderId, navigate]);
+  const handleApplyCoupon = async () => {
+
+  if (!couponCode.trim()) {
+    return alert("Enter coupon code");
+  }
+
+  try {
+
+    setCouponLoading(true);
+
+    const res = await axios.post(
+      `${BACKEND_BASE_URL}/api/coupon/apply`,
+      {
+        code: couponCode,
+        totalAmount: totalPrice,
+      }
+    );
+
+    setDiscount(res.data.discount);
+
+    setFinalAmount(res.data.finalAmount);
+
+    setCouponApplied(true);
+
+    alert("Coupon Applied Successfully");
+
+  } catch (err) {
+     setCouponApplied(false);
+     setDiscount(0);
+     setFinalAmount(totalPrice);
+
+    alert(
+      err.response?.data?.message || "Invalid Coupon"
+    );
+
+  } finally {
+
+    setCouponLoading(false);
+
+  }
+
+};
 
 
  const handlePayment = async () => {
@@ -45,7 +100,7 @@ const Payment = () => {
     const { data } = await axios.post(
       `${BACKEND_BASE_URL}/api/orders/payment/make-payment`,
       {
-        orderId,
+        orderId, couponCode,finalAmount, 
       },
       {
         headers: {
@@ -135,7 +190,7 @@ const Payment = () => {
   }
 };
 
-  const handleCOD = async () => {
+/*  const handleCOD = async () => {
     try {
       const token = localStorage.getItem('token');
 
@@ -159,7 +214,7 @@ const Payment = () => {
       console.error(' COD error:', error);
       alert('Failed to place COD order.');
     }
-  };
+  };*/
 
   return (
 <div className="min-h-screen w-screen bg-[#FFF8F1] pt-28 pb-16 px-5">
@@ -323,7 +378,7 @@ Delivery Address
 
 <button
 onClick={()=>navigate("/cart")}
-className="mt-4 text-[#F97354] underline font-medium">
+className="text-[#F97354] font-semibold bg-transparent hover:underline border-none outline-none focus:outline-none focus:ring-0 active:outline-none active:ring-0 shadow-none">
 Edit Details
 </button>
 
@@ -374,7 +429,7 @@ onChange={()=>setPaymentMethod("online")}
 />
 
 </label>
-
+{/*
 <label className={`flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition ${
 paymentMethod==="cod"
 ?"border-[#F97354] bg-orange-50"
@@ -402,7 +457,7 @@ onChange={()=>setPaymentMethod("cod")}
 />
 
 </label>
-
+*/}
 </div>
 
 <hr className="my-8"/>
@@ -432,9 +487,61 @@ FREE
 </span>
 
 </div>
+<div className="mt-8">
+
+<h3 className="font-semibold mb-3">
+
+Have a Coupon?
+
+</h3>
+
+<div className="flex gap-2">
+
+<input
+
+type="text"
+
+placeholder="Enter Coupon"
+
+value={couponCode}
+
+onChange={(e)=>setCouponCode(e.target.value.toUpperCase())}
+disabled={couponApplied}
+
+className="flex-1 border bg-white rounded-md px-4 py-3"
+
+/>
+
+<button
+
+onClick={handleApplyCoupon}
+
+disabled={couponLoading || couponApplied}
+
+className="bg-[#F97354] text-white px-5 rounded-xl"
+
+>
+
+{couponApplied ? "Applied ✓" : couponLoading ? "Applying..." : "Apply"}
+
+</button>
+
+</div>
+
+</div>
 
 <hr/>
+{couponApplied && (
 
+<div className="flex justify-between text-green-600">
+
+<span>Coupon Discount</span>
+
+<span>- ₹{discount}</span>
+
+</div>
+
+)}
 <div className="flex justify-between items-center">
 
 <span className="text-lg font-bold text-[#3B2418]">
@@ -442,13 +549,26 @@ Grand Total
 </span>
 
 <span className="text-4xl font-bold text-[#F97354]">
-₹{totalPrice?.toFixed(2)}
+
+₹{finalAmount?.toFixed(2)}
 </span>
 
 </div>
 
 </div>
+{paymentMethod==="online" && (
 
+<button
+onClick={handlePayment}
+disabled={loading}
+className="mt-8 w-full bg-[#F97354] hover:bg-[#ea6847] text-white py-4 rounded-xl font-bold text-lg transition disabled:opacity-50">
+
+{loading ? "Processing..." : "Pay Securely"}
+
+</button>
+
+)}
+{/*}
 {paymentMethod==="online" ? (
 
 <button
@@ -471,6 +591,8 @@ Confirm COD Order
 </button>
 
 )}
+*/}
+
 
 <p className="mt-6 text-center text-sm text-gray-500">
 🔒 100% Secure Payment powered by Razorpay

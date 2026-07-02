@@ -44,7 +44,7 @@ export default function Home() {
             Nature
           </span>
         </h1>
-
+        <p className="mt-5 text-lg leading-8 text-black text-bold"> 📍 Currently Delivering Only in Jabalpur </p>
         <p className="mt-7 text-lg leading-8 text-gray-700">
           Fresh milk, pure desi ghee, homemade curd and
           traditional dairy products delivered directly

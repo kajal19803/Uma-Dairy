@@ -19,6 +19,7 @@ const ticketRoutes = require('./routes/ticketRoutes');
 const shiprocketRoutes = require('./routes/shiprocketRoutes');
 const webhookRoutes = require('./routes/webhookRoutes');
 const cartRoutes = require('./routes/cartRoutes');
+const couponRoutes = require("./routes/coupon");
 
 const User = require('./models/User');
 
@@ -64,6 +65,7 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/shiprocket', shiprocketRoutes);
 app.use('/api/cart', cartRoutes);
+app.use("/api/coupon", couponRoutes);
 
 app.post('/api/auth/google', async (req, res) => {
   try {
