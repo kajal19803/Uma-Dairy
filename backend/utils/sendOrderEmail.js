@@ -211,5 +211,3 @@ module.exports = {
 sendOrderConfirmation,
 sendAdminOrder
 };
-
-module.exports = sendOrderConfirmation;
