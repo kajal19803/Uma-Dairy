@@ -114,36 +114,34 @@ const Products = () =>{
 
 
   return (
-    <div className="min-h-screen w-screen bg-[#FFF8F1]">
+    <div className="min-h-screen overflow-x-hidden w-screen bg-[#FFF8F1]">
 
   {/* Header */}
 
-  <div className="pt-28 pb-8 text-center">
+ <div className="pt-24 md:pt-28 pb-6 md:pb-8 text-center px-4">
 
-    <h1 className="text-5xl font-bold text-[#3B2418]">
+    <h1 className="text-3xl md:text-5xl font-bold text-[#3B2418]">
       Our Products
     </h1>
 
-    <p className="mt-4 text-lg text-gray-600">
+    <p className="mt-2 md:mt-4 text-sm md:text-lg text-gray-600">
       Fresh • Pure • Farm to Home
     </p>
 
-    <div className="mt-4 inline-flex px-5 py-2 rounded-full bg-orange-100 text-[#F97354] font-medium">
+    <div className="mt-3 inline-flex px-4 md:px-5 py-1.5 md:py-2 rounded-full bg-orange-100 text-xs md:text-base text-[#F97354] font-medium">
       {products.length} Products Available
     </div>
 
   </div>
-      <h1 className="text-3xl font-bold text-center text-green-700 mb-6">All Products</h1>
 
       {/* Filters */}
       <div className="max-w-7xl mx-auto mb-10">
 
-<div className="bg-white rounded-3xl shadow-lg p-6 flex flex-wrap justify-center gap-5">
-
+<div className="w-[70%] md:w-full mx-auto bg-white rounded-3xl shadow-lg p-4 md:p-6 flex flex-wrap justify-center gap-3 md:gap-5">
 <select
 value={filters.category}
 onChange={(e)=>setFilters(prev=>({...prev,category:e.target.value}))}
-className="rounded-xl border border-orange-200 px-5 py-3 bg-[#FFF8F1] text-[#3B2418] outline-none"
+className="w-full sm:w-auto rounded-xl border border-orange-200 px-4 py-2.5 bg-[#FFF8F1] text-sm md:text-base text-[#3B2418] outline-none"
 >
 
 <option value="">All Categories</option>
@@ -156,7 +154,7 @@ className="rounded-xl border border-orange-200 px-5 py-3 bg-[#FFF8F1] text-[#3B2
 <select
 value={filters.inStock}
 onChange={(e)=>setFilters(prev=>({...prev,inStock:e.target.value}))}
-className="rounded-xl border border-orange-200 px-5 py-3 bg-[#FFF8F1]"
+className="w-full sm:w-auto rounded-xl border border-orange-200 px-4 py-2.5 bg-[#FFF8F1] text-sm md:text-base"
 >
 
 <option value="">Stock Status</option>
@@ -168,7 +166,7 @@ className="rounded-xl border border-orange-200 px-5 py-3 bg-[#FFF8F1]"
 <select
 value={filters.unit}
 onChange={(e)=>setFilters(prev=>({...prev,unit:e.target.value}))}
-className="rounded-xl border border-orange-200 px-5 py-3 bg-[#FFF8F1]"
+className="w-full sm:w-auto rounded-xl border border-orange-200 px-4 py-2.5 bg-[#FFF8F1] text-sm md:text-base"
 >
 
 <option value="">All Units</option>
@@ -180,7 +178,7 @@ className="rounded-xl border border-orange-200 px-5 py-3 bg-[#FFF8F1]"
 
 <button
 onClick={()=>setFilters({category:"",inStock:"",unit:""})}
-className="px-6 py-3 rounded-xl bg-[#F97354] text-white hover:bg-[#ea6b4b] transition"
+className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#F97354] text-sm md:text-base text-white hover:bg-[#ea6b4b] transition"
 >
 
 Reset Filters
@@ -192,13 +190,14 @@ Reset Filters
 </div>
 
       {/* Product Grid */}
-      <div className="max-w-7xl mx-auto grid
-grid-cols-1
+      <div className="p-3 md:p-1 max-w-7xl mx-auto px-4 md:px-0 grid
+grid-cols-2
 sm:grid-cols-2
 lg:grid-cols-3
 xl:grid-cols-4
-gap-8
-pb-20">
+gap-4
+md:gap-8
+pb-16 md:pb-20">
         {products.length === 0 && (
           <p className="col-span-full text-center text-xl text-gray-500 py-20">
 No Products Found 🥛

@@ -1,14 +1,14 @@
 module.exports = {
   content: [
-    './index.html',
-    './src/**/*.{js,ts,jsx,tsx}',
-    './node_modules/react-toastify/dist/*.css'
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/react-toastify/dist/*.css",
   ],
-  darkMode: 'class',
+  darkMode: "class",
   theme: {
     extend: {},
   },
-  plugins: [],
-}
+  plugins: [require("tailwindcss-animate")],
+};
 
 

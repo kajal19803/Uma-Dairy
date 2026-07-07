@@ -46,11 +46,11 @@ const ProductCard = ({
     onClick={onClick}
     onMouseEnter={onHover}
     onMouseLeave={onLeave}
-    className="group relative bg-white rounded-3xl overflow-hidden border border-orange-100 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer"
+    className="group relative bg-white rounded-2xl md:rounded-3xl overflow-hidden border border-orange-100 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer"
   >
     {/* Badge */}
     <div
-      className={`absolute top-4 left-4 z-20 px-3 py-1 rounded-full text-xs font-semibold ${badge.color}`}
+      className={`absolute top-2 md:top-4 left-2 md:left-4 z-20 px-2 md:px-3 py-0.5 md:py-1 rounded-full text-[10px] md:text-xs font-semibold ${badge.color}`}
     >
       {badge.text}
     </div>
@@ -61,17 +61,17 @@ const ProductCard = ({
         e.stopPropagation();
         toggleWishlist(e, _id);
       }}
-      className="absolute top-4 right-4 z-20 w-14 h-14 rounded-full bg-white/95 backdrop-blur shadow-2xl border border-orange-100 flex items-center justify-center hover:scale-110 transition"
+      className="absolute top-2 md:top-4 right-2 md:right-4 z-20 w-9 h-9 md:w-14 md:h-14 rounded-full bg-white/95 backdrop-blur shadow-xl border border-orange-100 flex items-center justify-center hover:scale-110 transition"
     >
       {isWishlisted ? (
-        <FaHeart className="text-[#F97354] text-xl" />
+        <FaHeart className="text-[#F97354] text-sm md:text-xl" />
       ) : (
-        <FaRegHeart className="text-[#F97354] text-xl" />
+        <FaRegHeart className="text-[#F97354] text-sm md:text-xl" />
       )}
     </button>
 
     {/* Image Slider */}
-    <div className="relative h-64 overflow-hidden bg-[#FFF8F1]">
+    <div className="relative h-36 md:h-64 overflow-hidden bg-[#FFF8F1]">
 
       <div
         className="absolute top-0 left-0 h-full flex transition-transform duration-500"
@@ -101,23 +101,23 @@ const ProductCard = ({
     </div>
 
     {/* Content */}
-    <div className="p-5">
+    <div className="p-3 md:p-5">
 
-      <h2 className="text-xl font-bold text-[#3B2418] truncate">
+      <h2 className="text-base md:text-xl font-bold text-[#3B2418] truncate">
         {name}
       </h2>
 
-      <p className="text-gray-500 text-sm mt-1">
+      <p className="text-gray-500 text-xs md:text-sm mt-1">
         {category}
       </p>
 
-      <p className="text-gray-400 text-sm">
+      <p className="text-gray-400 text-xs md:text-sm">
         {unit}
       </p>
 
       {/* Price */}
             <div className="flex items-center flex-wrap gap-2 mt-3">
-        <span className="text-2xl font-bold text-[#F97354]">
+        <span className="text-lg md:text-2xl font-bold text-[#F97354]">
           ₹{price}
         </span>
 
@@ -135,9 +135,9 @@ const ProductCard = ({
       </div>
 
       {/* Stock */}
-      <div className="mt-3">
+      <div className="mt-2 md:mt-3">
         <span
-          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+          className={`inline-flex items-center px-2 md:px-3 py-0.5 md:py-1 rounded-full text-xs font-semibold ${
             inStock
               ? "bg-green-100 text-green-700"
               : "bg-red-100 text-red-600"

@@ -138,8 +138,7 @@ const Cart = () => {
 }
 
  return (
-<div className="min-h-screen w-screen bg-[#FFF8F1] pt-28 pb-16 px-5">
-
+<div className="min-h-screen w-screen overflow-x-hidden bg-[#FFF8F1] pt-28 pb-16 px-4 md:px-5">
 <div className="max-w-7xl mx-auto">
 
 <div className="text-center mb-12">
@@ -165,12 +164,12 @@ Review your selected dairy products
 <div
 key={item._id}
 onClick={()=>navigate(`/product/${item._id}`)}
-className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition duration-300 p-6 flex gap-6 cursor-pointer">
+className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition duration-300 p-4 md:p-6 flex flex-col sm:flex-row gap-4 md:gap-6 cursor-pointer">
 
 <img
 src={`${BACKEND_BASE_URL}${item.images[0]}`}
 alt={item.name}
-className="w-32 h-32 rounded-2xl object-cover border border-orange-100"/>
+className="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl object-cover border border-orange-100 mx-auto sm:mx-0"/>
 
 <div className="flex-1">
 
@@ -186,7 +185,7 @@ className="w-32 h-32 rounded-2xl object-cover border border-orange-100"/>
 ₹{item.price}
 </p>
 
-<div className="mt-5 flex items-center gap-3">
+<div className="mt-5 flex flex-wrap items-center gap-3">
 
 <button
 onClick={(e)=>{
@@ -249,30 +248,30 @@ Delivery Address
 
 {Array.isArray(user?.address) && user.address.length>0 ? (
 
-<div className="flex gap-4">
+<div className="space-y-4">
 
-<select
-value={JSON.stringify(selectedAddress)}
-onChange={(e)=>setSelectedAddress(JSON.parse(e.target.value))}
-className="flex-1 rounded-xl text-[#3B2418] border border-orange-200 bg-[#FFF8F1] p-4 outline-none">
+  <div className="rounded-2xl border border-orange-200 bg-[#FFF8F1] p-4">
 
-{user.address.map((addr,index)=>(
+    <p className="font-semibold text-[#3B2418]">
+      {selectedAddress?.fullName}
+    </p>
 
-<option
-key={index}
-value={JSON.stringify(addr)}>
-{addr.fullName}, {addr.street}, {addr.city}, {addr.state}, {addr.zip}
-</option>
+    <p className="mt-1 text-gray-600 leading-6">
+      {selectedAddress?.street}
+      <br />
+      {selectedAddress?.city}, {selectedAddress?.state}
+      <br />
+      {selectedAddress?.zip}
+    </p>
 
-))}
+  </div>
 
-</select>
-
-<button
-onClick={()=>setCustomAddress(true)}
-className="bg-[#F97354] text-white px-5 rounded-xl hover:bg-[#ea6847]">
-New
-</button>
+  <button
+    onClick={() => setCustomAddress(true)}
+    className="w-full sm:w-auto bg-[#F97354] text-white px-6 py-3 rounded-xl hover:bg-[#ea6847] transition"
+  >
+    Change
+  </button>
 
 </div>
 
@@ -417,12 +416,12 @@ Phone Number
 
 {Array.isArray(user?.phoneNumber)&&user.phoneNumber.length>0 ? (
 
-<div className="flex gap-4">
+<div className="flex flex-col sm:flex-row gap-4">
 
 <select
 value={selectedPhone}
 onChange={(e)=>setSelectedPhone(e.target.value)}
-className="flex-1 rounded-xl text-[#3B2418] border border-orange-200 bg-[#FFF8F1] p-4">
+className="flex-1 w-full min-w-0 max-w-full rounded-xl text-[#3B2418] border border-orange-200 bg-[#FFF8F1] p-4">
 
 {user.phoneNumber.map((num,index)=>(
 
@@ -438,7 +437,7 @@ value={num}>
 
 <button
 onClick={()=>setCustomPhone(true)}
-className="bg-[#F97354] text-white px-5 rounded-xl hover:bg-[#ea6847]">
+className="bg-[#F97354] text-white px-5 py-3 sm:py-0 rounded-xl hover:bg-[#ea6847]">
 Change
 </button>
 
@@ -565,7 +564,7 @@ Use Saved Number
 
 <div className="lg:col-span-1">
 
-<div className="sticky top-28 bg-white rounded-3xl shadow-xl p-8">
+<div className="lg:sticky lg:top-28 bg-white rounded-3xl shadow-xl p-6 md:p-8">
 
 <h2 className="text-2xl font-bold text-[#3B2418]">
 Order Summary
