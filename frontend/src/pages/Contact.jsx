@@ -40,7 +40,7 @@ const Contact = () => {
             Get In Touch
           </div>
 
-          <h1 className="mt-6 text-5xl md:text-6xl font-bold text-[#3B2418]">
+          <h1 className="mt-6 text-3xl lg:text-5xl md:text-6xl font-bold text-[#3B2418]">
             Contact Us
           </h1>
 

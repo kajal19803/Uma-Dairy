@@ -181,8 +181,7 @@ const Navbar = () => {
           {menuOpen && (
             <div className="absolute top-full right-1 mt-2 w-30 md:w-56 rounded-xl bg-[#FFF8F1] shadow-xl border border-orange-100 overflow-hidden z-50 flex flex-col">
               <Link to="/" className="px-5 py-1 text-sm  text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Home</Link>
-              <Link to="/features" className="px-5 py-1 text-sm  text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Features</Link>
-              <Link to="/team" className="px-5 py-1 text-sm  text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Team</Link>
+              
               <Link to="/contact" className="px-5 py-1 text-sm  text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Contact Us</Link>
             <div className="md:hidden">
               {!isLoggedIn ? (

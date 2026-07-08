@@ -146,6 +146,9 @@ const [couponApplied, setCouponApplied] = useState(false);
               razorpay_signature: response.razorpay_signature,
 
               orderId,
+              couponCode,
+              discount,
+              finalAmount,
             },
             {
               headers: {
@@ -220,7 +223,7 @@ const [couponApplied, setCouponApplied] = useState(false);
 <div className="min-h-screen w-screen bg-[#FFF8F1] pt-28 pb-16 px-5">
 
 <div className="text-center mb-12">
-<h1 className="text-5xl font-bold text-[#3B2418]">
+<h1 className="text-3xl lg:text-5xl font-bold text-[#3B2418]">
 Payment
 </h1>
 
@@ -548,7 +551,7 @@ className="bg-[#F97354] text-white px-5 rounded-xl"
 Grand Total
 </span>
 
-<span className="text-4xl font-bold text-[#F97354]">
+<span className="text-2xl lg:text-4xl font-bold text-[#F97354]">
 
 ₹{finalAmount?.toFixed(2)}
 </span>
@@ -561,7 +564,7 @@ Grand Total
 <button
 onClick={handlePayment}
 disabled={loading}
-className="mt-8 w-full bg-[#F97354] hover:bg-[#ea6847] text-white py-4 rounded-xl font-bold text-lg transition disabled:opacity-50">
+className="mt-5 w-full bg-[#F97354] hover:bg-[#ea6847] text-white py-3 rounded-xl font-bold text-lg transition disabled:opacity-50">
 
 {loading ? "Processing..." : "Pay Securely"}
 

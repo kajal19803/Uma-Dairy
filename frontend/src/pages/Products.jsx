@@ -190,14 +190,21 @@ Reset Filters
 </div>
 
       {/* Product Grid */}
-      <div className="p-3 md:p-1 max-w-7xl mx-auto px-4 md:px-0 grid
-grid-cols-2
-sm:grid-cols-2
-lg:grid-cols-3
-xl:grid-cols-4
-gap-4
-md:gap-8
-pb-16 md:pb-20">
+      <div
+  className="
+    p-2 md:p-1
+    max-w-7xl
+    mx-auto
+    px-2 md:px-0
+    grid
+    grid-cols-2
+    sm:grid-cols-2
+    lg:grid-cols-3
+    xl:grid-cols-4
+    gap-2 md:gap-8
+    pb-16 md:pb-20
+  "
+>
         {products.length === 0 && (
           <p className="col-span-full text-center text-xl text-gray-500 py-20">
 No Products Found 🥛

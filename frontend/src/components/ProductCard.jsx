@@ -46,7 +46,7 @@ const ProductCard = ({
     onClick={onClick}
     onMouseEnter={onHover}
     onMouseLeave={onLeave}
-    className="group relative bg-white rounded-2xl md:rounded-3xl overflow-hidden border border-orange-100 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer"
+    className="group relative bg-white rounded-2xl md:rounded-3xl overflow-visible md:overflow-hidden border border-orange-100 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer"
   >
     {/* Badge */}
     <div
@@ -56,19 +56,19 @@ const ProductCard = ({
     </div>
 
     {/* Wishlist */}
-    <button
-      onClick={(e) => {
-        e.stopPropagation();
-        toggleWishlist(e, _id);
-      }}
-      className="absolute top-2 md:top-4 right-2 md:right-4 z-20 w-9 h-9 md:w-14 md:h-14 rounded-full bg-white/95 backdrop-blur shadow-xl border border-orange-100 flex items-center justify-center hover:scale-110 transition"
-    >
-      {isWishlisted ? (
-        <FaHeart className="text-[#F97354] text-sm md:text-xl" />
-      ) : (
-        <FaRegHeart className="text-[#F97354] text-sm md:text-xl" />
-      )}
-    </button>
+<button
+  onClick={(e) => {
+    e.stopPropagation();
+    toggleWishlist(e, _id);
+  }}
+  className="absolute top-2 right-2 md:top-4 md:right-4 z-50 w-10 h-10 md:w-14 md:h-14 rounded-full bg-white border border-orange-100 shadow-lg flex items-center justify-center hover:scale-110 transition"
+>
+  {isWishlisted ? (
+    <FaHeart size={20} className="text-[#F97354] md:w-6 md:h-6" />
+  ) : (
+    <FaRegHeart size={20} className="text-[#F97354] md:w-6 md:h-6" />
+  )}
+</button>
 
     {/* Image Slider */}
     <div className="relative h-36 md:h-64 overflow-hidden bg-[#FFF8F1]">
@@ -156,44 +156,44 @@ const ProductCard = ({
               addToCart(product);
             }}
             disabled={!inStock}
-            className={`w-full py-3 rounded-xl font-semibold transition ${
-              inStock
-                ? "bg-[#F97354] hover:bg-[#ea6847] text-white"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            }`}
+           className={`w-full py-2 md:py-3 text-sm md:text-base rounded-lg md:rounded-xl font-semibold transition ${
+  inStock
+    ? "bg-[#F97354] hover:bg-[#ea6847] text-white"
+    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+}`}
           >
             🛒 Add to Cart
           </button>
         ) : (
-          <div className="flex items-center justify-between border border-orange-200 rounded-xl overflow-hidden bg-orange-50">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                if(quantity > 1){
-                   updateQuantity(_id, quantity - 1);
-                }else{
-                   removeFromCart(_id);
-                }
-              }}
-              className="w-12 h-12 bg-[#F97354] hover:bg-[#ea6847] text-white text-xl font-bold transition"
-            >
-              −
-            </button>
+          <div className="flex items-center justify-between border border-orange-200 rounded-lg md:rounded-xl overflow-hidden bg-orange-50">
+  <button
+    onClick={(e) => {
+      e.stopPropagation();
+      if (quantity > 1) {
+        updateQuantity(_id, quantity - 1);
+      } else {
+        removeFromCart(_id);
+      }
+    }}
+    className="w-8 h-8 md:w-12 md:h-12 bg-[#F97354] hover:bg-[#ea6847] text-white text-lg md:text-xl font-bold transition"
+  >
+    −
+  </button>
 
-            <span className="text-lg font-bold text-[#3B2418]">
-              {quantity}
-            </span>
+  <span className="text-base md:text-lg font-bold text-[#3B2418]">
+    {quantity}
+  </span>
 
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                updateQuantity(_id, quantity + 1);
-              }}
-              className="w-12 h-12 bg-[#F97354] hover:bg-[#ea6847] text-white text-xl font-bold transition"
-            >
-              +
-            </button>
-          </div>
+  <button
+    onClick={(e) => {
+      e.stopPropagation();
+      updateQuantity(_id, quantity + 1);
+    }}
+    className="w-8 h-8 md:w-12 md:h-12 bg-[#F97354] hover:bg-[#ea6847] text-white text-lg md:text-xl font-bold transition"
+  >
+    +
+  </button>
+</div>
         )}
       </div>
 

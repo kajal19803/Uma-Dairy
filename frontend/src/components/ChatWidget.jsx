@@ -669,22 +669,67 @@ await createTicket(file);};
     <>
       {/* Floating Button */}
 
-      {!isOpen && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full bg-gradient-to-r from-[#F97354] to-[#ff9b6b] text-white shadow-2xl hover:scale-110 transition duration-300 flex items-center justify-center"
-        >
-          <MessageCircle size={28} />
-        </button>
-      )}
+{!isOpen && (
+  <button
+    onClick={() => setIsOpen(true)}
+    className="
+      fixed
+      bottom-4 right-4
+      md:bottom-6 md:right-6
+      z-50
+      w-12 h-12
+      md:w-16 md:h-16
+      rounded-full
+      bg-gradient-to-r
+      from-[#F97354]
+      to-[#ff9b6b]
+      text-white
+      shadow-2xl
+      hover:scale-110
+      transition
+      duration-300
+      flex
+      items-center
+      justify-center
+    "
+  >
+    <MessageCircle
+      size={22}
+      className="md:w-7 md:h-7"
+    />
+  </button>
+)}
 
-      {/* Chat Window */}
+{/* Chat Window */}
 
-      {isOpen && (
-        <div
-          ref={chatRef}
-          className="fixed bottom-6 right-6 w-[390px] h-[680px] bg-white rounded-[30px] shadow-2xl overflow-hidden flex flex-col border border-orange-100 z-50"
-        >
+{isOpen && (
+  <div
+    ref={chatRef}
+    className="
+      fixed
+      inset-x-2
+      bottom-2
+      top-16
+
+      md:top-auto
+      md:bottom-6
+      md:right-6
+      md:left-auto
+      md:w-[390px]
+      md:h-[680px]
+
+      bg-white
+      rounded-2xl
+      md:rounded-[30px]
+      shadow-2xl
+      overflow-hidden
+      flex
+      flex-col
+      border
+      border-orange-100
+      z-50
+    "
+  >
           {/* Header */}
 
           <div className="bg-gradient-to-r from-[#F97354] to-[#ff9b6b] px-6 py-5">
