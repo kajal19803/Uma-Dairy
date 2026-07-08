@@ -9,7 +9,7 @@ const Order = require("../models/Order");
 // Shiprocket Webhook
 // ===================================
 
-router.post("/shiprocket", async (req, res) => {
+router.post("/tracking", async (req, res) => {
   try {
     // Verify API Key
     const apiKey = req.headers["x-api-key"];
