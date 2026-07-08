@@ -440,9 +440,15 @@ Order #{order.orderId}
 
 <span
 className={`px-3 py-1 rounded-full text-xs font-semibold ${
-order.orderStatus === "PLACED"
+order.orderStatus === "DELIVERED"
 ? "bg-green-100 text-green-700"
-: "bg-yellow-100 text-yellow-700"
+: order.orderStatus === "SHIPPED"
+? "bg-blue-100 text-blue-700"
+: order.orderStatus === "PLACED"
+? "bg-yellow-100 text-yellow-700"
+: order.orderStatus === "CANCELLED"
+? "bg-red-100 text-red-700"
+: "bg-gray-100 text-gray-700"
 }`}
 >
 📦 {order.orderStatus}
@@ -597,12 +603,87 @@ Qty : {item.quantity}
 <div>
 
 <p className="text-sm text-gray-500">
-Grand Total
+{order.discount > 0 ? "Final Amount" : "Grand Total"}
 </p>
 
 <h3 className="text-3xl font-bold text-[#F97354]">
-₹{Number(order.totalPrice).toFixed(2)}
+₹{Number(order.finalAmount || order.totalPrice).toFixed(2)}
 </h3>
+{/* ================= Shiprocket ================= */}
+
+{order.shiprocket?.shipmentId && (
+
+<div className="mt-6 bg-[#FFF8F1] border border-orange-100 rounded-2xl p-5">
+
+<h4 className="font-bold text-[#3B2418] mb-4">
+🚚 Shipment Details
+</h4>
+
+<div className="grid md:grid-cols-2 gap-4 text-sm">
+
+<div>
+<p className="text-gray-500">Shipment ID</p>
+<p className="font-semibold text-[#3B2418]">
+{order.shiprocket.shipmentId}
+</p>
+</div>
+
+<div>
+<p className="text-gray-500">Tracking Status</p>
+<p
+  className={`font-semibold ${
+    order.shiprocket.trackingStatus === "Delivered"
+      ? "text-green-600"
+      : order.shiprocket.trackingStatus?.includes("Shipped")
+      ? "text-blue-600"
+      : "text-orange-600"
+  }`}
+>
+  {order.shiprocket.trackingStatus || "Pending"}
+</p>
+</div>
+
+{order.shiprocket.awbCode && (
+<div>
+<p className="text-gray-500">AWB Number</p>
+<p className="font-semibold">
+{order.shiprocket.awbCode}
+</p>
+</div>
+)}
+
+{order.shiprocket.courierName && (
+<div>
+<p className="text-gray-500">Courier</p>
+<p className="font-semibold">
+{order.shiprocket.courierName}
+</p>
+</div>
+)}
+
+</div>
+
+{order.shiprocket.trackingUrl && (
+
+<button
+onClick={() =>
+window.open(
+order.shiprocket.trackingUrl,
+"_blank"
+)
+}
+className="mt-5 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl font-semibold"
+>
+
+📍 Track Shipment
+
+</button>
+
+)}
+
+</div>
+
+)}
 
 </div>
 

@@ -4,39 +4,27 @@ const router = express.Router();
 const Order = require("../models/Order");
 
 // ===================================
-// Shiprocket Webhook
+// Shiprocket Tracking Webhook
 // ===================================
 
 router.post("/tracking", async (req, res) => {
   try {
-    console.log("\n==============================");
-    console.log("🚚 SHIPROCKET WEBHOOK HIT");
-    console.log("==============================");
+    // ===================================
+    // Verify API Key
+    // ===================================
 
-    console.log("Headers:");
-    console.log(req.headers);
-
-    console.log("\nBody:");
-    console.log(req.body);
-
-    // ===========================
-    // TEMPORARY
-    // Authentication disabled
-    // ===========================
-
-    /*
     const apiKey = req.headers["x-api-key"];
 
-    console.log("Received Key:", apiKey);
-    console.log("Expected Key:", process.env.SHIPROCKET_WEBHOOK_KEY);
-
     if (apiKey !== process.env.SHIPROCKET_WEBHOOK_KEY) {
+      console.log("❌ Invalid Shiprocket API Key");
+
       return res.status(401).json({
         success: false,
         message: "Unauthorized",
       });
     }
-    */
+
+    console.log("📩 Shiprocket Webhook Received");
 
     const {
       awb,
@@ -47,13 +35,12 @@ router.post("/tracking", async (req, res) => {
       order_id,
     } = req.body;
 
-    console.log("Shipment ID:", shipment_id);
-    console.log("Order ID:", order_id);
-    console.log("Current Status:", current_status);
+    // ===================================
+    // Ignore Test Webhook
+    // ===================================
 
-    // Test webhook me shipment_id nahi bhi ho sakta
     if (!shipment_id) {
-      console.log("⚠️ Test webhook received (No shipment_id)");
+      console.log("⚠️ Shiprocket Test Webhook");
 
       return res.status(200).json({
         success: true,
@@ -61,37 +48,56 @@ router.post("/tracking", async (req, res) => {
       });
     }
 
+    // ===================================
+    // Find Order
+    // ===================================
+
     const order = await Order.findOne({
       "shiprocket.shipmentId": shipment_id.toString(),
     });
 
     if (!order) {
-      console.log("❌ Order not found");
+      console.log(
+        `❌ Order not found for Shipment ID: ${shipment_id}`
+      );
 
       return res.status(200).json({
         success: true,
-        message: "Webhook received but order not found",
+        message: "Order not found",
       });
     }
 
-    // Update Shiprocket details
+    // ===================================
+    // Update Shiprocket Details
+    // ===================================
 
-    if (awb) order.shiprocket.awbCode = awb;
-    if (courier_name) order.shiprocket.courierName = courier_name;
-    if (tracking_url) order.shiprocket.trackingUrl = tracking_url;
-    if (current_status) order.shiprocket.trackingStatus = current_status;
+    if (awb) {
+      order.shiprocket.awbCode = awb;
+    }
+
+    if (courier_name) {
+      order.shiprocket.courierName = courier_name;
+    }
+
+    if (tracking_url) {
+      order.shiprocket.trackingUrl = tracking_url;
+    }
+
+    if (current_status) {
+      order.shiprocket.trackingStatus = current_status;
+    }
+
+    // ===================================
+    // Update Main Order Status
+    // ===================================
 
     const status = current_status?.toUpperCase() || "";
 
     if (status.includes("SHIPPED")) {
       order.orderStatus = "SHIPPED";
-    }
-
-    if (status.includes("DELIVERED")) {
+    } else if (status.includes("DELIVERED")) {
       order.orderStatus = "DELIVERED";
-    }
-
-    if (
+    } else if (
       status.includes("CANCEL") ||
       status.includes("RTO")
     ) {
@@ -100,7 +106,9 @@ router.post("/tracking", async (req, res) => {
 
     await order.save();
 
-    console.log("✅ Order updated successfully");
+    console.log(
+      `✅ Order ${order.orderId} updated (${current_status})`
+    );
 
     return res.status(200).json({
       success: true,
@@ -108,15 +116,15 @@ router.post("/tracking", async (req, res) => {
     });
 
   } catch (err) {
-
-    console.error("❌ WEBHOOK ERROR");
-    console.error(err);
+    console.error(
+      "❌ Shiprocket Webhook Error:",
+      err.response?.data || err.message
+    );
 
     return res.status(500).json({
       success: false,
-      message: err.message,
+      message: "Internal Server Error",
     });
-
   }
 });
 
