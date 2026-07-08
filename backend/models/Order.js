@@ -1,131 +1,34 @@
-const axios = require("axios");
-const getShiprocketToken = require("../utils/getShiprocketToken");
-
-const createShiprocketOrder = async (order) => {
-  try {
-    // Generate Shiprocket Token
-    const token = await getShiprocketToken();
-
-    // Shiprocket Payload
-    const orderData = {
-      order_id: order.orderId,
-
-      order_date: new Date(order.createdAt)
-        .toISOString()
-        .slice(0, 19)
-        .replace("T", " "),
-
-      pickup_location: "Home",
-
-      billing_customer_name:
-        order.address?.fullName || "Customer",
-
-      billing_last_name: "",
-
-      billing_address:
-        order.address?.street || "Default Address",
-
-      billing_city:
-        order.address?.city || "Jabalpur",
-
-      billing_state:
-        order.address?.state || "Madhya Pradesh",
-
-      billing_pincode:
-        order.address?.zip || "482009",
-
-      billing_country: "India",
-
-      billing_phone:
-        order.phone || "9999999999",
-
-      shipping_is_billing: true,
-
-      order_items: order.items.map((item) => ({
-        name: item.name,
-
-        sku:
-          item.productId?.toString() ||
-          item.name.replace(/\s/g, "_"),
-
-        units: item.quantity,
-
-        selling_price: item.price,
-      })),
-
-      payment_method:
-        order.paymentMethod === "COD"
-          ? "COD"
-          : "Prepaid",
-
-      sub_total: Number(
-        (order.finalAmount || order.totalPrice).toFixed(2)
-      ),
-
-      length: 10,
-      breadth: 10,
-      height: 10,
-      weight: 0.5,
-    };
-
-    console.log("📦 Shiprocket Payload");
-    console.log(orderData);
-
-    // Create Shiprocket Order
-    const response = await axios.post(
-      "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
-      orderData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    console.log("✅ Shiprocket Response");
-    console.log(response.data);
-
-    // ==========================
-    // Save Shiprocket Details
-    // ==========================
-
-    order.shiprocket.orderId =
-      response.data.order_id?.toString() || "";
-
-    order.shiprocket.shipmentId =
-      response.data.shipment_id?.toString() || "";
-
-    order.shiprocket.awbCode =
-      response.data.awb_code || "";
-
-    order.shiprocket.courierName =
-      response.data.courier_name || "";
-
-    order.shiprocket.trackingUrl =
-      response.data.tracking_url || "";
-
-    order.shiprocket.trackingStatus =
-      response.data.status || "NEW";
-
-    await order.save();
-
-    return response.data;
-
-  } catch (error) {
-
-    console.error(
-      "🚫 Shiprocket Service Error:",
-      error.response?.data || error.message
-    );
-
-    throw error;
-  }
-};
-
-module.exports = {
-  createShiprocketOrder,
-};
+const mongoose = require ('mongoose'); 
+const orderSchema = new mongoose.Schema({ 
+  orderId: { type: String, required: true, unique: true, }, 
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, 
+  items: [ { 
+    productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true }, 
+    name: { type: String }, description: { type: String }, mrp: { type: Number }, 
+    discount: { type: Number }, price: { type: Number, required: true }, 
+    images: [{ type: String }], category: { type: String }, unit: { type: String }, 
+    ingredients: { type: String }, nutritionalInfo: { type: String }, 
+    quantity: { type: Number, required: true }, inStock: { type: Boolean, default: true }, } ], 
+    totalPrice: { type: Number, required: true }, address: { fullName: String, street: String, city: String, state: String, zip: String, }, 
+    phone: { type: String, required: true }, paymentMethod: { type: String, enum: ['ONLINE', 'COD'], default: 'ONLINE', }, 
+    paymentStatus: { type: String, enum: ['PENDING', 'PAID', 'FAILED'], default: 'PENDING', }, 
+    orderStatus: { type: String, enum: ['PLACED', 'SHIPPED', 'DELIVERED', 'CANCELLED','PENDING'], default: 'PENDING', }, 
+    placedAt: { type: Date }, 
+    razorpayOrderId: { type: String, }, 
+    razorpayPaymentId: { type: String, }, 
+    razorpaySignature: { type: String, }, 
+    couponCode: { type: String, default: "", }, 
+    discount: { type: Number, default: 0, }, 
+    finalAmount: { type: Number, }, 
+    paidAt: { type: Date, }, 
+    shiprocket: { orderId: { type: String, default: "", }, 
+    shipmentId: { type: String, default: "", }, 
+    awbCode: { type: String, default: "", }, 
+    courierName: { type: String, default: "", }, 
+    trackingUrl: { type: String, default: "", }, 
+    trackingStatus: { type: String, default: "", }, },
+   }, { timestamps: true }); 
+module.exports = mongoose.model('Order', orderSchema);
 
 
 
