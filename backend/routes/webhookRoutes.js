@@ -1,49 +1,118 @@
-// routes/webhook.js
-const express = require('express');
-const crypto = require('crypto');
-const fs = require('fs');
+const express = require("express");
 const router = express.Router();
 
-router.post(
-  '/cashfree',
-  express.raw({ type: 'application/json' }), 
-  async (req, res) => {
-    try {
-      console.log('\n Webhook route hit');
+router.use(express.json());
 
-      const receivedSignature = req.headers['x-webhook-signature'];
-      if (!receivedSignature) {
-        console.log('Signature missing in headers');
-        return res.status(400).send('Missing signature');
-      }
+const Order = require("../models/Order");
 
-      const rawPayload = req.body.toString('utf-8');
+// ===================================
+// Shiprocket Webhook
+// ===================================
 
-      // Save raw body to file for testing
-      fs.writeFileSync('raw-payload.txt', rawPayload);
+router.post("/shiprocket", async (req, res) => {
+  try {
+    // Verify API Key
+    const apiKey = req.headers["x-api-key"];
 
-      // Generate signature
-      const generatedSignature = crypto
-        .createHash('sha256')
-        .update(rawPayload)
-        .digest('base64');
-
-      console.log('Received Signature :', receivedSignature);
-      console.log('Generated Signature:', generatedSignature);
-
-      if (receivedSignature !== generatedSignature) {
-        console.log('Signature mismatch!');
-        return res.status(403).send('Invalid signature');
-      }
-
-      console.log('Signature matched!');
-      res.status(200).send('Webhook verified');
-    } catch (err) {
-      console.error('Error in webhook:', err.message);
-      res.status(500).send('Server error');
+    if (apiKey !== process.env.SHIPROCKET_WEBHOOK_KEY) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
     }
+
+    console.log("📩 Shiprocket Webhook Received");
+    console.log(req.body);
+
+    const {
+      awb,
+      shipment_id,
+      current_status,
+      courier_name,
+      tracking_url,
+      order_id,
+    } = req.body;
+
+    const shipmentId = shipment_id?.toString();
+
+    // Find Order
+    const order = await Order.findOne({
+      "shiprocket.shipmentId": shipmentId,
+    });
+
+    if (!order) {
+      console.log("❌ Order not found");
+
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    // ============================
+    // Update Shiprocket Details
+    // ============================
+
+    if (awb) {
+      order.shiprocket.awbCode = awb;
+    }
+
+    if (courier_name) {
+      order.shiprocket.courierName = courier_name;
+    }
+
+    if (tracking_url) {
+      order.shiprocket.trackingUrl = tracking_url;
+    }
+
+    if (current_status) {
+      order.shiprocket.trackingStatus = current_status;
+    }
+
+    // ============================
+    // Update Order Status
+    // ============================
+
+    const status = current_status?.toUpperCase();
+
+    if (status?.includes("SHIPPED")) {
+      order.orderStatus = "SHIPPED";
+    }
+
+    if (status?.includes("DELIVERED")) {
+      order.orderStatus = "DELIVERED";
+    }
+
+    if (
+      status?.includes("CANCEL") ||
+      status?.includes("RTO")
+    ) {
+      order.orderStatus = "CANCELLED";
+    }
+
+    await order.save();
+
+    console.log("✅ Order updated from Shiprocket");
+
+    return res.status(200).json({
+      success: true,
+      message: "Webhook processed successfully",
+    });
+
+  } catch (err) {
+
+    console.error(
+      "❌ Shiprocket Webhook Error:",
+      err.response?.data || err.message
+    );
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+
   }
-);
+});
 
 module.exports = router;
 
