@@ -82,6 +82,37 @@ finalAmount: {
 paidAt: {
   type: Date,
 },
+shiprocket: {
+  orderId: {
+    type: String,
+    default: "",
+  },
+
+  shipmentId: {
+    type: String,
+    default: "",
+  },
+
+  awbCode: {
+    type: String,
+    default: "",
+  },
+
+  courierName: {
+    type: String,
+    default: "",
+  },
+
+  trackingUrl: {
+    type: String,
+    default: "",
+  },
+
+  trackingStatus: {
+    type: String,
+    default: "",
+  },
+},
 }, { timestamps: true });
 
 

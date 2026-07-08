@@ -11,6 +11,7 @@ const Coupon = require("../models/couponSchema");
 
 const {  sendOrderConfirmation,sendAdminOrder } = require("../utils/sendOrderEmail");
 const Product = require('../models/Product');
+const { createShiprocketOrder } = require("../services/shiprocketService");
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
@@ -293,11 +294,28 @@ if (!alreadyUsed) {
   }
 }
     await order.save();
-    const user = await User.findById(order.userId);
 
-    sendOrderConfirmation(order, user);
-    sendAdminOrder(order, user);
-    console.log("Order saved successfully");
+// ==============================
+// Create Shiprocket Order
+// ==============================
+
+try {
+  await createShiprocketOrder(order);
+  console.log("🚚 Shiprocket order created successfully.");
+} catch (err) {
+  console.error(
+    "❌ Shiprocket Error:",
+    err.response?.data || err.message
+  );
+}
+
+const user = await User.findById(order.userId);
+
+sendOrderConfirmation(order, user);
+sendAdminOrder(order, user);
+
+console.log("Order saved successfully");
+
 
     return res.status(200).json({
       success: true,

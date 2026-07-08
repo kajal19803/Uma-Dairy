@@ -28,37 +28,7 @@ function PaymentStatus() {
 
     clearCart();
 
-    const sendToShiprocket = async () => {
-      try {
-        const token = localStorage.getItem("token");
-
-        const res = await fetch(
-          `${import.meta.env.VITE_BACKEND_BASE_URL}/api/shiprocket/create-order`,
-          {
-            method: "POST",
-
-            headers: {
-              "Content-Type": "application/json",
-
-              Authorization: `Bearer ${token}`,
-            },
-
-            body: JSON.stringify({
-              orderId: order_id,
-            }),
-          }
-        );
-
-        const data = await res.json();
-
-        console.log("🚚 Shiprocket:", data);
-
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    sendToShiprocket();
+    
   }
 
 }, [location.search]);
