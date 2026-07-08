@@ -15,7 +15,7 @@ const createShiprocketOrder = async (order) => {
         .slice(0, 19)
         .replace("T", " "),
 
-      pickup_location: "Jabalpur Warehouse",
+      pickup_location: "Home",
 
       billing_customer_name:
         order.address?.fullName || "Customer",
@@ -57,8 +57,7 @@ const createShiprocketOrder = async (order) => {
           ? "COD"
           : "Prepaid",
 
-      sub_total:
-        order.finalAmount || order.totalPrice,
+      sub_total: Number((order.finalAmount || order.totalPrice).toFixed(2)),
 
       length: 10,
       breadth: 10,
