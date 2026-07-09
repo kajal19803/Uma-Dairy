@@ -20,7 +20,7 @@ const {
 
 const {
   getShippingCharge,
-} = require("../services/deliveryService");
+} = require("../services/DeliveryService");
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
