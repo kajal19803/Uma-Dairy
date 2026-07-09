@@ -93,12 +93,6 @@ router.post("/tracking", async (req, res) => {
 
     const status = current_status?.toUpperCase() || "";
 
-   // ===================================
-// Update Main Order Status
-// ===================================
-
-const status = current_status?.toUpperCase() || "";
-
 // Save latest Shiprocket status
 order.shiprocket.trackingStatus = current_status;
 
