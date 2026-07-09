@@ -170,25 +170,13 @@ useEffect(() => {
 
     if (customPhone) phoneData = phone;
 
-    const orderPayload = {
+   const orderPayload = {
   items: cartItems.map((item) => ({
     _id: item._id,
     quantity: item.quantity,
   })),
 
-  totalPrice: totalPrice + gst + shippingCharge,
-
-  finalAmount: payableAmount,
-
   couponCode,
-
-  discount,
-
-  shipping: {
-    charge: shippingCharge,
-    courier,
-    estimatedDelivery,
-  },
 
   address: addressData,
 
@@ -221,23 +209,9 @@ useEffect(() => {
         data.order.orderId
       );
 
-     navigate("/payment", {
+    navigate("/payment", {
   state: {
-    order: {
-      ...data.order,
-
-      couponCode,
-
-      discount,
-
-      finalAmount: payableAmount,
-
-      shipping: {
-        charge: shippingCharge,
-        courier,
-        estimatedDelivery,
-      },
-    },
+    order: data.order,
   },
 });
     } catch (err) {

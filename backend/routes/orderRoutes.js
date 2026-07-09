@@ -12,6 +12,16 @@ const Coupon = require("../models/couponSchema");
 const {  sendOrderConfirmation,sendAdminOrder } = require("../utils/sendOrderEmail");
 const Product = require('../models/Product');
 const { createShiprocketOrder,cancelShiprocketOrder } = require("../services/shiprocketService");
+const {
+  calculateSubtotal,
+  applyCoupon,
+  calculateGST,
+} = require("../services/orderCalculationService");
+
+const {
+  getShippingCharge,
+} = require("../services/deliveryService");
+
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
@@ -19,112 +29,65 @@ const razorpay = new Razorpay({
 
 // 📦 1. Place Order Route
 
-router.post('/', authMiddleware , async (req, res) => {
-  try {
-    const {
-  items,
-  address,
-  totalPrice,
-  phone,
-  couponCode,
-  discount,
-  finalAmount,
-  shipping,
-} = req.body;
-    
-    const userId = req.user.id;
+router.post("/", authMiddleware, async (req, res) => {
 
-    if (!items || !Array.isArray(items) || !address || !totalPrice || !phone) {
-      return res.status(400).json({ message: 'Missing or invalid order details' });
-    }
+try {
+const { items, address, phone, couponCode,} = req.body;
+const userId = req.user.id;
+const { subtotal,finalItems,} = await calculateSubtotal(items);
+const { discount, appliedCoupon, } = await applyCoupon( couponCode, subtotal);
+const { taxableAmount, gst,} = calculateGST( subtotal, discount);
+const shipping = await getShippingCharge({
 
-    // ✅ Enrich items with full product details from DB
-    const finalItems = await Promise.all(
-      items.map(async (item) => {
-        const product = await Product.findById(item._id);
+deliveryPincode: address.zip,
+paymentMethod: "Prepaid", weight:0.5,
 
-        if (!product) {
-          return {
-            productId: item._id,
-            name: 'Deleted Product',
-            description: '',
-            mrp: 0,
-            discount: 0,
-            price: 0,
-            images: [],
-            category: '',
-            unit: '',
-            ingredients: '',
-            nutritionalInfo: '',
-            quantity: item.quantity,
-            inStock: false,
-          };
-        }
-
-        return {
-          productId: product._id,
-          name: product.name,
-          description: product.description,
-          mrp: product.mrp,
-          discount: product.discount,
-          price: product.price,
-          images: product.images,
-          category: product.category,
-          unit: product.unit,
-          ingredients: product.ingredients,
-          nutritionalInfo: product.nutritionalInfo,
-          quantity: item.quantity,
-          inStock: true,
-        };
-      })
-    );
-
-    const orderId = `ORDER_${Date.now()}`;
-    const newOrder = new Order({
-  orderId,
-  userId,
-  items: finalItems,
-  address,
-  totalPrice,
-  phone,
-
-  couponCode: couponCode || "",
-  discount: discount || 0,
-  finalAmount: finalAmount || totalPrice,
-
-  shipping: {
-    charge: shipping?.charge || 0,
-    courier: shipping?.courier || "",
-    estimatedDelivery: shipping?.estimatedDelivery || "",
-  },
-
-  paymentStatus: "PENDING",
-  orderStatus: "PENDING",
 });
-    const savedOrder = await newOrder.save();
-    
-    res.status(201).json({
-       message: 'Order placed successfully',
-       order: {
-       orderId: savedOrder.orderId,
-       totalPrice: savedOrder.totalPrice,
-       items: finalItems,
-       address: savedOrder.address,
-       phone: savedOrder.phone,
-       paymentStatus: savedOrder.paymentStatus,
-       orderStatus: savedOrder.orderStatus,
-       createdAt: savedOrder.createdAt,
-       },
-    });
 
-  } catch (error) {
-    console.error('❌ Order creation error:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
+if(!shipping.success){
+
+return res.status(400).json({ message: shipping.message, });
+
+}
+
+const finalAmount = taxableAmount + gst + shipping.shippingCharge;
+
+const order = await Order.create({
+orderId:
+`ORDER_${Date.now()}`, userId,
+items: finalItems,
+address, phone,
+totalPrice: subtotal,
+couponCode: appliedCoupon,
+discount,finalAmount,
+shipping:{
+charge: shipping.shippingCharge,
+courier:shipping.courier,
+estimatedDelivery: shipping.estimatedDelivery,
+
+},
+
+paymentStatus: "PENDING",
+orderStatus: "PENDING",
+
+});
+
+return res.status(201).json({ message: "Order placed successfully", order,});
+
+}
+
+catch(err){
+
+console.error(err);
+
+return res.status(500).json({ message: err.message,});
+
+}
+
 });
 router.post("/payment/make-payment", authMiddleware, async (req, res) => {
   try {
-    const { orderId, couponCode, finalAmount } = req.body;
+    const { orderId } = req.body;
 
     if (!orderId) {
       return res.status(400).json({
@@ -160,7 +123,7 @@ router.post("/payment/make-payment", authMiddleware, async (req, res) => {
     }
 
     // Amount in paisa
-    const amount = Math.round(finalAmount * 100);
+    const amount = Math.round(order.finalAmount * 100);
     const razorpayOrder = await razorpay.orders.create({
       amount,
       currency: "INR",
@@ -213,9 +176,6 @@ console.log("USER:", req.user._id);
       razorpay_payment_id,
       razorpay_signature,
       orderId,
-      couponCode,
-  discount,
-  finalAmount,
     } = req.body;
 
     if (
@@ -287,15 +247,11 @@ console.log("USER:", req.user._id);
 
     order.paidAt = new Date();
     order.placedAt = new Date();
-    // Save coupon information
-order.couponCode = couponCode || "";
-order.discount = discount || 0;
-order.finalAmount = finalAmount || order.totalPrice;
    console.log("Saving order...");
-   if (couponCode) {
+   if (order.couponCode) {
 
   const coupon = await Coupon.findOne({
-    code: couponCode.toUpperCase(),
+    code: order.couponCode.toUpperCase(),
   });
 
   if (coupon) {
@@ -400,7 +356,15 @@ router.patch("/:orderId/cancel", authMiddleware, async (req, res) => {
     // ======================================
     // Razorpay Refund
     // ======================================
-
+    if (
+  order.refund.status === "PROCESSING" ||
+  order.refund.status === "COMPLETED"
+) {
+  return res.status(400).json({
+    success: false,
+    message: "Refund already initiated",
+  });
+}
     if (
       order.paymentMethod === "ONLINE" &&
       order.paymentStatus === "PAID"
