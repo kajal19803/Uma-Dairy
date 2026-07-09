@@ -21,7 +21,16 @@ const razorpay = new Razorpay({
 
 router.post('/', authMiddleware , async (req, res) => {
   try {
-    const { items, address, totalPrice, phone } = req.body;
+    const {
+  items,
+  address,
+  totalPrice,
+  phone,
+  couponCode,
+  discount,
+  finalAmount,
+  shipping,
+} = req.body;
     
     const userId = req.user.id;
 
@@ -72,15 +81,26 @@ router.post('/', authMiddleware , async (req, res) => {
 
     const orderId = `ORDER_${Date.now()}`;
     const newOrder = new Order({
-      orderId,
-      userId,
-      items: finalItems,
-      address,
-      totalPrice,
-      phone,
-      paymentStatus: 'PENDING',
-      orderStatus: 'PENDING',
-    });
+  orderId,
+  userId,
+  items: finalItems,
+  address,
+  totalPrice,
+  phone,
+
+  couponCode: couponCode || "",
+  discount: discount || 0,
+  finalAmount: finalAmount || totalPrice,
+
+  shipping: {
+    charge: shipping?.charge || 0,
+    courier: shipping?.courier || "",
+    estimatedDelivery: shipping?.estimatedDelivery || "",
+  },
+
+  paymentStatus: "PENDING",
+  orderStatus: "PENDING",
+});
     const savedOrder = await newOrder.save();
     
     res.status(201).json({

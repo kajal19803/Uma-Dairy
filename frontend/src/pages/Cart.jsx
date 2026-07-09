@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useCart } from "../context/CartContext";
 import { useNavigate, Link } from "react-router-dom";
 import useUserStore from "../store/userStore";
+import axios from "axios";
 
 const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 
@@ -26,6 +27,14 @@ const Cart = () => {
 
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
+  const [shippingCharge, setShippingCharge] = useState(0);
+const [courier, setCourier] = useState("");
+const [estimatedDelivery, setEstimatedDelivery] = useState("");
+const [deliveryLoading, setDeliveryLoading] = useState(false);
+const [couponCode, setCouponCode] = useState("");
+const [discount, setDiscount] = useState(0);
+const [couponApplied, setCouponApplied] = useState(false);
+const [couponLoading, setCouponLoading] = useState(false);
 
   const getPriceNumber = (price) => {
     if (typeof price === "number") return price;
@@ -42,7 +51,8 @@ const Cart = () => {
   );
 
   const gst = totalPrice * 0.03;
-  const finalTotal = totalPrice + gst;
+const payableAmount =
+  totalPrice + gst + shippingCharge - discount;
 
   useEffect(() => {
     if (user?.address) {
@@ -59,6 +69,80 @@ const Cart = () => {
         setSelectedPhone(user.phoneNumber);
     }
   }, [user]);
+  const fetchDeliveryCharge = async (address) => {
+  if (!address?.zip) return;
+
+  try {
+    setDeliveryLoading(true);
+
+    const res = await fetch(
+      `${BACKEND_BASE_URL}/api/delivery/charge`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          deliveryPincode: address.zip,
+          paymentMethod: "ONLINE",
+          weight: 0.5,
+        }),
+      }
+    );
+
+    const data = await res.json();
+
+    if (data.success) {
+      setShippingCharge(data.shippingCharge);
+      setCourier(data.courier);
+      setEstimatedDelivery(data.estimatedDelivery);
+    }
+
+  } catch (err) {
+    console.log(err);
+  } finally {
+    setDeliveryLoading(false);
+  }
+};
+const handleApplyCoupon = async () => {
+  if (!couponCode.trim()) {
+    return alert("Enter coupon code");
+  }
+
+  try {
+    setCouponLoading(true);
+
+    const res = await axios.post(
+      `${BACKEND_BASE_URL}/api/coupon/apply`,
+      {
+        code: couponCode,
+        totalAmount: totalPrice + gst + shippingCharge,
+      }
+    );
+
+    setDiscount(res.data.discount);
+
+    setCouponApplied(true);
+
+    alert("Coupon Applied Successfully");
+  } catch (err) {
+    setCouponApplied(false);
+    setDiscount(0);
+
+    alert(
+      err.response?.data?.message ||
+        "Invalid Coupon"
+    );
+  } finally {
+    setCouponLoading(false);
+  }
+};
+useEffect(() => {
+  if (selectedAddress?.zip) {
+    fetchDeliveryCharge(selectedAddress);
+  }
+}, [selectedAddress]);
 
   const handlePlaceOrder = async () => {
     if (!user) {
@@ -87,14 +171,29 @@ const Cart = () => {
     if (customPhone) phoneData = phone;
 
     const orderPayload = {
-      items: cartItems.map((item) => ({
-        _id: item._id,
-        quantity: item.quantity,
-      })),
-      totalPrice: finalTotal,
-      address: addressData,
-      phone: phoneData,
-    };
+  items: cartItems.map((item) => ({
+    _id: item._id,
+    quantity: item.quantity,
+  })),
+
+  totalPrice: totalPrice + gst + shippingCharge,
+
+  finalAmount: payableAmount,
+
+  couponCode,
+
+  discount,
+
+  shipping: {
+    charge: shippingCharge,
+    courier,
+    estimatedDelivery,
+  },
+
+  address: addressData,
+
+  phone: phoneData,
+};
 
     try {
       setLoading(true);
@@ -122,11 +221,25 @@ const Cart = () => {
         data.order.orderId
       );
 
-      navigate("/payment", {
-        state: {
-          order: data.order,
-        },
-      });
+     navigate("/payment", {
+  state: {
+    order: {
+      ...data.order,
+
+      couponCode,
+
+      discount,
+
+      finalAmount: payableAmount,
+
+      shipping: {
+        charge: shippingCharge,
+        courier,
+        estimatedDelivery,
+      },
+    },
+  },
+});
     } catch (err) {
       console.error(err);
       alert("Order failed. Try again.");
@@ -620,11 +733,61 @@ const Cart = () => {
     </div>
 
     <div className="flex justify-between text-sm lg:text-base text-gray-600">
-      <span>Delivery Charges</span>
-      <span className="text-green-600 font-semibold">
-        FREE
-      </span>
-    </div>
+  <span>Delivery Charges</span>
+
+  <span>
+    {deliveryLoading
+      ? "Calculating..."
+      : `₹${shippingCharge.toFixed(2)}`}
+  </span>
+</div>
+<div className="mt-4">
+  <label className="block text-sm font-medium mb-2">
+    Apply Coupon
+  </label>
+
+  <div className="flex gap-2">
+    <input
+      type="text"
+      placeholder="Enter coupon code"
+      value={couponCode}
+      onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+      className="flex-1 border rounded-lg px-3 py-2"
+    />
+
+    <button
+      onClick={handleApplyCoupon}
+      disabled={couponLoading || couponApplied}
+      className="bg-green-600 text-white px-4 rounded-lg disabled:opacity-50"
+    >
+      {couponLoading
+        ? "Applying..."
+        : couponApplied
+        ? "Applied"
+        : "Apply"}
+    </button>
+  </div>
+</div>
+
+{discount > 0 && (
+  <div className="flex justify-between text-green-600 mt-3">
+    <span>Coupon Discount</span>
+    <span>-₹{discount.toFixed(2)}</span>
+  </div>
+)}
+{courier && (
+  <div className="mt-3 text-sm text-gray-600">
+
+    <p>
+      🚚 <b>Courier:</b> {courier}
+    </p>
+
+    <p>
+      📦 <b>Estimated Delivery:</b> {estimatedDelivery}
+    </p>
+
+  </div>
+)}
 
     <hr />
 
@@ -635,7 +798,7 @@ const Cart = () => {
       </span>
 
       <span className="text-2xl lg:text-3xl font-bold text-[#F97354]">
-        ₹{finalTotal.toFixed(2)}
+        ₹{payableAmount.toFixed(2)}
       </span>
 
     </div>

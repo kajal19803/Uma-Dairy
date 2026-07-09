@@ -19,22 +19,18 @@ const Payment = () => {
   const orderId = order?.orderId;
   const address = order?.address;
   const phone = order?.phone;
+  const finalAmount = order?.finalAmount || totalPrice;
+const couponCode = order?.couponCode || "";
+const discount = order?.discount || 0;
+
+const shipping = order?.shipping || {};
+
+const shippingCharge = shipping.charge || 0;
+const courier = shipping.courier || "";
+const estimatedDelivery = shipping.estimatedDelivery || "";
 
   const [loading, setLoading] = useState(false);
-  const [couponCode, setCouponCode] = useState("");
-
-const [discount, setDiscount] = useState(0);
-
-const [finalAmount, setFinalAmount] = useState(totalPrice);
-
-const [couponLoading, setCouponLoading] = useState(false);
-
-const [couponApplied, setCouponApplied] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('online');
-
-  useEffect(() => {
-  setFinalAmount(totalPrice);
-}, [totalPrice]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -42,48 +38,6 @@ const [couponApplied, setCouponApplied] = useState(false);
       navigate('/cart');
     }
   }, [user, cartItems, totalPrice, orderId, navigate]);
-  const handleApplyCoupon = async () => {
-
-  if (!couponCode.trim()) {
-    return alert("Enter coupon code");
-  }
-
-  try {
-
-    setCouponLoading(true);
-
-    const res = await axios.post(
-      `${BACKEND_BASE_URL}/api/coupon/apply`,
-      {
-        code: couponCode,
-        totalAmount: totalPrice,
-      }
-    );
-
-    setDiscount(res.data.discount);
-
-    setFinalAmount(res.data.finalAmount);
-
-    setCouponApplied(true);
-
-    alert("Coupon Applied Successfully");
-
-  } catch (err) {
-     setCouponApplied(false);
-     setDiscount(0);
-     setFinalAmount(totalPrice);
-
-    alert(
-      err.response?.data?.message || "Invalid Coupon"
-    );
-
-  } finally {
-
-    setCouponLoading(false);
-
-  }
-
-};
 
 
  const handlePayment = async () => {
@@ -478,73 +432,46 @@ Items
 </span>
 
 </div>
+<div className="flex justify-between">
+  <span className="text-gray-600">
+    Subtotal
+  </span>
+
+  <span className="font-semibold">
+    ₹{(totalPrice - shippingCharge).toFixed(2)}
+  </span>
+</div>
 
 <div className="flex justify-between">
+  <span className="text-gray-600">
+    Delivery
+  </span>
 
-<span className="text-gray-600">
-Delivery
-</span>
-
-<span className="text-green-600 font-semibold">
-FREE
-</span>
-
-</div>
-<div className="mt-8">
-
-<h3 className="font-semibold mb-3">
-
-Have a Coupon?
-
-</h3>
-
-<div className="flex gap-2">
-
-<input
-
-type="text"
-
-placeholder="Enter Coupon"
-
-value={couponCode}
-
-onChange={(e)=>setCouponCode(e.target.value.toUpperCase())}
-disabled={couponApplied}
-
-className="flex-1 border bg-white rounded-md px-4 py-3"
-
-/>
-
-<button
-
-onClick={handleApplyCoupon}
-
-disabled={couponLoading || couponApplied}
-
-className="bg-[#F97354] text-white px-5 rounded-xl"
-
->
-
-{couponApplied ? "Applied ✓" : couponLoading ? "Applying..." : "Apply"}
-
-</button>
-
+  <span className="font-semibold">
+    ₹{shippingCharge.toFixed(2)}
+  </span>
 </div>
 
-</div>
-
-<hr/>
-{couponApplied && (
-
-<div className="flex justify-between text-green-600">
-
-<span>Coupon Discount</span>
-
-<span>- ₹{discount}</span>
-
-</div>
-
+{courier && (
+  <div className="text-sm text-gray-500">
+    🚚 {courier}
+  </div>
 )}
+
+{estimatedDelivery && (
+  <div className="text-sm text-gray-500">
+    📦 Delivery by {estimatedDelivery}
+  </div>
+)}
+
+{discount > 0 && (
+  <div className="flex justify-between text-green-600">
+    <span>Coupon Discount</span>
+    <span>-₹{discount.toFixed(2)}</span>
+  </div>
+)}
+<hr/>
+
 <div className="flex justify-between items-center">
 
 <span className="text-lg font-bold text-[#3B2418]">
