@@ -21,7 +21,7 @@ const webhookRoutes = require('./routes/webhookRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const couponRoutes = require("./routes/coupon");
 const deliveryRoutes = require("./routes/deliveryRoutes");
-const razorpaywebhookRoutes = require("./routes/razorpayWebhookRoutes");
+const razorpayWebhookRoutes = require("./routes/razorpayWebhookRoutes");
 
 const User = require('./models/User');
 
