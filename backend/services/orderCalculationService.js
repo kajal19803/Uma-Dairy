@@ -1,5 +1,5 @@
 const Product = require("../models/Product");
-const Coupon = require("../models/Coupon");
+const coupon = require("../models/couponSchema");
 
 // ========================================
 // Calculate Subtotal & Prepare Items
