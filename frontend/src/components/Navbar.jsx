@@ -89,7 +89,7 @@ const Navbar = () => {
   <span className="block md:inline md:ml-1">Dairy</span>
 </h1>
 
-        <p className="hidden sm:block text-xs text-gray-500">
+        <p className="hidden sm:block text-xs text-gray-550">
             Pure by Nature, Trusted by You
         </p>
     </div>
