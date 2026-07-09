@@ -62,7 +62,7 @@ const Dashboard = () => {
         console.error('Fetch orders failed', err);
       }
     };
-
+    
     const fetchTickets = async () => {
       try {
         const res = await fetch(`${API_URL}/api/tickets/my-tickets`, {
@@ -85,6 +85,50 @@ const Dashboard = () => {
       fetchTickets();
     }
   }, [token]);
+  const handleCancelOrder = async (orderId) => {
+  const confirmCancel = window.confirm(
+    "Are you sure you want to cancel this order?"
+  );
+
+  if (!confirmCancel) return;
+
+  try {
+    const res = await fetch(
+      `${API_URL}/api/orders/${orderId}/cancel`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message);
+      return;
+    }
+
+    alert("Order cancelled successfully.");
+
+    setOrders((prev) =>
+      prev.map((order) =>
+        order.orderId === orderId
+          ? {
+              ...order,
+              orderStatus: "CANCELLED",
+            }
+          : order
+      )
+    );
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to cancel order.");
+  }
+};
+
 
   const updateContact = async (updatedPhones, updatedAddresses) => {
     try {
@@ -699,6 +743,15 @@ className="bg-[#F97354] hover:bg-[#ea6847] text-white px-6 py-3 rounded-xl font-
 
 </button>
 
+)}
+{["PLACED", "PENDING"].includes(order.orderStatus) &&
+ order.paymentStatus === "PAID" && (
+  <button
+    onClick={() => handleCancelOrder(order.orderId)}
+    className="mt-3 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-semibold transition"
+  >
+    ❌ Cancel Order
+  </button>
 )}
 
 </div>

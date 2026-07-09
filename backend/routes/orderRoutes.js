@@ -353,44 +353,67 @@ console.log("Order saved successfully");
     });
   }
 });
-/*
-router.post('/place-cod', authMiddleware, async (req, res) => {
+// ==============================
+// Cancel Order
+// ==============================
+
+router.patch("/:orderId/cancel", authMiddleware, async (req, res) => {
   try {
-    const { orderId } = req.body;
-    console.log(orderId);
-    if (!orderId) {
-      return res.status(400).json({ error: 'Order ID is required' });
-    }
+    const { orderId } = req.params;
 
     const order = await Order.findOne({ orderId });
 
     if (!order) {
-      return res.status(404).json({ error: 'Order not found' });
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
     }
 
-    // Check if order belongs to the logged-in user
+    // Check ownership
     if (order.userId.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ error: 'Unauthorized access to this order' });
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized",
+      });
     }
 
-    // Check if already paid or already confirmed
-    if (order.paymentStatus === 'PAID' || order.orderStatus === 'PLACED') {
-      return res.status(400).json({ error: 'Order already confirmed or paid' });
+    // Already cancelled
+    if (order.orderStatus === "CANCELLED") {
+      return res.status(400).json({
+        success: false,
+        message: "Order already cancelled",
+      });
     }
 
-    // Update order for COD
-    order.paymentMethod = 'COD';
-    order.paymentStatus = 'PENDING';
-    order.orderStatus = 'PLACED';
-    order.placedAt = new Date();
+    // Cannot cancel shipped orders
+    if (
+      order.orderStatus === "SHIPPED" ||
+      order.orderStatus === "DELIVERED"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Order cannot be cancelled now",
+      });
+    }
+
+    order.orderStatus = "CANCELLED";
 
     await order.save();
 
-    res.status(200).json({ success: true, message: 'COD order placed successfully' });
-  } catch (error) {
-    console.error('❌ Error placing COD order:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    return res.json({
+      success: true,
+      message: "Order cancelled successfully",
+    });
+
+  } catch (err) {
+    console.error("Cancel Order Error:", err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
   }
-});*/
+});
 
 module.exports = router;

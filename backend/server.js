@@ -32,8 +32,18 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 app.use(cors({
   origin: process.env.FRONTEND_URL,
   credentials: true,
-  methods: [ 'GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: [
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "OPTIONS",
+  ],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+  ],
 }));
 
 

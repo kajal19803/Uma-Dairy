@@ -1,0 +1,10 @@
+* [33m905f212[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m feat: move coupon flow to cart and integrate shipping charges
+* [33md7f9c51[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m change file name
+* [33m3386b02[m add deliveryService for adding shipping charges in billing
+* [33ma9473ed[m change the py in menu dropdown
+* [33ma31c056[m change order.js
+* [33m8a97be2[m feat: integrate Shiprocket order tracking and customer shipment details
+* [33m6044212[m  add console logs in webhook route
+* [33m4c79731[m change path name
+* [33m79dd171[m feat: integrate Shiprocket order creation and webhook tracking
+* [33mfec1c93[m  correct pickup location
