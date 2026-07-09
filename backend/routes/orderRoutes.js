@@ -11,7 +11,7 @@ const Coupon = require("../models/couponSchema");
 
 const {  sendOrderConfirmation,sendAdminOrder } = require("../utils/sendOrderEmail");
 const Product = require('../models/Product');
-const { createShiprocketOrder } = require("../services/shiprocketService");
+const { createShiprocketOrder,cancelShiprocketOrder } = require("../services/shiprocketService");
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
@@ -432,6 +432,34 @@ router.patch("/:orderId/cancel", authMiddleware, async (req, res) => {
         });
       }
     }
+   // ======================================
+// Cancel Shiprocket Order
+// ======================================
+
+if (order.shiprocket.orderId) {
+  try {
+
+    await cancelShiprocketOrder(
+      order.shiprocket.orderId
+    );
+
+    console.log("🚚 Shiprocket order cancelled.");
+
+    order.shiprocket.trackingStatus = "Cancelled";
+
+  } catch (err) {
+
+    console.error(
+      "❌ Shiprocket Cancel Error:",
+      err.response?.data || err.message
+    );
+
+    return res.status(400).json({
+      success: false,
+      message: "Failed to cancel Shiprocket order.",
+    });
+  }
+}
 
     // ======================================
     // Cancel Order

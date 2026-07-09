@@ -107,7 +107,29 @@ const createShiprocketOrder = async (order) => {
     throw error;
   }
 };
+// ======================================
+// Cancel Shiprocket Order
+// ======================================
 
+const cancelShiprocketOrder = async (shiprocketOrderId) => {
+  const token = await getShiprocketToken();
+
+  await axios.post(
+    "https://apiv2.shiprocket.in/v1/external/orders/cancel",
+    {
+      ids: [Number(shiprocketOrderId)],
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  return true;
+};
 module.exports = {
   createShiprocketOrder,
+  cancelShiprocketOrder,
 };

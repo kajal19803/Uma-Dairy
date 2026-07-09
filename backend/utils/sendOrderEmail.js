@@ -93,7 +93,7 @@ border-radius:8px;
 
 <p><b>Payment:</b> Paid ✅</p>
 
-<p><b>Amount:</b> ₹${order.totalPrice}</p>
+<p><b>Amount:</b> ₹${order.finalAmount}</p>
 
 <p><b>Status:</b> ${order.orderStatus}</p>
 
@@ -194,7 +194,7 @@ const html = `
 
 <p><b>Order:</b> ${order.orderId}</p>
 
-<p><b>Total:</b> ₹${order.totalPrice}</p>
+<p><b>Total:</b> ₹${order.finalAmount}</p>
 
 <p><b>Status:</b> ${order.orderStatus}</p>
 `;

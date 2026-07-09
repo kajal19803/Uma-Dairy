@@ -93,16 +93,50 @@ router.post("/tracking", async (req, res) => {
 
     const status = current_status?.toUpperCase() || "";
 
-    if (status.includes("SHIPPED")) {
-      order.orderStatus = "SHIPPED";
-    } else if (status.includes("DELIVERED")) {
-      order.orderStatus = "DELIVERED";
-    } else if (
-      status.includes("CANCEL") ||
-      status.includes("RTO")
-    ) {
-      order.orderStatus = "CANCELLED";
-    }
+   // ===================================
+// Update Main Order Status
+// ===================================
+
+const status = current_status?.toUpperCase() || "";
+
+// Save latest Shiprocket status
+order.shiprocket.trackingStatus = current_status;
+
+// Order Status Mapping
+
+if (status.includes("AWB ASSIGNED")) {
+  order.orderStatus = "PLACED";
+}
+
+else if (
+  status.includes("READY TO SHIP") ||
+  status.includes("PICKUP SCHEDULED") ||
+  status.includes("PICKED UP") ||
+  status.includes("IN TRANSIT") ||
+  status.includes("OUT FOR DELIVERY") ||
+  status.includes("SHIPPED")
+) {
+  order.orderStatus = "SHIPPED";
+}
+
+else if (status.includes("DELIVERED")) {
+  order.orderStatus = "DELIVERED";
+}
+
+else if (
+  status.includes("CANCELLED") ||
+  status.includes("CANCELED") ||
+  status.includes("ORDER CANCELLED") ||
+  status.includes("SHIPMENT CANCELLED")
+) {
+  order.orderStatus = "CANCELLED";
+  order.shiprocket.trackingStatus = "Cancelled";
+}
+
+else if (status.includes("RTO")) {
+  order.orderStatus = "CANCELLED";
+  order.shiprocket.trackingStatus = current_status;
+}
 
     await order.save();
 

@@ -519,6 +519,22 @@ order.paymentMethod === "COD"
 ? "💵 COD"
 : "🌐 ONLINE"}
 </span>
+{order.paymentMethod === "ONLINE" &&
+ order.refund?.status !== "NOT_REQUIRED" && (
+
+  <span
+    className={`px-3 py-1 rounded-full text-xs font-semibold ${
+      order.refund.status === "COMPLETED"
+        ? "bg-green-100 text-green-700"
+        : order.refund.status === "PROCESSING"
+        ? "bg-yellow-100 text-yellow-700"
+        : "bg-red-100 text-red-700"
+    }`}
+  >
+    💰 Refund {order.refund.status}
+  </span>
+
+)}
 
 </div>
 
@@ -653,6 +669,33 @@ Qty : {item.quantity}
 <h3 className="text-3xl font-bold text-[#F97354]">
 ₹{Number(order.finalAmount || order.totalPrice).toFixed(2)}
 </h3>
+{order.refund?.status === "PROCESSING" && (
+  <p className="text-sm text-orange-600 mt-2">
+    Refund is being processed by Razorpay.
+    It may take 2–7 business days.
+  </p>
+)}
+
+{order.refund?.status === "COMPLETED" && (
+  <div className="mt-2">
+    <p className="text-sm text-green-600">
+      Refund completed successfully.
+    </p>
+
+    {order.refund.refundedAt && (
+      <p className="text-xs text-gray-500 mt-1">
+        Refunded on{" "}
+        {new Date(order.refund.refundedAt).toLocaleString("en-IN")}
+      </p>
+    )}
+  </div>
+)}
+
+{order.refund?.status === "FAILED" && (
+  <p className="text-sm text-red-600 mt-2">
+    Refund could not be processed.
+  </p>
+)}
 {/* ================= Shiprocket ================= */}
 
 {order.shiprocket?.shipmentId && (
