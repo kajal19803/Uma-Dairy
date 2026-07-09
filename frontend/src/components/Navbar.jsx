@@ -180,23 +180,22 @@ const Navbar = () => {
           {/* Mobile Dropdown */}
           {menuOpen && (
             <div className="absolute top-full right-1 mt-2 w-30 md:w-56 rounded-xl bg-[#FFF8F1] shadow-xl border border-orange-100 overflow-hidden z-50 flex flex-col">
-              <Link to="/" className="px-5 py-1 text-sm  text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Home</Link>
-              
-              <Link to="/contact" className="px-5 py-1 text-sm  text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Contact Us</Link>
+              <Link to="/" className="px-5 py-2 text-sm  text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Home</Link>
+              <Link to="/contact" className="px-2 py-2 text-sm  text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Contact Us</Link>
             <div className="md:hidden">
               {!isLoggedIn ? (
-                <Link to="/login" className="px-5 py-1 text-sm  text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Login</Link>
+                <Link to="/login" className="px-5 py-2 text-sm  text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Login</Link>
               ) : (
                 <>
                   {userRole === "admin" ? (
-                    <Link to="/admindashboard" className="px-5 py-1 text-sm  text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Admin Dashboard</Link>
+                    <Link to="/admindashboard" className="px-5 py-2 text-sm  text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Admin Dashboard</Link>
                   ) : (
-                    <Link to="/dashboard" className="px-5 py-1 text-sm  text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Profile</Link>
+                    <Link to="/dashboard" className="px-5 py-2 text-sm  text-[#4E342E] hover:bg-orange-50 border-b" onClick={() => setMenuOpen(false)}>Profile</Link>
                   )}
                   <button
                    type="button"
                    onClick={handleLogout}
-                   className="px-5 py-1 text-sm bg-transparent text-[#F97354] font-semibold hover:bg-orange-50"
+                   className="px-5 py-2 text-sm bg-transparent text-[#F97354] font-semibold hover:bg-orange-50"
                    >
                    Logout
                   </button>
