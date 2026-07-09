@@ -21,6 +21,22 @@ const orderSchema = new mongoose.Schema({
     discount: { type: Number, default: 0, }, 
     finalAmount: { type: Number, }, 
     paidAt: { type: Date, }, 
+    shipping: {
+  charge: {
+    type: Number,
+    default: 0,
+  },
+
+  courier: {
+    type: String,
+    default: "",
+  },
+
+  estimatedDelivery: {
+    type: String,
+    default: "",
+  },
+},
     shiprocket: { orderId: { type: String, default: "", }, 
     shipmentId: { type: String, default: "", }, 
     awbCode: { type: String, default: "", }, 
