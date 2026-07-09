@@ -1,5 +1,5 @@
 const Product = require("../models/Product");
-const coupon = require("../models/couponSchema");
+const Coupon = require("../models/couponSchema");
 
 // ========================================
 // Calculate Subtotal & Prepare Items
@@ -91,31 +91,26 @@ const applyCoupon = async (
   }
 
   const coupon = await Coupon.findOne({
+  code: couponCode.toUpperCase(),
+  active: true,
+});
 
-    code: couponCode.toUpperCase(),
+if (!coupon) {
+  return {
+    discount,
+    appliedCoupon,
+  };
+}
 
-    isActive: true,
-
-  });
-
-  if (!coupon) {
-
-    return {
-
-      discount,
-
-      appliedCoupon,
-
-    };
-
-  }
+if (coupon.expiryDate < new Date()) {
+  throw new Error("Coupon has expired");
+}
 
   if (
-    coupon.minPurchase &&
-    subtotal < coupon.minPurchase
-  ) {
+  subtotal < coupon.minOrderValue
+) {
     throw new Error(
-      `Minimum purchase should be ₹${coupon.minPurchase}`
+      `Minimum purchase should be ₹${coupon.minOrderValue} to use this coupon`
     );
   }
 

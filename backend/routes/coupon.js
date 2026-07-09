@@ -2,6 +2,11 @@ const express = require("express");
 const router = express.Router();
 
 const Coupon = require("../models/couponSchema");
+const {
+  calculateSubtotal,
+  applyCoupon,
+  calculateGST,
+} = require("../services/orderCalculationService");
 
 // ==============================
 // Create Coupon
@@ -159,101 +164,53 @@ router.patch("/:id/toggle", async (req, res) => {
 
 router.post("/apply", async (req, res) => {
   try {
-    const { code, totalAmount } = req.body;
+    const { code, items } = req.body;
 
-    if (!code || totalAmount == null) {
+    if (!code || !items || !Array.isArray(items)) {
       return res.status(400).json({
         success: false,
-        message: "Coupon code and total amount are required.",
+        message: "Coupon code and items are required.",
       });
     }
 
-    const coupon = await Coupon.findOne({
-      code: code.toUpperCase().trim(),
-    });
+    // Calculate subtotal from DB
+    const { subtotal } = await calculateSubtotal(items);
 
-    // Coupon exists?
-    if (!coupon) {
-      return res.status(404).json({
-        success: false,
-        message: "Invalid coupon code.",
-      });
-    }
+    // Apply coupon
+    const {
+      discount,
+      appliedCoupon,
+    } = await applyCoupon(code, subtotal);
 
-    // Active?
-    if (!coupon.active) {
-      return res.status(400).json({
-        success: false,
-        message: "This coupon is currently inactive.",
-      });
-    }
-
-    // Expired?
-    if (new Date() > coupon.expiryDate) {
-      return res.status(400).json({
-        success: false,
-        message: "Coupon has expired.",
-      });
-    }
-
-    // Minimum order amount
-    if (totalAmount < coupon.minOrderValue) {
-      return res.status(400).json({
-        success: false,
-        message: `Minimum order value should be ₹${coupon.minOrderValue}`,
-      });
-    }
-
-    let discount = 0;
-
-    // Flat Discount
-    if (coupon.discountType === "FLAT") {
-      discount = coupon.discountValue;
-    }
-
-    // Percentage Discount
-    if (coupon.discountType === "PERCENTAGE") {
-      discount = (totalAmount * coupon.discountValue) / 100;
-
-      // Max discount cap
-      if (
-        coupon.maxDiscount > 0 &&
-        discount > coupon.maxDiscount
-      ) {
-        discount = coupon.maxDiscount;
-      }
-    }
-
-    // Discount cannot exceed order amount
-    if (discount > totalAmount) {
-      discount = totalAmount;
-    }
-
-    const finalAmount = totalAmount - discount;
+    // GST
+    const {
+      taxableAmount,
+      gst,
+    } = calculateGST(subtotal, discount);
 
     return res.status(200).json({
       success: true,
       message: "Coupon applied successfully.",
 
       coupon: {
-        code: coupon.code,
-        description: coupon.description,
+        code: appliedCoupon,
       },
 
-      totalAmount,
-
+      subtotal,
       discount,
-
-      finalAmount,
+      gst,
+      taxableAmount,
     });
 
   } catch (error) {
+
     console.error("Coupon Apply Error:", error);
 
-    return res.status(500).json({
+    return res.status(400).json({
       success: false,
-      message: "Failed to apply coupon.",
+      message: error.message,
     });
+
   }
 });
 

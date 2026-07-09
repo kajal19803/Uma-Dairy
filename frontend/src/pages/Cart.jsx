@@ -69,6 +69,7 @@ const payableAmount =
         setSelectedPhone(user.phoneNumber);
     }
   }, [user]);
+
   const fetchDeliveryCharge = async (address) => {
   if (!address?.zip) return;
 
@@ -116,9 +117,12 @@ const handleApplyCoupon = async () => {
     const res = await axios.post(
       `${BACKEND_BASE_URL}/api/coupon/apply`,
       {
-        code: couponCode,
-        totalAmount: totalPrice + gst + shippingCharge,
-      }
+  code: couponCode,
+  items: cartItems.map((item) => ({
+    _id: item._id,
+    quantity: item.quantity,
+  })),
+}
     );
 
     setDiscount(res.data.discount);
@@ -138,6 +142,13 @@ const handleApplyCoupon = async () => {
     setCouponLoading(false);
   }
 };
+useEffect(() => {
+  if (couponApplied) {
+    setCouponApplied(false);
+    setDiscount(0);
+    setCouponCode("");
+  }
+}, [cartItems, shippingCharge]);
 useEffect(() => {
   if (selectedAddress?.zip) {
     fetchDeliveryCharge(selectedAddress);
@@ -323,7 +334,7 @@ useEffect(() => {
                         removeFromCart(item._id);
                       }
                     }}
-                    className="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-[#F97354] text-white text-lg lg:text-xl"
+                    className="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-[#F97354] text-black text-lg lg:text-xl"
                   >
                     −
                   </button>
@@ -341,7 +352,7 @@ useEffect(() => {
                         (item.quantity || 1) + 1
                       );
                     }}
-                    className="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-[#F97354] text-white text-lg lg:text-xl"
+                    className="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-[#F97354] text-black text-lg lg:text-xl"
                   >
                     +
                   </button>
@@ -385,21 +396,38 @@ useEffect(() => {
 
       <div className="space-y-4">
 
-        <div className="rounded-xl lg:rounded-2xl border border-orange-200 bg-[#FFF8F1] p-3 lg:p-4">
+     <select
+  value={user.address.findIndex(
+    (a) => a === selectedAddress
+  )}
+  onChange={(e) =>
+    setSelectedAddress(user.address[e.target.value])
+  }
+  className="w-full rounded-xl border border-orange-200 bg-[#FFF8F1] p-3 text-[#3B2418]"
+>
+  {user.address.map((address, index) => (
+    <option key={index} value={index}>
+      {address.fullName} | {address.city}, {address.state} - {address.zip}
+    </option>
+  ))}
+</select>
+{selectedAddress && (
+  <div className="mt-4 rounded-xl border border-orange-200 bg-[#FFF8F1] p-4">
 
-          <p className="font-semibold text-[#3B2418] text-sm lg:text-base">
-            {selectedAddress?.fullName}
-          </p>
+    <p className="font-semibold">
+      {selectedAddress.fullName}
+    </p>
 
-          <p className="mt-1 text-gray-600 text-sm lg:text-base leading-6">
-            {selectedAddress?.street}
-            <br />
-            {selectedAddress?.city}, {selectedAddress?.state}
-            <br />
-            {selectedAddress?.zip}
-          </p>
+    <p className="text-gray-600 mt-1">
+      {selectedAddress.street}
+      <br />
+      {selectedAddress.city}, {selectedAddress.state}
+      <br />
+      {selectedAddress.zip}
+    </p>
 
-        </div>
+  </div>
+)}
 
         <button
           onClick={() => setCustomAddress(true)}
@@ -493,7 +521,9 @@ useEffect(() => {
 
             user.address = data.user.address;
 
-            setSelectedAddress(formAddress);
+setSelectedAddress(
+  data.user.address[data.user.address.length - 1]
+);
 
             setCustomAddress(false);
 
@@ -633,7 +663,11 @@ useEffect(() => {
 
               user.phoneNumber = data.user.phoneNumber;
 
-              setSelectedPhone(phone);
+setSelectedPhone(
+  data.user.phoneNumber[
+    data.user.phoneNumber.length - 1
+  ]
+);
 
               setPhone("");
 
@@ -716,7 +750,7 @@ useEffect(() => {
   </span>
 </div>
 <div className="mt-4">
-  <label className="block text-sm font-medium mb-2">
+  <label className="block text-sm text-gray-700 font-medium mb-2">
     Apply Coupon
   </label>
 
@@ -726,7 +760,7 @@ useEffect(() => {
       placeholder="Enter coupon code"
       value={couponCode}
       onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-      className="flex-1 border rounded-lg px-3 py-2"
+      className="flex-1 border text-gray-700 rounded-lg px-3 py-2"
     />
 
     <button
