@@ -87,7 +87,8 @@ router.post("/", async (req, res) => {
     if (payload.event === "refund.processed") {
 
       order.refund.status = "COMPLETED";
-      order.refund.refundedAt = new Date();
+      order.refund.refundedAt =
+  new Date(refund.created_at * 1000);
 
     }
 

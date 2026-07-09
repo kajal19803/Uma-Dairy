@@ -679,7 +679,8 @@ Qty : {item.quantity}
 {order.refund?.status === "COMPLETED" && (
   <div className="mt-2">
     <p className="text-sm text-green-600">
-      Refund completed successfully.
+      Refund processed successfully by Razorpay.
+      The amount will reflect in your bank account within 3–7 working days.
     </p>
 
     {order.refund.refundedAt && (
