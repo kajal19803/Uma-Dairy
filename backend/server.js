@@ -21,6 +21,7 @@ const webhookRoutes = require('./routes/webhookRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const couponRoutes = require("./routes/coupon");
 const deliveryRoutes = require("./routes/deliveryRoutes");
+const razorpaywebhookRoutes = require("./routes/razorpayWebhookRoutes");
 
 const User = require('./models/User');
 
@@ -45,6 +46,12 @@ app.use(cors({
     "Authorization",
   ],
 }));
+// Razorpay webhook (raw body)
+app.use(
+  "/webhook/razorpay",
+  express.raw({ type: "application/json" }),
+  razorpayWebhookRoutes
+);
 
 
 
@@ -79,7 +86,6 @@ app.use('/api/shiprocket', shiprocketRoutes);
 app.use('/api/cart', cartRoutes);
 app.use("/api/coupon", couponRoutes);
 app.use("/api/delivery", deliveryRoutes);
-
 app.post('/api/auth/google', async (req, res) => {
   try {
     const { token } = req.body;

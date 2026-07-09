@@ -386,7 +386,7 @@ router.patch("/:orderId/cancel", authMiddleware, async (req, res) => {
       });
     }
 
-    // Cannot cancel shipped orders
+    // Cannot cancel shipped / delivered orders
     if (
       order.orderStatus === "SHIPPED" ||
       order.orderStatus === "DELIVERED"
@@ -397,22 +397,64 @@ router.patch("/:orderId/cancel", authMiddleware, async (req, res) => {
       });
     }
 
+    // ======================================
+    // Razorpay Refund
+    // ======================================
+
+    if (
+      order.paymentMethod === "ONLINE" &&
+      order.paymentStatus === "PAID"
+    ) {
+      try {
+        const refund = await razorpay.payments.refund(
+          order.razorpayPaymentId,
+          {
+            speed: "normal",
+          }
+        );
+
+        console.log("✅ Refund Initiated");
+        console.log(refund);
+
+        order.refund.status = "PROCESSING";
+        order.refund.refundId = refund.id;
+
+      } catch (err) {
+
+        console.error(
+          "❌ Refund Error:",
+          err.error || err.message
+        );
+
+        return res.status(400).json({
+          success: false,
+          message: "Refund could not be initiated.",
+        });
+      }
+    }
+
+    // ======================================
+    // Cancel Order
+    // ======================================
+
     order.orderStatus = "CANCELLED";
 
     await order.save();
 
-    return res.json({
+    return res.status(200).json({
       success: true,
-      message: "Order cancelled successfully",
+      message: "Order cancelled successfully.",
     });
 
   } catch (err) {
-    console.error("Cancel Order Error:", err);
+
+    console.error("❌ Cancel Order Error:", err);
 
     return res.status(500).json({
       success: false,
       message: "Internal Server Error",
     });
+
   }
 });
 

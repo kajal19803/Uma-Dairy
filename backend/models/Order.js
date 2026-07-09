@@ -11,7 +11,30 @@ const orderSchema = new mongoose.Schema({
     quantity: { type: Number, required: true }, inStock: { type: Boolean, default: true }, } ], 
     totalPrice: { type: Number, required: true }, address: { fullName: String, street: String, city: String, state: String, zip: String, }, 
     phone: { type: String, required: true }, paymentMethod: { type: String, enum: ['ONLINE', 'COD'], default: 'ONLINE', }, 
-    paymentStatus: { type: String, enum: ['PENDING', 'PAID', 'FAILED'], default: 'PENDING', }, 
+   paymentStatus: {
+  type: String,
+  enum: ["PENDING", "PAID", "FAILED"],
+  default: "PENDING",
+},
+refund: {
+  status: {
+    type: String,
+    enum: [
+      "NOT_REQUIRED",
+      "PROCESSING",
+      "COMPLETED",
+      "FAILED",
+    ],
+    default: "NOT_REQUIRED",
+  },
+
+  refundId: {
+    type: String,
+    default: "",
+  },
+
+  refundedAt: Date,
+},
     orderStatus: { type: String, enum: ['PLACED', 'SHIPPED', 'DELIVERED', 'CANCELLED','PENDING'], default: 'PENDING', }, 
     placedAt: { type: Date }, 
     razorpayOrderId: { type: String, }, 
