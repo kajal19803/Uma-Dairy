@@ -22,6 +22,8 @@ const Payment = () => {
   const finalAmount = order?.finalAmount || totalPrice;
 const couponCode = order?.couponCode || "";
 const discount = order?.discount || 0;
+const gst = order?.gst || 0;
+const taxableAmount = order?.taxableAmount || (totalPrice - discount);
 
 const shipping = order?.shipping || {};
 
@@ -54,7 +56,7 @@ const estimatedDelivery = shipping.estimatedDelivery || "";
     const { data } = await axios.post(
       `${BACKEND_BASE_URL}/api/orders/payment/make-payment`,
       {
-        orderId, couponCode,finalAmount, 
+        orderId,
       },
       {
         headers: {
@@ -100,9 +102,6 @@ const estimatedDelivery = shipping.estimatedDelivery || "";
               razorpay_signature: response.razorpay_signature,
 
               orderId,
-              couponCode,
-              discount,
-              finalAmount,
             },
             {
               headers: {
@@ -433,36 +432,9 @@ Items
 
 </div>
 <div className="flex justify-between">
-  <span className="text-gray-600">
-    Subtotal
-  </span>
-
-  <span className="font-semibold">
-    ₹{(totalPrice - shippingCharge).toFixed(2)}
-  </span>
+  <span>Subtotal</span>
+  <span>₹{totalPrice.toFixed(2)}</span>
 </div>
-
-<div className="flex justify-between">
-  <span className="text-gray-600">
-    Delivery
-  </span>
-
-  <span className="font-semibold">
-    ₹{shippingCharge.toFixed(2)}
-  </span>
-</div>
-
-{courier && (
-  <div className="text-sm text-gray-500">
-    🚚 {courier}
-  </div>
-)}
-
-{estimatedDelivery && (
-  <div className="text-sm text-gray-500">
-    📦 Delivery by {estimatedDelivery}
-  </div>
-)}
 
 {discount > 0 && (
   <div className="flex justify-between text-green-600">
@@ -470,19 +442,29 @@ Items
     <span>-₹{discount.toFixed(2)}</span>
   </div>
 )}
-<hr/>
+
+<div className="flex justify-between">
+  <span>Taxable Amount</span>
+  <span>₹{taxableAmount.toFixed(2)}</span>
+</div>
+
+<div className="flex justify-between">
+  <span>GST (3%)</span>
+  <span>₹{gst.toFixed(2)}</span>
+</div>
+
+<div className="flex justify-between">
+  <span>Delivery Charges</span>
+  <span>₹{shippingCharge.toFixed(2)}</span>
+</div>
+
+<hr />
 
 <div className="flex justify-between items-center">
-
-<span className="text-lg font-bold text-[#3B2418]">
-Grand Total
-</span>
-
-<span className="text-2xl lg:text-4xl font-bold text-[#F97354]">
-
-₹{finalAmount?.toFixed(2)}
-</span>
-
+  <span className="text-lg font-bold">Grand Total</span>
+  <span className="text-2xl font-bold">
+    ₹{finalAmount.toFixed(2)}
+  </span>
 </div>
 
 </div>

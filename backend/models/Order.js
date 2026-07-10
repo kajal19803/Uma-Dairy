@@ -41,7 +41,9 @@ refund: {
     razorpayPaymentId: { type: String, }, 
     razorpaySignature: { type: String, }, 
     couponCode: { type: String, default: "", }, 
-    discount: { type: Number, default: 0, }, 
+    discount: { type: Number, default: 0, },
+    gst: { type: Number, default: 0,}, 
+    taxableAmount: { type: Number, default: 0,},
     finalAmount: { type: Number, }, 
     paidAt: { type: Date, }, 
     shipping: {
