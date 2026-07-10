@@ -22,6 +22,7 @@ const cartRoutes = require('./routes/cartRoutes');
 const couponRoutes = require("./routes/coupon");
 const deliveryRoutes = require("./routes/deliveryRoutes");
 const razorpayWebhookRoutes = require("./routes/razorpayWebhookRoutes");
+const reviewRoutes = require("./routes/reviewRoutes");
 
 const User = require('./models/User');
 
@@ -86,6 +87,7 @@ app.use('/api/shiprocket', shiprocketRoutes);
 app.use('/api/cart', cartRoutes);
 app.use("/api/coupon", couponRoutes);
 app.use("/api/delivery", deliveryRoutes);
+app.use("/api/reviews", reviewRoutes);
 app.post('/api/auth/google', async (req, res) => {
   try {
     const { token } = req.body;

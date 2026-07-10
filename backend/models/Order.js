@@ -68,6 +68,10 @@ refund: {
     courierName: { type: String, default: "", }, 
     trackingUrl: { type: String, default: "", }, 
     trackingStatus: { type: String, default: "", }, },
+    reviewEmailSent: {
+  type: Boolean,
+  default: false,
+},
    }, { timestamps: true }); 
 module.exports = mongoose.model('Order', orderSchema);
 

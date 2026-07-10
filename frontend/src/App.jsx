@@ -23,6 +23,7 @@ import Payment from './pages/Payment';
 import PaymentStatus from './pages/PaymentStatus';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import ReviewPage from "./pages/ReviewPage";
 import { WishlistProvider } from './context/WishlistContext';
 import Policy from './pages/Policy';
 
@@ -90,6 +91,7 @@ const App = () => {
                 <Route path="/about" element={<About />} />
                 <Route path="/policy" element={<Policy />}/>
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/review" element={<ReviewPage />} />
               </Routes>
             </ErrorBoundary>
           </main>

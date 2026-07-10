@@ -570,43 +570,33 @@ setCustomAddress(false);
 <h2 className="text-xl lg:text-2xl font-bold text-[#3B2418] mb-5">
   Phone Number
 </h2>
-{!customPhone ? (
 
-  <>
-    {Array.isArray(user?.phoneNumber) &&
-    user.phoneNumber.length > 0 ? (
+{(!customPhone &&
+  Array.isArray(user?.phoneNumber) &&
+  user.phoneNumber.length > 0) ? (
 
-      <div className="flex flex-col sm:flex-row gap-3 lg:gap-4">
+  <div className="flex flex-col sm:flex-row gap-3 lg:gap-4">
 
-        <select
-          value={selectedPhone}
-          onChange={(e) => setSelectedPhone(e.target.value)}
-          className="flex-1 w-full rounded-xl border border-orange-200 bg-[#FFF8F1] p-3 lg:p-4 text-sm lg:text-base text-[#3B2418]"
-        >
-          {user.phoneNumber.map((num, index) => (
-            <option key={index} value={num}>
-              {num}
-            </option>
-          ))}
-        </select>
+    <select
+      value={selectedPhone}
+      onChange={(e) => setSelectedPhone(e.target.value)}
+      className="flex-1 w-full rounded-xl border border-orange-200 bg-[#FFF8F1] p-3 lg:p-4 text-sm lg:text-base text-[#3B2418]"
+    >
+      {user.phoneNumber.map((num, index) => (
+        <option key={index} value={num}>
+          {num}
+        </option>
+      ))}
+    </select>
 
-        <button
-          onClick={() => setCustomPhone(true)}
-          className="bg-[#F97354] hover:bg-[#ea6847] text-white px-5 py-3 rounded-xl transition"
-        >
-          Change
-        </button>
+    <button
+      onClick={() => setCustomPhone(true)}
+      className="bg-[#F97354] hover:bg-[#ea6847] text-white px-5 py-3 rounded-xl transition"
+    >
+      Change
+    </button>
 
-      </div>
-
-    ) : (
-
-      <p className="text-red-500 text-sm">
-        Please add a phone number to your profile to proceed with the order.
-      </p>
-
-    )}
-  </>
+  </div>
 
 ) : (
 
@@ -659,11 +649,11 @@ setCustomAddress(false);
 
               setUser(data.user);
 
-setSelectedPhone(
-  data.user.phoneNumber[
-    data.user.phoneNumber.length - 1
-  ]
-);
+              setSelectedPhone(
+                data.user.phoneNumber[
+                  data.user.phoneNumber.length - 1
+                ]
+              );
 
               setPhone("");
 
@@ -681,29 +671,24 @@ setSelectedPhone(
         Add Phone
       </button>
 
-      <button
-        onClick={() => {
-          if (user?.phoneNumber) {
-            setSelectedPhone(
-              Array.isArray(user.phoneNumber)
-                ? user.phoneNumber[0]
-                : user.phoneNumber
-            );
-
-            setCustomPhone(false);
-          }
-        }}
-        className="text-[#F97354] font-semibold bg-transparent hover:underline border-none"
-      >
-        Use Saved Number
-      </button>
+      {Array.isArray(user?.phoneNumber) &&
+        user.phoneNumber.length > 0 && (
+          <button
+            onClick={() => {
+              setSelectedPhone(user.phoneNumber[0]);
+              setCustomPhone(false);
+            }}
+            className="text-[#F97354] font-semibold bg-transparent hover:underline border-none"
+          >
+            Use Saved Number
+          </button>
+      )}
 
     </div>
 
   </div>
 
 )}
-
 </div>
 
 {/* LEFT COLUMN END */}
@@ -784,13 +769,6 @@ setSelectedPhone(
     </button>
   </div>
 </div>
-
-{discount > 0 && (
-  <div className="flex justify-between text-green-600 mt-3">
-    <span>Coupon Discount</span>
-    <span>-₹{discount.toFixed(2)}</span>
-  </div>
-)}
 {courier && (
   <div className="mt-3 text-sm text-gray-600">
 

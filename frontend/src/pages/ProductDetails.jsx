@@ -19,6 +19,7 @@ const ProductDetail = () => {
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [reviews, setReviews] = useState([]);
 
   const { cartItems, addToCart, updateQuantity, removeFromCart } = useCart();
   const { wishlist, toggleWishlist } = useWishlist();
@@ -38,6 +39,14 @@ const ProductDetail = () => {
     fetch(`${BACKEND_BASE_URL}/api/products/related/${id}`)
       .then((res) => res.json())
       .then((data) => setRelatedProducts(data));
+    fetch(`${BACKEND_BASE_URL}/api/reviews/product/${id}`)
+  .then((res) => res.json())
+  .then((data) => {
+    setReviews(data.reviews || []);
+  })
+  .catch((err) => {
+    console.error("Failed to fetch reviews:", err);
+  });
   }, [id]);
 
   const getQuantity = () => {
@@ -388,6 +397,64 @@ quantity === 0 ? (
 </div>
 
 {/* MAIN GRID END */}
+</div>
+{/* Customer Reviews */}
+
+<div className="mt-12 lg:mt-16">
+
+  <h2 className="text-2xl lg:text-4xl font-bold text-[#3B2418] mb-6">
+    Customer Reviews
+  </h2>
+
+  {reviews.length === 0 ? (
+
+    <div className="bg-white rounded-2xl shadow-lg p-8 text-center text-gray-500">
+      No reviews yet.
+    </div>
+
+  ) : (
+
+    <div className="space-y-5">
+
+      {reviews.map((review, index) => (
+
+        <div
+          key={index}
+          className="bg-white rounded-2xl shadow-lg p-6"
+        >
+
+          <div className="flex items-center justify-between">
+
+            <div>
+
+              <h3 className="text-lg font-semibold text-[#3B2418]">
+                {review.userName}
+              </h3>
+
+              <p className="text-sm text-gray-500 mt-1">
+                {new Date(review.createdAt).toLocaleDateString("en-IN", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+})}
+              </p>
+
+            </div>
+
+            <div className="text-yellow-500 font-semibold text-lg">
+              {"⭐".repeat(review.rating)}
+            </div>
+
+          </div>
+
+        </div>
+
+      ))}
+
+    </div>
+
+  )}
+
 </div>
 
 {/* Related Products */}

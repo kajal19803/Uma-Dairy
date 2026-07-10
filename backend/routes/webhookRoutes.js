@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const Order = require("../models/Order");
+const User = require("../models/User");
+const { sendReviewEmail } = require("../utils/sendOrderEmail");
 
 // ===================================
 // Shiprocket Tracking Webhook
@@ -114,9 +116,29 @@ else if (
 }
 
 else if (status.includes("DELIVERED")) {
-  order.orderStatus = "DELIVERED";
-}
 
+  order.orderStatus = "DELIVERED";
+
+  // ============================
+  // Send Review Email (Only Once)
+  // ============================
+
+  if (!order.reviewEmailSent) {
+  try {
+    const user = await User.findById(order.userId);
+
+    if (user) {
+      await sendReviewEmail(order, user);
+      order.reviewEmailSent = true;
+    }
+  } catch (err) {
+    console.error(
+      "Review email failed:",
+      err.response?.data || err.message
+    );
+  }
+}
+}
 else if (
   status.includes("CANCELLED") ||
   status.includes("CANCELED") ||

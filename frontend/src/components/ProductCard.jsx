@@ -11,17 +11,19 @@ const ProductCard = ({
   toggleWishlist,
   backendUrl,
 }) => {
-  const {
-    _id,
-    name,
-    price,
-    mrp,
-    discount,
-    unit,
-    images = [],
-    inStock,
-    category,
-  } = product || {};
+ const {
+  _id,
+  name,
+  price,
+  mrp,
+  discount,
+  unit,
+  images = [],
+  inStock,
+  category,
+  rating = 0,
+  numRatings = 0,
+} = product || {};
 
   const safeImages =
     Array.isArray(images) && images.length > 0 ? images : ["/default.jpg"];
@@ -133,6 +135,19 @@ const ProductCard = ({
           </>
         )}
       </div>
+      {/* Rating */}
+
+<div className="flex items-center gap-2 mt-3">
+
+  <span className="text-yellow-500 font-semibold">
+    ⭐ {rating.toFixed(1)}
+  </span>
+
+  <span className="text-gray-500 text-sm">
+    ({numRatings} {numRatings === 1 ? "Rating" : "Ratings"})
+  </span>
+
+</div>
 
       {/* Stock */}
       <div className="mt-2 md:mt-3">
