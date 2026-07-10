@@ -10,7 +10,7 @@ const Cart = () => {
   const navigate = useNavigate();
 
   const { cartItems, removeFromCart, updateQuantity } = useCart();
-  const { user } = useUserStore();
+  const { user, setUser } = useUserStore();
 
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [selectedPhone, setSelectedPhone] = useState("");
@@ -50,9 +50,12 @@ const [couponLoading, setCouponLoading] = useState(false);
     0
   );
 
-  const gst = totalPrice * 0.03;
+  const taxableAmount = Math.max(totalPrice - discount, 0);
+
+const gst = taxableAmount * 0.03;
+
 const payableAmount =
-  totalPrice + gst + shippingCharge - discount;
+  taxableAmount + gst + shippingCharge;
 
   useEffect(() => {
     if (user?.address) {
@@ -390,11 +393,14 @@ useEffect(() => {
   Delivery Address
 </h2>
 
-{!customAddress ? (
-  <>
-    {Array.isArray(user?.address) && user.address.length > 0 ? (
 
-      <div className="space-y-4">
+
+{(!customAddress &&
+  
+
+Array.isArray(user?.address) && user.address.length > 0 ? (
+
+  <div className="space-y-4">
 
      <select
   value={user.address.findIndex(
@@ -438,17 +444,9 @@ useEffect(() => {
 
       </div>
 
-    ) : (
-
-      <p className="text-red-500 text-sm">
-        Please add an address to your profile to proceed with the order.
-      </p>
-
-    )}
-  </>
 ) : (
 
-<div className="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4">
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4">
 
   <input
     placeholder="Full Name"
@@ -519,13 +517,13 @@ useEffect(() => {
 
             alert("Address Added");
 
-            user.address = data.user.address;
+setUser(data.user);
 
 setSelectedAddress(
   data.user.address[data.user.address.length - 1]
 );
 
-            setCustomAddress(false);
+setCustomAddress(false);
 
             setFormAddress({
               fullName:"",
@@ -547,25 +545,23 @@ setSelectedAddress(
       Add Address
     </button>
 
-    <button
-      onClick={()=>{
-        if(user?.address){
-          setSelectedAddress(
-            Array.isArray(user.address)
-              ? user.address[0]
-              : user.address
-          );
-          setCustomAddress(false);
-        }
-      }}
-      className="text-[#F97354] font-semibold bg-transparent hover:underline border-none"
-    >
-      Use Saved Address
-    </button>
+    {Array.isArray(user?.address) && user.address.length > 0 && (
+  <button
+    onClick={() => {
+      setSelectedAddress(user.address[0]);
+      setCustomAddress(false);
+    }}
+    className="text-[#F97354] font-semibold bg-transparent hover:underline border-none"
+  >
+    Use Saved Address
+  </button>
+)}
 
   </div>
 
 </div>
+
+)
 
 )}
 
@@ -661,7 +657,7 @@ setSelectedAddress(
 
               alert("Phone Number Added");
 
-              user.phoneNumber = data.user.phoneNumber;
+              setUser(data.user);
 
 setSelectedPhone(
   data.user.phoneNumber[
@@ -730,17 +726,29 @@ setSelectedPhone(
       <span>{cartItems.length}</span>
     </div>
 
-    <div className="flex justify-between text-sm lg:text-base text-gray-600">
-      <span>Subtotal</span>
-      <span>₹{totalPrice.toFixed(2)}</span>
-    </div>
+   <div className="flex justify-between text-sm lg:text-base text-gray-600">
+  <span>Subtotal</span>
+  <span>₹{totalPrice.toFixed(2)}</span>
+</div>
 
-    <div className="flex justify-between text-sm lg:text-base text-gray-600">
-      <span>GST (3%)</span>
-      <span>₹{gst.toFixed(2)}</span>
-    </div>
+{discount > 0 && (
+  <div className="flex justify-between text-green-600">
+    <span>Coupon Discount</span>
+    <span>-₹{discount.toFixed(2)}</span>
+  </div>
+)}
 
-    <div className="flex justify-between text-sm lg:text-base text-gray-600">
+<div className="flex justify-between text-sm lg:text-base text-gray-600">
+  <span>Taxable Amount</span>
+  <span>₹{taxableAmount.toFixed(2)}</span>
+</div>
+
+<div className="flex justify-between text-sm lg:text-base text-gray-600">
+  <span>GST (3%)</span>
+  <span>₹{gst.toFixed(2)}</span>
+</div>
+
+<div className="flex justify-between text-sm lg:text-base text-gray-600">
   <span>Delivery Charges</span>
 
   <span>
