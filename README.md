@@ -3,6 +3,13 @@
 https://github.com/user-attachments/assets/9b437ae1-f951-4de9-96fd-7ce5c331cb9d
 
 > A production-ready MERN Stack e-commerce platform built to digitize a real local dairy business.
+![React](https://img.shields.io/badge/React-19-blue?logo=react)
+![Node](https://img.shields.io/badge/Node.js-Express-green)
+![MongoDB](https://img.shields.io/badge/MongoDB-Database-green?logo=mongodb)
+![JWT](https://img.shields.io/badge/Auth-JWT-orange)
+![Razorpay](https://img.shields.io/badge/Payments-Razorpay-blue)
+![Render](https://img.shields.io/badge/Deployment-Render-black)
+![License](https://img.shields.io/badge/License-MIT-blue)
 
 📹 **If the embedded video doesn't load, you can watch it here:**  
 [▶️ Watch Demo](demo/uma-dairy-demo.mp4)
@@ -33,29 +40,104 @@ This project gave me hands-on experience with authentication, payments, order ma
 
 # ✨ Features
 
-## 👤 Customer
+## 👤 Customer Features
 
-- JWT Authentication
-- Browse Products
-- Product Search
-- Product Details
-- Shopping Cart
-- Address Management
-- Razorpay Payment Gateway
-- Cash on Delivery (COD)
-- Order History
-- AI-powered Uma Assistant
-- Automatic Support Ticket Creation
-- Responsive UI
+- 🔐 JWT Authentication
+- 🔑 Google OAuth Login
+- 📧 Email OTP Verification
+- 🔄 Forgot & Reset Password
+- 👤 User Profile Management
+- 🛍 Browse Products
+- 🔍 Product Search
+- 📄 Product Details
+- 🛒 Persistent Shopping Cart
+- 📍 Address Management
+- 🎟 Apply Coupons
+- 🎁 Offers & Discounts
+- 💳 Razorpay Online Payments
+- 💵 Cash on Delivery (COD)
+- 📦 Order History
+- 🚚 Real-time Delivery Status Tracking
+- ⭐ Product Reviews & Ratings
+- 📩 Automatic Review Request Email
+- 🤖 AI-powered Customer Support Assistant
+- 🎫 Automatic Support Ticket Generation
+- 📱 Fully Responsive UI
 
 ---
 
-## 🛠 Admin
+## 🛠 Admin Features
 
-- Admin Dashboard
-- Product Management
-- Order Management
+- 📊 Admin Dashboard
+- 📦 Product Management (CRUD)
+- 📋 Order Management
+- 🚚 Delivery Status Management
+- 🎟 Coupon Management
+- 🎁 Offer Management
+- 👥 User Management
+- ⭐ Review Management
+- 🎫 Support Ticket Management
+- 🔒 Protected Admin Routes
+
+---
+
+## ⚙ Backend Features
+
+- RESTful API Architecture
+- JWT Authentication & Authorization
+- Role-based Access Control
+- Google OAuth Authentication
+- Email OTP Verification
+- Password Hashing using bcrypt
+- MongoDB with Mongoose
+- Razorpay Payment Integration
+- Razorpay Webhook Verification
+- Secure HMAC Signature Validation
+- Shiprocket API Integration
+- AI Chat Support API
+- Review Management API
+- Coupon Management API
+- Offer Management API
+- Cart Management API
+- Order Management API
+- Delivery Management API
+- Ticket Management API
+- Global Error Handling
+- Environment-based Configuration
+
+---
+
+## 🔒 Security
+
+- JWT-based Authentication
+- Password Encryption (bcrypt)
+- Role-based Authorization
 - Protected Admin Routes
+- Razorpay HMAC Signature Verification
+- Secure Environment Variables
+- CORS Configuration
+- Input Validation
+
+---
+
+## 🚀 Production Ready Features
+
+- ✅ Responsive Design
+- ✅ Docker Support
+- ✅ Render Deployment
+- ✅ MongoDB Atlas
+- ✅ Razorpay Integration
+- ✅ Shiprocket Integration
+- ✅ Google OAuth Login
+- ✅ Email OTP Verification
+- ✅ AI Customer Support Assistant
+- ✅ Automatic Ticket Generation
+- ✅ Coupon & Offer Engine
+- ✅ Persistent Shopping Cart
+- ✅ Product Review System
+- ✅ Review Email Notifications
+- ✅ Secure REST APIs
+- ✅ Production-grade Authentication
 
 ---
 
