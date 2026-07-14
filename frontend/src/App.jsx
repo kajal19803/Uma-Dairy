@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Moon, Sun } from 'lucide-react';
+import axios from "axios";
 
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -28,6 +29,7 @@ import { WishlistProvider } from './context/WishlistContext';
 import Policy from './pages/Policy';
 
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const API_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 
 const App = () => {
   const location = useLocation();
@@ -51,6 +53,39 @@ const App = () => {
       localStorage.setItem('theme', 'light');
     }
   }, [darkMode]);
+  useEffect(() => {
+  const token = localStorage.getItem("token");
+
+  if (!token) return;
+
+  const verifyUser = async () => {
+  console.log("VERIFY START");
+
+  try {
+    const response = await axios.get(`${API_URL}/api/auth/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log("VERIFY SUCCESS", response.data);
+  } catch (err) {
+    console.log("VERIFY ERROR", err.response?.status, err.response?.data);
+
+    if (err.response?.status === 401) {
+      console.log("REMOVING TOKEN");
+
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("userRole");
+
+      window.dispatchEvent(new Event("userUpdated"));
+    }
+  }
+};
+
+  verifyUser();
+}, []);
 
   return (
     <GoogleOAuthProvider clientId={clientId || ''}>

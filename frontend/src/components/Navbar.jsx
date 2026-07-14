@@ -7,8 +7,8 @@ import useUserStore from '../store/userStore';
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userRole, setUserRole] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => !!localStorage.getItem("token"));
+  const [userRole, setUserRole] = useState(() => localStorage.getItem("userRole"));
   const { cartItems } = useCart();
   const navigate = useNavigate();
   const cartCount = cartItems.reduce((total, item) => total + (item.quantity || 1), 0);

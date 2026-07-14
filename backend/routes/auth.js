@@ -1,5 +1,13 @@
 const express = require('express');
-const { register, login, googleLogin } = require('../controllers/auth');
+const {
+  register,
+  login,
+  googleLogin,
+  checkUser,
+  getCurrentUser,
+  changePassword,
+  resetPassword,
+} = require('../controllers/auth');
 const jwt = require('jsonwebtoken');
 const { authMiddleware } = require('../middleware/authMiddleware');
 const User = require('../models/User');
@@ -9,6 +17,11 @@ const JWT_SECRET = process.env.JWT_SECRET;
 router.post('/register', register);
 router.post('/login', login);
 router.post('/google', googleLogin);
+router.post('/check-user', checkUser);
+router.get('/me', getCurrentUser);
+router.post('/change-password', changePassword);
+router.post('/reset-password', resetPassword);
+
 const verifyToken = (req) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) throw new Error('Authorization header missing');

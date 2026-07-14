@@ -26,7 +26,7 @@ const Dashboard = () => {
     const fetchUserData = async () => {
       try {
         const [userRes, wishlistRes] = await Promise.all([
-          fetch (`${API_URL}/api/user`, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch (`${API_URL}/api/auth/me`, { headers: { Authorization: `Bearer ${token}` } }),
           fetch(`${API_URL}/api/auth/wishlist`, { headers: { Authorization: `Bearer ${token}` } })
         ]);
 
