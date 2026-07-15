@@ -30,61 +30,138 @@ const razorpay = new Razorpay({
 // 📦 1. Place Order Route
 
 router.post("/", authMiddleware, async (req, res) => {
+  try {
+    const { items, address, phone, couponCode } = req.body;
+    const userId = req.user.id;
 
-try {
-const { items, address, phone, couponCode,} = req.body;
-const userId = req.user.id;
-const { subtotal,finalItems,} = await calculateSubtotal(items);
-const { discount, appliedCoupon, } = await applyCoupon( couponCode, subtotal);
-const { taxableAmount, gst,} = calculateGST( subtotal, discount);
-const shipping = await getShippingCharge({
+    const { subtotal, finalItems } = await calculateSubtotal(items);
 
-deliveryPincode: address.zip,
-paymentMethod: "Prepaid", weight:0.5,
+    const { discount, appliedCoupon } = await applyCoupon(
+      couponCode,
+      subtotal
+    );
 
-});
+    const { taxableAmount, gst } = calculateGST(
+      subtotal,
+      discount
+    );
 
-if(!shipping.success){
+    const shipping = await getShippingCharge({
+      deliveryPincode: address.zip,
+      paymentMethod: "Prepaid",
+      weight: 0.5,
+    });
 
-return res.status(400).json({ message: shipping.message, });
+    if (!shipping.success) {
+      return res.status(400).json({
+        message: shipping.message,
+      });
+    }
 
-}
+    const finalAmount =
+      taxableAmount + gst + shipping.shippingCharge;
 
-const finalAmount = taxableAmount + gst + shipping.shippingCharge;
+    // ==============================
+    // Generate Order Hash
+    // ==============================
 
-const order = await Order.create({
-orderId:
-`ORDER_${Date.now()}`, userId,
-items: finalItems,
-address, phone,
-totalPrice: subtotal,
-couponCode: appliedCoupon,
-discount,taxableAmount,
-gst,finalAmount,
-shipping:{
-charge: shipping.shippingCharge,
-courier:shipping.courier,
-estimatedDelivery: shipping.estimatedDelivery,
+    const orderHash = crypto
+      .createHash("sha256")
+      .update(
+        JSON.stringify({
+          items: finalItems
+            .map((item) => ({
+              productId: item.productId.toString(),
+              quantity: Number(item.quantity),
+            }))
+            .sort((a, b) =>
+              a.productId.localeCompare(b.productId)
+            ),
 
-},
+          address: {
+            fullName: address.fullName,
+            street: address.street,
+            city: address.city,
+            state: address.state,
+            zip: address.zip,
+          },
 
-paymentStatus: "PENDING",
-orderStatus: "PENDING",
+          phone,
 
-});
+          couponCode: appliedCoupon || "",
+        })
+      )
+      .digest("hex");
 
-return res.status(201).json({ message: "Order placed successfully", order,});
+    // ==============================
+    // Check Duplicate Pending Order
+    // ==============================
 
-}
+    const existingOrder = await Order.findOne({
+      userId,
+      paymentStatus: "PENDING",
+      orderStatus: "PENDING",
+      orderHash,
+    }).sort({ createdAt: -1 });
 
-catch(err){
+    if (existingOrder) {
+      return res.status(200).json({
+        message: "Pending order already exists.",
+        order: existingOrder,
+      });
+    }
 
-console.error(err);
+    // ==============================
+    // Create New Order
+    // ==============================
 
-return res.status(500).json({ message: err.message,});
+    const order = await Order.create({
+      orderId: `ORDER_${Date.now()}`,
 
-}
+      userId,
 
+      orderHash,
+
+      items: finalItems,
+
+      address,
+
+      phone,
+
+      totalPrice: subtotal,
+
+      couponCode: appliedCoupon,
+
+      discount,
+
+      taxableAmount,
+
+      gst,
+
+      finalAmount,
+
+      shipping: {
+        charge: shipping.shippingCharge,
+        courier: shipping.courier,
+        estimatedDelivery: shipping.estimatedDelivery,
+      },
+
+      paymentStatus: "PENDING",
+
+      orderStatus: "PENDING",
+    });
+
+    return res.status(201).json({
+      message: "Order placed successfully",
+      order,
+    });
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({
+      message: err.message,
+    });
+  }
 });
 router.post("/payment/make-payment", authMiddleware, async (req, res) => {
   try {

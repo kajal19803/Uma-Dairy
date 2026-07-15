@@ -72,6 +72,11 @@ refund: {
   type: Boolean,
   default: false,
 },
+orderHash: {
+  type: String,
+  required: true,
+  index: true,
+},
    }, { timestamps: true }); 
 module.exports = mongoose.model('Order', orderSchema);
 
