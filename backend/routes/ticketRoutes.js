@@ -27,17 +27,41 @@ router.post(
   upload.array('images', 5),
   async (req, res) => {
     try {
+      console.log("========== NEW TICKET ==========");
+      console.log("User:", req.user);
+
       const { issueType, message, orderId, productNames } = req.body;
       const userId = req.user.id;
 
+      console.log("Body:", req.body);
+
       if (!issueType || !message) {
-        return res.status(400).json({ error: 'Issue type and message are required.' });
+        return res.status(400).json({
+          error: "Issue type and message are required.",
+        });
       }
 
-      const images = (req.files || []).map((file) => `/ticket_uploads/${file.filename}`);
-      const ticketNumber = `TCK-${uuidv4().split('-')[0].toUpperCase()}`;
+      // Multer Debug
+      console.log("Uploaded Files:", req.files);
 
-      const parsedProductNames = productNames ? JSON.parse(productNames) : [];
+      const images = (req.files || []).map((file) => {
+        console.log("Original Name:", file.originalname);
+        console.log("Saved Filename:", file.filename);
+        console.log("Saved Path:", file.path);
+        console.log("Destination:", file.destination);
+
+        return `/ticket_uploads/${file.filename}`;
+      });
+
+      console.log("Images Array:", images);
+
+      const ticketNumber = `TCK-${uuidv4()
+        .split("-")[0]
+        .toUpperCase()}`;
+
+      const parsedProductNames = productNames
+        ? JSON.parse(productNames)
+        : [];
 
       const newTicket = new Ticket({
         user: userId,
@@ -49,10 +73,11 @@ router.post(
         productNames: parsedProductNames,
       });
 
-     
       const savedTicket = await newTicket.save();
 
-      
+      console.log("Saved Ticket ID:", savedTicket._id);
+      console.log("Saved Images:", savedTicket.images);
+
       await sendTicketMail({
         to: req.user.email,
         ticketNumber: savedTicket.ticketNumber,
@@ -60,16 +85,19 @@ router.post(
         message: savedTicket.message,
       });
 
-      
+      console.log("✅ Ticket confirmation email sent");
+
       res.status(201).json({
         success: true,
-        message: 'Ticket created successfully.',
+        message: "Ticket created successfully.",
         ticketNumber: savedTicket.ticketNumber,
       });
 
     } catch (error) {
-      console.error('🎫 Ticket creation error:', error.message);
-      res.status(500).json({ error: 'Server error. Please try again later.' });
+      console.error("🎫 Ticket creation error:", error);
+      res.status(500).json({
+        error: "Server error. Please try again later.",
+      });
     }
   }
 );
