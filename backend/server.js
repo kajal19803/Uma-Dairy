@@ -50,6 +50,10 @@ app.use(
 
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
+app.use(
+  '/ticket_uploads',
+  express.static(path.join(__dirname, 'public/ticket_uploads'))
+);
 app.use('/webhook', webhookRoutes);
 
 mongoose.connect(process.env.MONGO_URI, {
