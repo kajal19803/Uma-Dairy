@@ -5,8 +5,6 @@ require("dotenv").config();
 
 const otpStore = new Map();
 
-console.log("🚀 Email OTP Route Loaded");
-
 const BREVO_API = "https://api.brevo.com/v3/smtp/email";
 const BREVO_API_KEY = process.env.BREVO_API_KEY;
 
@@ -16,7 +14,7 @@ async function sendEmail(to, subject, html) {
     {
       sender: {
         name: "Uma Dairy",
-        email: "kajalverma6263@gmail.com",
+        email: process.env.BREVO_SENDER_EMAIL,
       },
 
       to: [
@@ -39,8 +37,6 @@ async function sendEmail(to, subject, html) {
   );
 }
 router.post("/send", async (req, res) => {
-  console.log("📩 /send route hit");
-
   const { email } = req.body;
 
   if (!email) {
@@ -191,11 +187,7 @@ router.post("/send", async (req, res) => {
 
   try {
 
-    console.log("📨 Sending OTP using Brevo API...");
-
     await sendEmail(email, subject, html);
-
-    console.log("✅ OTP Email Sent");
 
     setTimeout(() => {
       otpStore.delete(email);

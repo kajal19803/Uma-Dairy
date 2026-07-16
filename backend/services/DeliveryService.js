@@ -24,10 +24,6 @@ const getShippingCharge = async ({
         },
       }
     );
-
-    console.log("🚚 Shipping API Response");
-    console.log(response.data);
-
     const couriers =
       response.data.data?.available_courier_companies || [];
 

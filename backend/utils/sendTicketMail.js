@@ -9,7 +9,7 @@ const sendTicketMail = async ({ to, ticketNumber, issueType, message }) => {
       {
         sender: {
           name: "Uma Dairy Support",
-          email: "kajalverma6263@gmail.com",
+          email: process.env.BREVO_SENDER_EMAIL,
         },
 
         to: [
@@ -168,7 +168,7 @@ Need help?
 
 <br><br>
 
-📧 kajalverma6263@gmail.com
+📧 ${process.env.BREVO_SENDER_EMAIL}
 
 <br><br>
 
@@ -196,8 +196,6 @@ Need help?
         },
       }
     );
-
-    console.log("✅ Ticket confirmation email sent");
   } catch (error) {
     console.error(
       "❌ Brevo Ticket Mail Error:",

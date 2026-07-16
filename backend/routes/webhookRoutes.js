@@ -18,16 +18,12 @@ router.post("/tracking", async (req, res) => {
     const apiKey = req.headers["x-api-key"];
 
     if (apiKey !== process.env.SHIPROCKET_WEBHOOK_KEY) {
-      console.log("❌ Invalid Shiprocket API Key");
 
       return res.status(401).json({
         success: false,
         message: "Unauthorized",
       });
     }
-
-    console.log("📩 Shiprocket Webhook Received");
-
     const {
       awb,
       shipment_id,
@@ -42,7 +38,6 @@ router.post("/tracking", async (req, res) => {
     // ===================================
 
     if (!shipment_id) {
-      console.log("⚠️ Shiprocket Test Webhook");
 
       return res.status(200).json({
         success: true,
@@ -59,10 +54,6 @@ router.post("/tracking", async (req, res) => {
     });
 
     if (!order) {
-      console.log(
-        `❌ Order not found for Shipment ID: ${shipment_id}`
-      );
-
       return res.status(200).json({
         success: true,
         message: "Order not found",
@@ -155,10 +146,6 @@ else if (status.includes("RTO")) {
 }
 
     await order.save();
-
-    console.log(
-      `✅ Order ${order.orderId} updated (${current_status})`
-    );
 
     return res.status(200).json({
       success: true,

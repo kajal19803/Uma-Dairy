@@ -27,7 +27,6 @@ router.post("/", async (req, res) => {
       .digest("hex");
 
     if (signature !== expectedSignature) {
-      console.log("❌ Invalid Razorpay Signature");
 
       return res.status(400).json({
         success: false,
@@ -40,10 +39,6 @@ router.post("/", async (req, res) => {
     // ======================================
 
     const payload = JSON.parse(req.body.toString());
-
-    console.log("========== RAZORPAY WEBHOOK ==========");
-    console.log("Event:", payload.event);
-
     const refund =
       payload.payload?.refund?.entity;
 
@@ -62,7 +57,6 @@ router.post("/", async (req, res) => {
     });
 
     if (!order) {
-      console.log("❌ Order not found");
 
       return res.status(200).json({
         success: true,
@@ -103,10 +97,6 @@ router.post("/", async (req, res) => {
     }
 
     await order.save();
-
-    console.log(
-      `✅ Refund Updated : ${order.orderId}`
-    );
 
     return res.status(200).json({
       success: true,

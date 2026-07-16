@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order');
 const { authMiddleware } = require('../middleware/authMiddleware');
-const axios = require('axios');
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
 require('dotenv').config();
@@ -245,9 +244,6 @@ router.post("/payment/make-payment", authMiddleware, async (req, res) => {
 });
 
 router.post("/payment/verify", authMiddleware, async (req, res) => {
-  console.log("========== VERIFY API ==========");
-console.log("BODY:", req.body);
-console.log("USER:", req.user._id);
   try {
     const {
       razorpay_order_id,
@@ -270,7 +266,6 @@ console.log("USER:", req.user._id);
 
     // Find existing order
     const order = await Order.findOne({ orderId });
-    console.log("ORDER FOUND:", order);
 
     if (!order) {
       return res.status(404).json({
@@ -301,8 +296,6 @@ console.log("USER:", req.user._id);
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest("hex");
-    console.log("Expected:", expectedSignature);
-    console.log("Received:", razorpay_signature);
 
     if (expectedSignature !== razorpay_signature) {
       order.paymentStatus = "FAILED";
@@ -325,7 +318,6 @@ console.log("USER:", req.user._id);
 
     order.paidAt = new Date();
     order.placedAt = new Date();
-   console.log("Saving order...");
    if (order.couponCode) {
 
   const coupon = await Coupon.findOne({
@@ -355,7 +347,6 @@ if (!alreadyUsed) {
 
 try {
   await createShiprocketOrder(order);
-  console.log("🚚 Shiprocket order created successfully.");
 } catch (err) {
   console.error(
     "❌ Shiprocket Error:",
@@ -367,9 +358,6 @@ const user = await User.findById(order.userId);
 
 sendOrderConfirmation(order, user);
 sendAdminOrder(order, user);
-
-console.log("Order saved successfully");
-
 
     return res.status(200).json({
       success: true,
@@ -455,9 +443,6 @@ router.patch("/:orderId/cancel", authMiddleware, async (req, res) => {
           }
         );
 
-        console.log("✅ Refund Initiated");
-        console.log(refund);
-
         order.refund.status = "PROCESSING";
         order.refund.refundId = refund.id;
 
@@ -484,9 +469,6 @@ if (order.shiprocket.orderId) {
     await cancelShiprocketOrder(
       order.shiprocket.orderId
     );
-
-    console.log("🚚 Shiprocket order cancelled.");
-
     order.shiprocket.trackingStatus = "Cancelled";
 
   } catch (err) {

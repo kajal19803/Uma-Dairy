@@ -64,11 +64,8 @@ const createShiprocketOrder = async (order) => {
       height: 10,
       weight: 0.5,
     };
-
-    console.log("📦 Shiprocket Payload");
-    console.log(orderData);
-
-    // Create Shiprocket Order
+    
+  // Create Shiprocket Order
     const response = await axios.post(
       "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
       orderData,
@@ -79,10 +76,6 @@ const createShiprocketOrder = async (order) => {
         },
       }
     );
-
-    console.log("✅ Shiprocket Response");
-    console.log(response.data);
-
     // Save Shiprocket Details
     order.shiprocket = {
       orderId: response.data.order_id || "",

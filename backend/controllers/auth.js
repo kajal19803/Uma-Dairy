@@ -16,7 +16,7 @@ const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({ name, email, password: hashedPassword });
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: 'User registered successfully',
       token,
@@ -36,7 +36,7 @@ const login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ success: false, message: 'Invalid credentials' });
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
-    res.json({
+    return res.json({
       success: true,
       token,
       user: { id: user._id, name: user.name, email: user.email }
@@ -49,7 +49,6 @@ const login = async (req, res) => {
 
 
 const googleLogin = async (req, res) => {
-  console.log('Google login route hit');
   const { token } = req.body; // frontend se yahi milega
    
   try {
@@ -59,7 +58,6 @@ const googleLogin = async (req, res) => {
     });
 
     const payload = ticket.getPayload();
-    console.log('Google payload:', payload);
 
     if (!payload.email_verified) {
       return res.status(401).json({ success: false, message: 'Google email not verified' });
@@ -76,7 +74,7 @@ const googleLogin = async (req, res) => {
       });
     }
     const jwtToken = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
-    res.json({
+    returnres.json({
       success: true,
       token: jwtToken,
       user: { id: user._id, name: user.name, email: user.email }
@@ -108,19 +106,7 @@ const checkUser = async (req, res) => {
 
 const getCurrentUser = async (req, res) => {
   try {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader) {
-      return res.status(401).json({
-        message: "Authorization header missing",
-      });
-    }
-
-    const token = authHeader.split(" ")[1];
-
-    const decoded = jwt.verify(token, JWT_SECRET);
-
-    const user = await User.findById(decoded.id).select("-password");
+    const user = await User.findById(req.user.id).select("-password");
 
     if (!user) {
       return res.status(404).json({
@@ -141,14 +127,7 @@ const getCurrentUser = async (req, res) => {
 
 const changePassword = async (req, res) => {
   try {
-    const authHeader = req.headers.authorization;
-
-    const token = authHeader?.split(" ")[1];
-
-    const decoded = jwt.verify(token, JWT_SECRET);
-
-    const user = await User.findById(decoded.id);
-
+    const user = await User.findById(req.user.id);
     const { oldPassword, newPassword } = req.body;
 
     if (

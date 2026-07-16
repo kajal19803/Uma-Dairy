@@ -13,9 +13,6 @@ const getShiprocketToken = async () => {
     ) {
       return shiprocketToken;
     }
-
-    console.log("🔑 Generating new Shiprocket token...");
-
     const response = await axios.post(
       "https://apiv2.shiprocket.in/v1/external/auth/login",
       {
@@ -31,9 +28,6 @@ const getShiprocketToken = async () => {
     tokenExpiry = new Date(
       Date.now() + 9 * 24 * 60 * 60 * 1000
     );
-
-    console.log("✅ Shiprocket token generated.");
-
     return shiprocketToken;
 
   } catch (error) {

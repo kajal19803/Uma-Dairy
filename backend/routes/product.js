@@ -36,10 +36,9 @@ router.post('/add', upload.array('images', 5), async (req, res) => {
     } = req.body;
 
     const mrpValue = Number(mrp);
-const discountValue = Number(discount);
+    const discountValue = Number(discount);
 
-const price =
-  mrpValue - (mrpValue * discountValue) / 100;
+    const price = mrpValue - (mrpValue * discountValue) / 100;
     const imagePaths = Array.isArray(req.files)
       ? req.files.map(file => `/uploads/${file.filename}`)
       : [];
@@ -100,7 +99,6 @@ router.get('/', async (req, res) => {
     if (discounted === 'true') {
       filter.discount = { $gt: 0 };
     }
-    console.log('🧪 Filter applied:', filter);
 
     const products = await Product.find(filter);
     res.json(products);

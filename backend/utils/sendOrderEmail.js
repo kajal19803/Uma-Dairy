@@ -201,9 +201,9 @@ const html = `
 `;
 
 await sendEmail(
-process.env.ADMIN_EMAIL,
-`🛒 New Order ${order.orderId}`,
-html
+  process.env.ADMIN_EMAIL,
+  `🛒 New Order ${order.orderId}`,
+  html
 );
 
 }
