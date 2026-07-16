@@ -74,14 +74,14 @@ const googleLogin = async (req, res) => {
       });
     }
     const jwtToken = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
-    returnres.json({
+    return res.json({
       success: true,
       token: jwtToken,
       user: { id: user._id, name: user.name, email: user.email }
     });
   } catch (err) {
     console.error('Google login error:', err);
-    res.status(401).json({ success: false, message: 'Google authentication failed' });
+    return res.status(401).json({ success: false, message: 'Google authentication failed' });
   }
 };
 
@@ -97,7 +97,7 @@ const checkUser = async (req, res) => {
   } catch (error) {
     console.error("Check user error:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Internal server error",
     });
   }
@@ -114,11 +114,11 @@ const getCurrentUser = async (req, res) => {
       });
     }
 
-    res.json(user);
+    return res.json(user);
   } catch (error) {
     console.error("Get user error:", error);
 
-    res.status(401).json({
+    return res.status(401).json({
       message: "Invalid token or unauthorized",
     });
   }
